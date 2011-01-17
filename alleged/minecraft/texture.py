@@ -121,24 +121,6 @@ class TextResourceTests(TestCase):
 	    self.assertEqual('Test pack\nBy Fréd the Deäd', doc.get_bytes())
 	    # This test relies on the encoding of the source file being UTF-8!!
 
-class RecipeTexturePackTests(TestCase):
-    def test_pack_txt_from_init(self):
-        pack = RecipeTexturePack(u'Test pack', u'It’s testy')
-        self.assertEqual(u'Test pack\nIt’s testy', pack.get_resource('pack.txt').get_content())
-
-    def test_zip_1(self):
-        pack = RecipeTexturePack(u'Yummy pack', u'It’s tasty')
-        pack.add_resource(TextResource('doc/news.txt', 'This is a news file.'))
-
-        # Now generate the archive and check it contains the expected files.
-        strm = StringIO()
-        pack.write_to(strm)
-
-        strm.seek(0)
-        with ZipFile(strm, 'r') as zip:
-            self.assertEqual(u'Yummy pack\nIt’s tasty', zip.read('pack.txt').decode('UTF-8'))
-            self.assertEqual(u'This is a news file.', zip.read('doc/news.txt').decode('UTF-8'))
-
 class SourcePackTests(TestCase):
     def test_sign(self):
         im_data = self.get_resource('sign.png')
@@ -161,6 +143,59 @@ class SourcePackTests(TestCase):
 
         # Check the data returned from the resource maches what went in to the ZIP
         self.assertEqual(im_data, res.get_bytes())
+
+class RecipeTexturePackTests(TestCase):
+    def test_pack_txt_from_init(self):
+        pack = RecipeTexturePack(u'Test pack', u'It’s testy')
+        self.assertEqual(u'Test pack\nIt’s testy', pack.get_resource('pack.txt').get_content())
+
+    def test_zip_1(self):
+        pack = RecipeTexturePack(u'Yummy pack', u'It’s tasty')
+        pack.add_resource(TextResource('doc/news.txt', 'This is a news file.'))
+
+        # Now generate the archive and check it contains the expected files.
+        strm = StringIO()
+        pack.write_to(strm)
+
+        strm.seek(0)
+        with ZipFile(strm, 'r') as zip:
+            self.assertEqual(u'Yummy pack\nIt’s tasty', zip.read('pack.txt').decode('UTF-8'))
+            self.assertEqual(u'This is a news file.', zip.read('doc/news.txt').decode('UTF-8'))
+
+    def test_zip_with_image_from_source_pack(self):
+        pack_ab = self.make_pack('a.png', 'b.png')
+        pack_c = self.make_pack('c.png')
+
+        new_pack = RecipeTexturePack(u'Composite pack', u'It’s composite')
+        new_pack.add_resource(pack_ab.get_resource('a.png'))
+        new_pack.add_resource(pack_c.get_resource('c.png'))
+
+        # Now generate the archive and check it contains the expected files.
+        strm = StringIO()
+        new_pack.write_to(strm)
+
+        strm.seek(0)
+        with ZipFile(strm, 'r') as zip:
+            self.assertEqual(self.get_resource('a.png'), zip.read('a.png'))
+            self.assertEqual(self.get_resource('c.png'), zip.read('c.png'))
+            try:
+                zip.read('b.png')
+                self.fail('Should not find b.png')
+            except KeyError:
+                pass
+
+    def make_pack(self, *file_names):
+        strm = StringIO()
+        with ZipFile(strm, 'w') as zip:
+            for file_name in file_names:
+                zip.writestr(file_name, self.get_resource(file_name))
+            zip.writestr('pack.txt', 'Sign pack\nJust a test')
+        strm.seek(0)
+
+        # Open it as a SourceTexturePack
+        pack = SourcePack(strm)
+
+        return pack
 
 
 
