@@ -121,6 +121,10 @@ class Mixer(object):
 
 class TestCase(unittest.TestCase):
     data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'test_data'))
+    test_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'test_working'))
+
+    if not os.path.exists(test_dir):
+        os.mkdir(test_dir)
 
     def get_resource(self, file_name):
         with open(os.path.join(self.data_dir, file_name), 'rb') as strm:
@@ -129,15 +133,18 @@ class TestCase(unittest.TestCase):
 
     def make_source_pack(self, name, desc, resources_by_file_name):
         strm = StringIO()
-        with ZipFile(strm, 'w') as zip:
-            for file_name, res_name in resources_by_file_name.items():
-                zip.writestr(file_name, self.get_resource(res_name))
-            zip.writestr('pack.txt', '{0}\n{1}'.format(name, desc).encode('UTF-8'))
+        self.write_pack_contents(strm, name, desc, resources_by_file_name)
         strm.seek(0)
 
         # Open it as a SourceTexturePack
         pack = SourcePack(strm)
         return pack
+
+    def write_pack_contents(self, strm, name, desc, resources_by_file_name):
+        with ZipFile(strm, 'w') as zip:
+            for file_name, res_name in resources_by_file_name.items():
+                zip.writestr(file_name, self.get_resource(res_name))
+            zip.writestr('pack.txt', '{0}\n{1}'.format(name, desc).encode('UTF-8'))
 
 class TextResourceTests(TestCase):
 	def setUp(self):
@@ -152,6 +159,9 @@ class TextResourceTests(TestCase):
 class SourcePackTests(TestCase):
     def test_sign(self):
         pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': 'sign.png'})
+        self.check_pack_is_sign_pack(pack)
+
+    def check_pack_is_sign_pack(self, pack):
         self.assertEqual('Sign pack', pack.label)
         self.assertEqual('Just a test', pack.desc)
 
@@ -161,6 +171,15 @@ class SourcePackTests(TestCase):
 
         # Check the data returned from the resource maches what went in to the ZIP
         self.assertEqual(self.get_resource('sign.png'), res.get_bytes())
+
+    def test_pack_from_file_name(self):
+        file_path = os.path.join(self.test_dir, 'bonko.zip')
+        with open(file_path, 'wb') as strm:
+            self.write_pack_contents(strm, 'Sign pack', 'Just a test', {'item/sign.png': 'sign.png'})
+
+        # Open it as a SourceTexturePack
+        pack = SourcePack(file_path)
+        self.check_pack_is_sign_pack(pack)
 
 class RecipePackTests(TestCase):
     def test_pack_txt_from_init(self):
