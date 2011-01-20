@@ -12,13 +12,17 @@ import os
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
+import Image
 
 class ResourceBase(object):
     def __init__(self, name):
         self.name = name
 
     def get_bytes(self):
-        raise NotImplemented('get_bytes')
+        raise NotImplemented('{0}.get_bytes'.format(self.__class__.__name))
+
+    def get_image(self):
+        raise NotImplemented('{0}.get_image'.format(self.__class__.__name))
 
 
 class TextResource(ResourceBase):
@@ -93,11 +97,18 @@ class SourceResource(ResourceBase):
         self.source = source
         self.name = name
         self.bytes = None
+        self.image = None
 
     def get_bytes(self):
         if self.bytes is None:
             self.bytes = self.source.get_resource_bytes(self.name)
         return self.bytes
+
+    def get_image(self):
+        if self.image is None:
+            strm = StringIO(self.get_bytes())
+            self.image = Image.open(strm)
+        return self.image
 
 class Map(object):
         pass
@@ -125,6 +136,37 @@ class GridMap(Map):
         u, v = i % self.nx, i // self.ny
         return (self.cell_wd * u, self.cell_ht * v, self.cell_wd * (u + 1), self.cell_ht * (v + 1))
 
+class CompositeResource(ResourceBase):
+    def __init__(self, name, base_res, base_map):
+        super(CompositeResource, self).__init__(name)
+        self.res = base_res
+        self.map = base_map
+        self.replacements = []
+        self.image = None
+
+    def replace(self, res, map, cells):
+        self.replacements.append((res, map, cells))
+        self.im = None
+        self.bytes = None
+
+    def _calc(self):
+        im = self.res.get_image().copy()
+        for src_res, src_map, cells in self.replacements:
+            for dst_name, src_name in cells.iteritems():
+                dst_box = self.map.get_box(dst_name)
+                src_box = src_map.get_box(src_name)
+                src_im = src_res.get_image().crop(src_box)
+                im.paste(src_im, dst_box)
+        self.image = im
+
+    def get_bytes(self):
+        if self.bytes is None:
+            if self.image is None:
+                self._calc()
+            strm = StringIO()
+            self.image.save(strm, 'PNG', optimize=True)
+            self.bytes = strm.getvalue()
+        return self.bytes
 
 class Mixer(object):
     def __init__(self):
