@@ -171,23 +171,58 @@ class CompositeResourceTests(TestCase):
 
 class MixerTests(TestCase):
     def test_b_plus_c(self):
-        mixer = Mixer()
-        mixer.add_pack('alpha_bravo', self.make_source_pack('AB', 'Has A and B', {'a.png': 'a.png', 'b.png': 'b.png'}))
-        mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': 'c.png'}))
-
-        recipe = {
-            'label': 'Composite pack',
-            'desc': 'A crazy mixed-up pack',
+        self.check_recipe({
             'mix': [
                 {'pack': 'alpha_bravo', 'files': ['b.png']},
                 {'pack': 'charlie', 'files': ['c.png']}
             ]
-        }
+        }, {'b.png': 'b.png', 'c.png': 'c.png'}, ['a.png'])
+
+    def test_a_b_replace(self):
+        self.check_recipe({
+            'mix': [
+                {
+                    'pack': 'alpha_bravo',
+                    'files': [
+                        {
+                            'file': 'a.png',
+                            'source': 'b.png',
+                            'map': {
+                                'cell_size': [16, 16],
+                                'image_size': [32, 32],
+                                'names': ['blue', 'cyan', 'green', 'magenta']
+                            },
+                            'replace': {
+                                'source': 'a.png',
+                                'map': {
+                                    'cell_size': [16, 16],
+                                    'image_size': [32, 32],
+                                    'names': ['yellow', 'red', 'orange', 'green']
+                                },
+                                'cells': {'blue': 'green', 'magenta': 'yellow'},
+                            }
+                        }
+                    ]
+                }
+            ]
+        }, {'a.png': 'a_b_replace.png'}, ['b.png'])
+
+    def check_recipe(self, recipe, expected_resources, unexpected_resources):
+        recipe.update({
+            'label': 'Composite pack',
+            'desc': 'A crazy mixed-up pack',
+        })
+
+        mixer = Mixer()
+        mixer.add_pack('alpha_bravo', self.make_source_pack('AB', 'Has A and B', {'a.png': 'a.png', 'b.png': 'b.png'}))
+        mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': 'c.png'}))
+
         pack = mixer.make(recipe)
 
         self.assertEqual('Composite pack', pack.label)
         self.assertEqual('A crazy mixed-up pack', pack.desc)
-        self.check_pack(pack, {'b.png': 'b.png', 'c.png': 'c.png'}, ['a.png'])
+        self.check_pack(pack, expected_resources, unexpected_resources)
+        return pack
 
     def check_pack(self, pack, expected_contents, expected_absent):
         strm = StringIO()
