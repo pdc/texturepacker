@@ -169,6 +169,11 @@ class CompositeResource(ResourceBase):
         return self.bytes
 
 class Mixer(object):
+    """Create texture packs by mixing together existing ones.
+
+    As well as interpreting the recipes, the mixer keeps
+    track of the packs and loads them as needed.
+    """
     def __init__(self):
         self.packs = {}
 
@@ -180,7 +185,26 @@ class Mixer(object):
         for ingredient in recipe['mix']:
             pack = self.packs[ingredient['pack']]
             for file_spec in ingredient['files']:
-                res_name = file_spec
-                res = pack.get_resource(res_name)
+                if isinstance(file_spec, basestring):
+                    res = pack.get_resource(file_spec)
+                else:
+                    src_res = pack.get_resource(file_spec['source'])
+                    src_map = self.get_map(file_spec['map'])
+                    res = CompositeResource(file_spec['file'], src_res, src_map)
+                    specs = file_spec['replace']
+                    if hasattr(specs, 'items'):
+                        specs = [specs]
+                    for spec in specs:
+                        src_res = pack.get_resource(spec['source'])
+                        src_map = self.get_map(spec['map'])
+                        cells = spec['cells']
+                        res.replace(src_res, src_map, cells)
                 new_pack.add_resource(res)
         return new_pack
+
+    def get_map(self, spec):
+        cell_size = tuple(spec['cell_size'])
+        image_size = tuple(spec['image_size'])
+        names = spec['names']
+        map_ = GridMap(image_size, cell_size, names)
+        return map_

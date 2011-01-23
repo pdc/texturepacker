@@ -44,13 +44,14 @@ class TestCase(unittest.TestCase):
                 zip.writestr(file_name, self.get_data(res_name))
             zip.writestr('pack.txt', '{0}\n{1}'.format(name, desc).encode('UTF-8'))
 
-    def assertRepresentIdenticalImages(self, bytes1, bytes2):
+    def assertRepresentIdenticalImages(self, bytes1, bytes2, msg=None):
         im1 = Image.open(StringIO(bytes1))
         im2 = Image.open(StringIO(bytes2))
         self.assertEqual(im1.size, im2.size)
         w, h = im1.size
         for i, (b1, b2) in enumerate(zip(im1.getdata(), im2.getdata())):
-            self.assertEqual(b1, b2, 'Pixels at ({x}, {y}) differ: {b1!r} != {b2!r}'.format(
+            self.assertEqual(b1, b2, '{msg}Pixels at ({x}, {y}) differ: {b1!r} != {b2!r}'.format(
+                msg=msg + ': ' if msg else '',
                 x=i % w,
                 y=i // h,
                 b1=b1,
@@ -228,13 +229,16 @@ class MixerTests(TestCase):
         strm = StringIO()
         pack.write_to(strm)
 
+        with open(os.path.join(self.test_dir, 'tmp.zip'), 'wb') as f:
+            f.write(strm.getvalue())
+
         strm.seek(0)
         with ZipFile(strm, 'r') as zip:
             for file_name, resource_name in expected_contents.items():
-                self.assertEqual(
+                self.assertRepresentIdenticalImages(
                         self.get_data(resource_name),
                         zip.read(file_name),
-                        'Expected to contain {0}'.format(file_name))
+                        'Expected contents of {actual} to match {expected}'.format(actual=file_name, expected=resource_name))
             for file_name in expected_absent:
                 try:
                     zip.read(file_name)
