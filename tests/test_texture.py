@@ -148,6 +148,87 @@ class GridMapTests(TestCase):
         self.assertEqual((0, 16, 16, 32), mappe.get_box('charlie'))
         self.assertEqual((16, 16, 32, 32), mappe.get_box('delta'))
 
+    def test_missing(self):
+        mappe = GridMap((32, 32), (16, 16), ['alpha', 'bravo', 'charlie', 'delta'])
+
+        with self.assertRaises(NotInMap):
+            mappe.get_box('echo')
+
+    def test_coords_offset(self):
+        map2 = GridMap((0, 96, 32, 128), (16, 16), ['whiskey', 'x-ray', 'yankee', 'zulu'])
+        self.assertEqual((0, 96, 16, 112), map2.get_box('whiskey'))
+        self.assertEqual((16, 96, 32, 112), map2.get_box('x-ray'))
+        self.assertEqual((0, 112, 16, 128), map2.get_box('yankee'))
+        self.assertEqual((16, 112, 32, 128), map2.get_box('zulu'))
+
+    def test_names(self):
+        names = [x + y for x in 'abcd' for y in 'lmno']
+        map3 = GridMap((32, 32), (8, 8), names)
+        self.assertEqual(names, map3.names)
+
+class CompositeMapTests(TestCase):
+    def test_two_grids(self):
+        names1 = [
+            'grass', 'stone', 'dirt', 'dirt_grass', 'planks', 'step_side', 'stop_top', 'brick',
+                'tnt_side', 'tnt_top', 'tnt_bottom', 'web', 'rose', 'dendelion', 'water', 'sapling',
+            'cobble', 'bedrock', 'sand', 'gravel', 'log_side', 'log_top', 'iron', 'gold',
+                'diamond', 'chest_top', 'chest_side', 'chest_front', 'red_mushroom', 'gray_mushroom', 'blank1', 'fire']
+        names2 = ['black_wool', 'gray_wool',
+            'red_wool', 'pink_wool',
+            'green_wool', 'lime_wool',
+            'brown_wool', 'yellow_wool',
+            'blue_wool', 'light_blue_wool',
+            'purple_wool', 'magenta_wool',
+            'cyan_wool', 'orange_wool',
+            'light_gray_wool']
+        map1 = GridMap((256, 32), (16, 16), names1)
+        map2 = GridMap((16, 112, 48, 240), (16, 16), names2)
+        map3 = CompositeMap([map1, map2])
+
+        self.assertEqual((0, 0, 16, 16), map3.get_box('grass'))
+        self.assertEqual((128, 16, 144, 32), map1.get_box('diamond'))
+        self.assertEqual((128, 16, 144, 32), map3.get_box('diamond'))
+        self.assertEqual((16, 112, 32, 128), map3.get_box('black_wool'))
+        self.assertEqual((32, 208, 48, 224), map3.get_box('orange_wool'))
+
+        self.assertEqual(set(names1) | set(names2), set(map3.names))
+
+
+class AtlasTests(TestCase):
+    def setUp(self):
+        super(AtlasTests, self).setUp()
+
+        map_a = GridMap((32, 32), (16, 16), ['yellow', 'red', 'orange', 'green'])
+        map_b = GridMap((32, 32), (16, 16), ['blue', 'cyan', 'green', 'magenta'])
+        self.atlas = Atlas()
+        self.atlas.add_map('a.png', map_a)
+        self.atlas.add_map('b.png', map_b)
+
+    def test_named_map(self):
+        m = self.atlas.get_map('a.png')
+        self.assertEqual((0, 0, 16, 16), m.get_box('yellow'))
+
+    def test_grid_map(self):
+        m = self.atlas.get_map({
+            'image_size': [32, 32],
+            'cell_size': [16, 16],
+            'names': ['p', 'q', 'r', 's']
+        })
+        self.assertEqual((16, 16, 32, 32), m.get_box('s'))
+
+    def test_composite_map(self):
+        m = self.atlas.get_map([
+            'a.png',
+            {
+                'image_size': [32, 0, 64, 32],
+                'cell_size': [16, 16],
+                'names': ['p', 'q', 'r', 's']
+            }
+        ])
+        self.assertEqual((0, 0, 16, 16), m.get_box('yellow'))
+        self.assertEqual((48, 16, 64, 32), m.get_box('s'))
+
+
 
 class CompositeResourceTests(TestCase):
     def test_change_one(self):

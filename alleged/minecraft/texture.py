@@ -113,12 +113,17 @@ class SourceResource(ResourceBase):
 class Map(object):
         pass
 
+class NotInMap(Exception):
+    def __init__(self, name):
+        super(NotInMap, self).__init__('{0!r} not found in map'.format(name))
+
 class GridMap(Map):
     def __init__(self, image_size, cell_size, names):
         """Create a grid map with this size and names.
 
         Arguments --
-            image_size -- pair (WIDTH, HEIGHT) -- size of the overall image
+            image_size -- pair (WIDTH, HEIGHT)
+                or tuple (LEFT, TOP, RIGHT, BOTTOM) -- size of the overall image
             cell_size -- pair (WIDTH, HEIGHT) -- size of cells within the image
                 The image width should be a multiple of the cell width
                 and similarly for the heights.
@@ -126,15 +131,67 @@ class GridMap(Map):
                 List of names, in order left to right, top to bottom.
         """
         self.cell_wd, self.cell_ht = cell_size
-        self.im_wd, self.im_ht = image_size
-        self.nx, self.ny = self.im_wd // self.cell_wd, self.im_ht // self.cell_ht
+        if len(image_size) == 2:
+            self.im_left = self.im_top = 0
+            im_wd, im_ht = image_size
+        else:
+            self.im_left, self.im_top, right, bottom = image_size
+            im_wd = right - self.im_left
+            im_ht = bottom - self.im_top
+        self.nx, self.ny = im_wd // self.cell_wd, im_ht // self.cell_ht
 
         self.names = names
 
     def get_box(self, name):
-        i = self.names.index(name)
-        u, v = i % self.nx, i // self.ny
-        return (self.cell_wd * u, self.cell_ht * v, self.cell_wd * (u + 1), self.cell_ht * (v + 1))
+        try:
+            i = self.names.index(name)
+        except ValueError:
+            raise NotInMap(name)
+        u, v = i % self.nx, i // self.nx
+        return (self.im_left + self.cell_wd * u, self.im_top + self.cell_ht * v,
+            self.im_left + self.cell_wd * (u + 1), self.im_top + self.cell_ht * (v + 1))
+
+class CompositeMap(Map):
+    """A map that combines several other maps.
+
+    Each submap is searched in turn for the desired item.
+    """
+    def __init__(self, maps):
+        self.maps = list(maps)
+
+    def get_box(self, name):
+        for m in self.maps:
+            try:
+                return m.get_box(name)
+            except NotInMap:
+                pass
+        raise NotInMap(name)
+
+    @property
+    def names(self):
+        names = []
+        for m in self.maps:
+            names.extend(list(m.names))
+        return names
+
+
+class Atlas(object):
+    __slots__ = ['maps']
+    def __init__(self):
+        self.maps = {}
+
+    def add_map(self, name, map):
+        self.maps[name] = map
+
+    def get_map(self, spec):
+        if isinstance(spec, basestring):
+            return self.maps[spec]
+        if hasattr(spec, 'items'):
+            cell_size = tuple(spec['cell_size'])
+            image_size = tuple(spec['image_size'])
+            names = spec['names']
+            return GridMap(image_size, cell_size, names)
+        return CompositeMap(self.get_map(x) for x in spec)
 
 class CompositeResource(ResourceBase):
     def __init__(self, name, base_res, base_map):
@@ -168,7 +225,7 @@ class CompositeResource(ResourceBase):
             self.bytes = strm.getvalue()
         return self.bytes
 
-class Mixer(object):
+class Mixer(Atlas):
     """Create texture packs by mixing together existing ones.
 
     As well as interpreting the recipes, the mixer keeps
@@ -201,10 +258,3 @@ class Mixer(object):
                         res.replace(src_res, src_map, cells)
                 new_pack.add_resource(res)
         return new_pack
-
-    def get_map(self, spec):
-        cell_size = tuple(spec['cell_size'])
-        image_size = tuple(spec['image_size'])
-        names = spec['names']
-        map_ = GridMap(image_size, cell_size, names)
-        return map_
