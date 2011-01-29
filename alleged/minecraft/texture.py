@@ -193,6 +193,7 @@ class Atlas(object):
             return GridMap(image_size, cell_size, names)
         return CompositeMap(self.get_map(x) for x in spec)
 
+
 class CompositeResource(ResourceBase):
     def __init__(self, name, base_res, base_map):
         super(CompositeResource, self).__init__(name)
@@ -225,7 +226,8 @@ class CompositeResource(ResourceBase):
             self.bytes = strm.getvalue()
         return self.bytes
 
-class Mixer(Atlas):
+
+class Mixer(object):
     """Create texture packs by mixing together existing ones.
 
     As well as interpreting the recipes, the mixer keeps
@@ -233,6 +235,7 @@ class Mixer(Atlas):
     """
     def __init__(self):
         self.packs = {}
+        self.atlas = Atlas()
 
     def add_pack(self, name, pack):
         self.packs[name] = pack
@@ -240,21 +243,26 @@ class Mixer(Atlas):
     def make(self, recipe):
         new_pack = RecipePack(recipe['label'], recipe['desc'])
         for ingredient in recipe['mix']:
-            pack = self.packs[ingredient['pack']]
+            src_pack = self.packs[ingredient['pack']]
             for file_spec in ingredient['files']:
                 if isinstance(file_spec, basestring):
-                    res = pack.get_resource(file_spec)
+                    res = src_pack.get_resource(file_spec)
                 else:
-                    src_res = pack.get_resource(file_spec['source'])
-                    src_map = self.get_map(file_spec['map'])
+                    src_res = src_pack.get_resource(file_spec['source'])
+                    src_map = self.get_pack_map(src_pack, file_spec['map'])
                     res = CompositeResource(file_spec['file'], src_res, src_map)
                     specs = file_spec['replace']
                     if hasattr(specs, 'items'):
                         specs = [specs]
                     for spec in specs:
-                        src_res = pack.get_resource(spec['source'])
-                        src_map = self.get_map(spec['map'])
+                        src_res = src_pack.get_resource(spec['source'])
+                        src_map = self.get_pack_map(src_pack, spec['map'])
                         cells = spec['cells']
                         res.replace(src_res, src_map, cells)
                 new_pack.add_resource(res)
         return new_pack
+
+    def get_pack_map(self, pack, spec):
+        """Get a map from the pack if possible, otherwise try the global atlas."""
+        # XXX Add atlas to Pack
+        return self.atlas.get_map(spec)
