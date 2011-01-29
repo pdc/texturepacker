@@ -29,18 +29,19 @@ class TestCase(unittest.TestCase):
             bytes = strm.read()
         return bytes
 
-    def make_source_pack(self, name, desc, resources_by_file_name):
+    def make_source_pack(self, name, desc, resources_and_maps_by_file_name):
         strm = StringIO()
-        self.write_pack_contents(strm, name, desc, resources_by_file_name)
+        self.write_pack_contents(strm, name, desc, resources_and_maps_by_file_name)
         strm.seek(0)
 
         # Open it as a SourceTexturePack
-        pack = SourcePack(strm)
+        atlas = Atlas(dict((k, m) for (k, (_, m)) in resources_and_maps_by_file_name.items() if m))
+        pack = SourcePack(strm, atlas)
         return pack
 
-    def write_pack_contents(self, strm, name, desc, resources_by_file_name):
+    def write_pack_contents(self, strm, name, desc, resources_and_maps_by_file_name):
         with ZipFile(strm, 'w') as zip:
-            for file_name, res_name in resources_by_file_name.items():
+            for file_name, (res_name, _) in resources_and_maps_by_file_name.items():
                 zip.writestr(file_name, self.get_data(res_name))
             zip.writestr('pack.txt', '{0}\n{1}'.format(name, desc).encode('UTF-8'))
 
@@ -72,7 +73,7 @@ class TextResourceTests(TestCase):
 
 class SourcePackTests(TestCase):
     def test_sign(self):
-        pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': 'sign.png'})
+        pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': ('sign.png', None)})
         self.check_pack_is_sign_pack(pack)
 
     def check_pack_is_sign_pack(self, pack):
@@ -89,10 +90,10 @@ class SourcePackTests(TestCase):
     def test_pack_from_file_name(self):
         file_path = os.path.join(self.test_dir, 'bonko.zip')
         with open(file_path, 'wb') as strm:
-            self.write_pack_contents(strm, 'Sign pack', 'Just a test', {'item/sign.png': 'sign.png'})
+            self.write_pack_contents(strm, 'Sign pack', 'Just a test', {'item/sign.png': ('sign.png', None)})
 
         # Open it as a SourceTexturePack
-        pack = SourcePack(file_path)
+        pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
 
 
@@ -115,8 +116,9 @@ class RecipePackTests(TestCase):
             self.assertEqual(u'This is a news file.', zip.read('doc/news.txt').decode('UTF-8'))
 
     def test_zip_with_image_from_source_pack(self):
-        pack_ab = self.make_source_pack('AB', 'Has A and B', {'a.png': 'a.png', 'b.png': 'b.png'})
-        pack_c = self.make_source_pack('C', 'Has C', {'c.png': 'c.png'})
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+        pack_ab = self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        pack_c = self.make_source_pack('C', 'Has C', {'c.png': ('c.png', simple_map)})
 
         new_pack = RecipePack(u'Composite pack', u'It’s composite')
         new_pack.add_resource(pack_ab.get_resource('a.png'))
@@ -210,8 +212,8 @@ class AtlasTests(TestCase):
 
     def test_grid_map(self):
         m = self.atlas.get_map({
-            'image_size': [32, 32],
-            'cell_size': [16, 16],
+            'source_rect': {'width': 32, 'height': 32},
+            'cell_rect': {'width': 16, 'height': 16},
             'names': ['p', 'q', 'r', 's']
         })
         self.assertEqual((16, 16, 32, 32), m.get_box('s'))
@@ -220,8 +222,8 @@ class AtlasTests(TestCase):
         m = self.atlas.get_map([
             'a.png',
             {
-                'image_size': [32, 0, 64, 32],
-                'cell_size': [16, 16],
+                'source_rect': {'x': 32, 'y': 0, 'width': 32, 'height': 32},
+                'cell_rect': {'width': 16, 'height': 16},
                 'names': ['p', 'q', 'r', 's']
             }
         ])
@@ -233,7 +235,7 @@ class AtlasTests(TestCase):
 class CompositeResourceTests(TestCase):
     def test_change_one(self):
         # Create a pack with 2 resources in it.
-        pack_ab = self.make_source_pack('AB', 'Has A and B', {'a.png': 'a.png', 'b.png': 'b.png'})
+        pack_ab = self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', None), 'b.png': ('b.png', None)})
         res_a = pack_ab.get_resource('a.png')
         res_b = pack_ab.get_resource('b.png')
         map_a = GridMap((32, 32), (16, 16), ['yellow', 'red', 'orange', 'green'])
@@ -260,7 +262,7 @@ class MixerTests(TestCase):
             ]
         }, {'b.png': 'b.png', 'c.png': 'c.png'}, ['a.png'])
 
-    def test_a_b_replace(self):
+    def test_a_b_replace_using_expliict_maps(self):
         self.check_recipe({
             'mix': [
                 {
@@ -270,18 +272,38 @@ class MixerTests(TestCase):
                             'file': 'a.png',
                             'source': 'b.png',
                             'map': {
-                                'cell_size': [16, 16],
-                                'image_size': [32, 32],
+                                'cell_rect': {'width': 16, 'height': 16},
+                                'source_rect': {'width': 32, 'height': 32},
                                 'names': ['blue', 'cyan', 'green', 'magenta']
                             },
                             'replace': {
                                 'source': 'a.png',
                                 'map': {
-                                    'cell_size': [16, 16],
-                                    'image_size': [32, 32],
+                                    'cell_rect': {'width': 16, 'height': 16},
+                                    'source_rect': {'width': 32, 'height': 32},
                                     'names': ['yellow', 'red', 'orange', 'green']
                                 },
                                 'cells': {'blue': 'green', 'magenta': 'yellow'},
+                            }
+                        }
+                    ]
+                }
+            ]
+        }, {'a.png': 'a_b_replace.png'}, ['b.png'])
+
+
+    def test_a_b_replace_using_pack_atlas(self):
+        self.check_recipe({
+            'mix': [
+                {
+                    'pack': 'alpha_bravo',
+                    'files': [
+                        {
+                            'file': 'a.png',
+                            'source': 'b.png',
+                            'replace': {
+                                'source': 'a.png',
+                                'cells': {'a': 'd', 'd': 'a'},
                             }
                         }
                     ]
@@ -295,9 +317,11 @@ class MixerTests(TestCase):
             'desc': 'A crazy mixed-up pack',
         })
 
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+
         mixer = Mixer()
-        mixer.add_pack('alpha_bravo', self.make_source_pack('AB', 'Has A and B', {'a.png': 'a.png', 'b.png': 'b.png'}))
-        mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': 'c.png'}))
+        mixer.add_pack('alpha_bravo', self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)}))
+        mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': ('c.png', simple_map)}))
 
         pack = mixer.make(recipe)
 

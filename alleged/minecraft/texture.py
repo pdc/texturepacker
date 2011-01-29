@@ -38,9 +38,35 @@ class TextResource(ResourceBase):
         """Get the byte sequence that will go in the ZIP archive"""
         return self.get_content().encode('UTF-8')
 
-class RecipePack(object):
-    """Represents a texture pack."""
+
+class PackBase(object):
+    """Base class for a texture pack.
+
+    Supplies two main features: resources (files) and maps
+    (which say how textures are arranged within resources)."""
+    def __init__(self, atlas):
+        self.atlas = atlas
+
+    def get_resource(self, name):
+        """Retrieve a resource object.
+
+        Arguments --
+            name -- names the resourece
+
+        Names use thenames of file within the archive, such as
+        'texture.png' or 'item/sign.png'.
+
+        Returns --
+            ResoureBase subclass instance
+
+        """
+        raise NotImplemented('{0}.get_resource'.format(self.__class__.__name__))
+
+
+class RecipePack(PackBase):
+    """A texture pack assembled from other resources."""
     def __init__(self, label, desc):
+        super(RecipePack, self).__init__(Atlas())
         self.label = label
         self.desc = desc
         self.resources = {}
@@ -59,8 +85,10 @@ class RecipePack(object):
                 zip.writestr(name, resource.get_bytes())
 
 
-class SourcePack(object):
-    def __init__(self, zip_data):
+class SourcePack(PackBase):
+    """A texture pack that gets resources from a ZIP file."""
+    def __init__(self, zip_data, atlas):
+        super(SourcePack, self).__init__(atlas)
         self.zip = ZipFile(zip_data)
         self.resources = {}
 
@@ -92,6 +120,7 @@ class SourcePack(object):
         res = self.get_resource('pack.txt')
         return res.get_content().split('\n', 1)[1]
 
+
 class SourceResource(ResourceBase):
     def __init__(self, source, name):
         self.source = source
@@ -118,24 +147,24 @@ class NotInMap(Exception):
         super(NotInMap, self).__init__('{0!r} not found in map'.format(name))
 
 class GridMap(Map):
-    def __init__(self, image_size, cell_size, names):
+    def __init__(self, source_box, cell_box, names):
         """Create a grid map with this size and names.
 
         Arguments --
-            image_size -- pair (WIDTH, HEIGHT)
+            source_box -- pair (WIDTH, HEIGHT)
                 or tuple (LEFT, TOP, RIGHT, BOTTOM) -- size of the overall image
-            cell_size -- pair (WIDTH, HEIGHT) -- size of cells within the image
+            cell_box -- pair (WIDTH, HEIGHT) -- size of cells within the image
                 The image width should be a multiple of the cell width
                 and similarly for the heights.
             names --
                 List of names, in order left to right, top to bottom.
         """
-        self.cell_wd, self.cell_ht = cell_size
-        if len(image_size) == 2:
+        self.cell_wd, self.cell_ht = cell_box
+        if len(source_box) == 2:
             self.im_left = self.im_top = 0
-            im_wd, im_ht = image_size
+            im_wd, im_ht = source_box
         else:
-            self.im_left, self.im_top, right, bottom = image_size
+            self.im_left, self.im_top, right, bottom = source_box
             im_wd = right - self.im_left
             im_ht = bottom - self.im_top
         self.nx, self.ny = im_wd // self.cell_wd, im_ht // self.cell_ht
@@ -175,23 +204,62 @@ class CompositeMap(Map):
         return names
 
 
+class NotInAtlas(Exception):
+    def __init__(self, spec):
+        super(NotInAtlas, self).__init__('{0!r}: not in atlas'.format(spec))
+
 class Atlas(object):
+    """Creates and stores maps.
+
+    Maps can be retrieved by name, or you can just supply a spec
+    that defines the map inline, as it were.
+    """
+
     __slots__ = ['maps']
-    def __init__(self):
-        self.maps = {}
+    def __init__(self, maps={}):
+        self.maps = dict(maps)
 
     def add_map(self, name, map):
         self.maps[name] = map
 
     def get_map(self, spec):
         if isinstance(spec, basestring):
-            return self.maps[spec]
+            try:
+                return self.maps[spec]
+            except KeyError:
+                raise NotInAtlas(spec)
         if hasattr(spec, 'items'):
-            cell_size = tuple(spec['cell_size'])
-            image_size = tuple(spec['image_size'])
+            cell_box = pil_box(**spec['cell_rect'])
+            source_box = pil_box(**spec['source_rect'])
             names = spec['names']
-            return GridMap(image_size, cell_size, names)
+            if cell_box[0:2] != (0, 0):
+                raise ValueError('{0!r}: cell_box must have (left, top) == (0, 0)'.format(cell_box))
+            cell_box = cell_box[2:]
+            return GridMap(source_box, cell_box, names)
+        # It had better be a list of maps if we get this far.
         return CompositeMap(self.get_map(x) for x in spec)
+
+
+def pil_box(left=None, top=None, right=None, bottom=None, x=None, y=None, width=None, height=None):
+    """Return a bounding box of form (LEFT, TOP, RIGHT, BOTTOM) used by PIL.
+
+    You can supply a subset of the parameters, but hte usual ones
+    will be
+
+        x, y, width, height -- coordinates of top-left corner and size of box
+        left, top, right, bottom -- coordinates of top-left and bottom-right corners
+
+    Coordinates are assumed to come between pixels (that is, the
+    top left corner pixel has bbox (0, 0, 1, 1), and the bottom-right
+    pixel of a 16x16 image is at (15, 15, 16, 16))
+
+    If x, y, left, and right are omitted, then the top left corner is at (0, 0)
+    """
+    left = left or x or 0
+    top = top or y or 0
+    right = right if right is not None else left + (width or 0)
+    bottom = bottom if bottom is not None else top + (height or 0)
+    return left, top, right, bottom
 
 
 class CompositeResource(ResourceBase):
@@ -249,14 +317,14 @@ class Mixer(object):
                     res = src_pack.get_resource(file_spec)
                 else:
                     src_res = src_pack.get_resource(file_spec['source'])
-                    src_map = self.get_pack_map(src_pack, file_spec['map'])
+                    src_map = self.get_pack_map(src_pack, file_spec.get('map', src_res.name))
                     res = CompositeResource(file_spec['file'], src_res, src_map)
                     specs = file_spec['replace']
                     if hasattr(specs, 'items'):
                         specs = [specs]
                     for spec in specs:
                         src_res = src_pack.get_resource(spec['source'])
-                        src_map = self.get_pack_map(src_pack, spec['map'])
+                        src_map = self.get_pack_map(src_pack, spec.get('map', src_res.name))
                         cells = spec['cells']
                         res.replace(src_res, src_map, cells)
                 new_pack.add_resource(res)
@@ -264,5 +332,8 @@ class Mixer(object):
 
     def get_pack_map(self, pack, spec):
         """Get a map from the pack if possible, otherwise try the global atlas."""
-        # XXX Add atlas to Pack
+        try:
+            return pack.atlas.get_map(spec)
+        except NotInAtlas:
+            pass
         return self.atlas.get_map(spec)
