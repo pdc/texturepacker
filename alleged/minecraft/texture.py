@@ -46,6 +46,7 @@ class PackBase(object):
     (which say how textures are arranged within resources)."""
     def __init__(self, atlas):
         self.atlas = atlas
+        self.resources = {}
 
     def get_resource(self, name):
         """Retrieve a resource object.
@@ -62,6 +63,10 @@ class PackBase(object):
         """
         raise NotImplemented('{0}.get_resource'.format(self.__class__.__name__))
 
+    def write_to(self, strm):
+        with ZipFile(strm, 'w', ZIP_DEFLATED) as zip:
+            for name, resource in sorted(self.resources.items()):
+                zip.writestr(name, resource.get_bytes())
 
 class RecipePack(PackBase):
     """A texture pack assembled from other resources."""
@@ -69,7 +74,6 @@ class RecipePack(PackBase):
         super(RecipePack, self).__init__(Atlas())
         self.label = label
         self.desc = desc
-        self.resources = {}
 
         self.add_resource(TextResource('pack.txt', u'{label}\n{desc}'.format(label=label, desc=desc)))
 
@@ -79,28 +83,28 @@ class RecipePack(PackBase):
     def get_resource(self, name):
         return self.resources[name]
 
-    def write_to(self, strm):
-        with ZipFile(strm, 'w', ZIP_DEFLATED) as zip:
-            for name, resource in sorted(self.resources.items()):
-                zip.writestr(name, resource.get_bytes())
-
 
 class SourcePack(PackBase):
     """A texture pack that gets resources from a ZIP file."""
     def __init__(self, zip_data, atlas):
         super(SourcePack, self).__init__(atlas)
-        self.zip = ZipFile(zip_data)
-        self.resources = {}
+        if (isinstance(zip_data, basestring) 
+                and os.path.isdir(zip_data)):
+            self.dir_path = zip_data
+        else:
+            self.zip = ZipFile(zip_data)
 
     def __del__(self):
-        self.zip.close()
+        if hasattr(self, 'zip'):
+            self.zip.close()
+            del self.zip
 
     def get_resource(self, name):
         res = self.resources.get(name)
         if res:
             return res
         if name.endswith('.txt'):
-            text = self.zip.read(name).decode('UTF-8')
+            text = self.get_resource_bytes(name).decode('UTF-8')
             res = TextResource(name, text)
         else:
             res = SourceResource(self, name)
@@ -108,6 +112,9 @@ class SourcePack(PackBase):
         return res
 
     def get_resource_bytes(self, name):
+        if hasattr(self, 'dir_path'):
+            with open(os.path.join(self.dir_path, name), 'rb') as strm:
+                return strm.read()
         return self.zip.read(name)
 
     @property
@@ -118,7 +125,7 @@ class SourcePack(PackBase):
     @property
     def desc(self):
         res = self.get_resource('pack.txt')
-        return res.get_content().split('\n', 1)[1]
+        return res.get_content().split('\n', 1)[1].rstrip()
 
 
 class SourceResource(ResourceBase):
