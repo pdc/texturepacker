@@ -15,8 +15,16 @@ sys.path[:0] = [os.path.join(root_dir)]
 
 from alleged.minecraft.texture import *
 
-dir_path = os.path.join(root_dir, 'texturepacks')
+src_dir = os.path.join(root_dir, 'texturepacks')
 
+out_dir = os.path.expanduser('~/Library/ApplicationSupport/minecraft/texturepacks')
+if not os.path.exists(out_dir):
+    out_dir = src_dir
+
+def save(pack, file_name):
+    file_path = os.path.join(out_dir, file_name)
+    pack.write_to(file_path)
+    print >>sys.stderr, 'Wrote ZIP to', file_path
 
 def main():
     common_files = [
@@ -45,8 +53,8 @@ def main():
     # Source packs in thgis case are incomplete directories of files.
     
     mixer = Mixer()
-    mixer.add_pack('groovy', SourcePack(os.path.join(dir_path, 'GroovyStipple'), Atlas()))
-    mixer.add_pack('smooth', SourcePack(os.path.join(dir_path, 'SmoothStipple'), Atlas()))
+    mixer.add_pack('groovy', SourcePack(os.path.join(src_dir, 'GroovyStipple'), Atlas()))
+    mixer.add_pack('smooth', SourcePack(os.path.join(src_dir, 'SmoothStipple'), Atlas()))
     
     # GroovyStipple is just a subset of the source pack.
     groovy_pack = mixer.make({
@@ -59,9 +67,7 @@ def main():
             }   
         ]
     })
-    file_path = os.path.join(dir_path, 'groovystipple.zip')
-    groovy_pack.write_to(file_path)
-    print >>sys.stderr, 'Wrote ZIP to', file_path
+    save(groovy_pack, 'groovystipple.zip')
     
     # SmoothStipple is GroovyStipple with two files replaced.
     smooth_pack = mixer.make({
@@ -78,12 +84,10 @@ def main():
             }   
         ]
     })
-    file_path = os.path.join(dir_path, 'smoothstipple.zip')
-    smooth_pack.write_to(file_path)
-    print >>sys.stderr, 'Wrote ZIP to', file_path
+    save(smooth_pack, 'smoothstipple.zip')
     
     # GroovyStipple45 is GroovyStipple with the track changed.
-    groovy_pack2 = mixer.make({
+    groovy_pack_alt = mixer.make({
         'label': 'GroovyStipple (alt track) R6a',
         'desc': u'A high-visibility unrealistic look with 45° tracks',
         'mix': [
@@ -129,9 +133,7 @@ def main():
             },
         ]
     })
-    file_path = os.path.join(dir_path, 'groovystipple-alt.zip')
-    groovy_pack2.write_to(file_path)
-    print >>sys.stderr, 'Wrote ZIP to', file_path
+    save(groovy_pack_alt, 'groovystipple-alt.zip')
 
 if __name__ == '__main__':
     main()
