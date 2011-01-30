@@ -1,0 +1,4 @@
+cp -R GroovyStipple/{item,mob,gui} SmoothStipple/
+(cd GroovyStipple/; ./mk)
+(cd SmoothStipple/; ./mk)
+

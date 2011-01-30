@@ -1,0 +1,8 @@
+#! /bin/sh
+
+file_name=smoothstipple.zip
+cfg_dir=/Users/pdc/Library/Application\ Support/minecraft/texturepacks
+pub_dir=/Users/pdc/Projects/alleged/alleged/static/pdc/2010
+
+zip "$cfg_dir/$file_name" *.txt *.png */*.png
+cp "$cfg_dir/$file_name" "$pub_dir/$file_name"

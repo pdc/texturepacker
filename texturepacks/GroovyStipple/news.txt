@@ -1,0 +1,17 @@
+R6. Revised some of the coloured wool patterns to be less sucky.
+
+R5. New terrain textures for Beta 1.2. Zombie and creeper skins. Revised
+the diamond block and obsidian. Added GUI screens (inventory, chest,
+furnace, and workbench).
+http://www.alleged.org.uk/pdc/2011/01/16.html
+
+R4. Grass texture that respects per-biome colours.
+Add Sheep.
+
+R3. Add sign and boat items.
+Redrew textures for Nether terrain.
+Improved minecart rails.
+http://www.alleged.org.uk/pdc/2011/01/01.html
+
+R2. New bedrock and tilled-soil textures. http://www.alleged.org.uk/pdc/2010/12/26.html
+
