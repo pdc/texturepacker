@@ -15,6 +15,7 @@ from alleged.minecraft.texture import *
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
+import shutil
 
 
 class TestCase(unittest.TestCase):
@@ -72,6 +73,12 @@ class TextResourceTests(TestCase):
 
 
 class SourcePackTests(TestCase):
+    def setUp(self):
+        super(SourcePackTests, self).setUp()
+        self.dir_pack_path = os.path.join(self.test_dir, 'bonka')
+        if os.path.exists(self.dir_pack_path):
+            shutil.rmtree(self.dir_pack_path)
+            
     def test_sign(self):
         pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': ('sign.png', None)})
         self.check_pack_is_sign_pack(pack)
@@ -95,6 +102,31 @@ class SourcePackTests(TestCase):
         # Open it as a SourceTexturePack
         pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
+        
+    def test_pack_from_directory(self):
+        # Create dir from scratch with contesnts of a pack.
+        os.mkdir(self.dir_pack_path)
+        os.mkdir(os.path.join(self.dir_pack_path, 'item'))
+        with open(os.path.join(self.dir_pack_path, 'item', 'sign.png'), 'wb') as strm:
+            strm.write(self.get_data('sign.png'))
+        with open(os.path.join(self.dir_pack_path, 'pack.txt'), 'wt') as strm:
+            strm.write('Sign pack\nJust a test\n')
+            
+        # Open it as a SourceTexturePack
+        pack = SourcePack(self.dir_pack_path, Atlas())
+        self.check_pack_is_sign_pack(pack)
+        
+        # Save as ZIP
+        file_path = os.path.join(self.test_dir, 'bonko.zip')
+        pack.write_to(file_path)
+        
+        # Reopen & recheck
+        pack = SourcePack(file_path, Atlas())
+        self.check_pack_is_sign_pack(pack)
+        
+        
+        
+        
 
 
 class RecipePackTests(TestCase):

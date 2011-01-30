@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+mkgroovy.py
+
+Created by Damian Cugley on 2011-01-30.
+Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+"""
+
+import sys
+import os
+
+root_dir = os.path.join(os.path.dirname(__file__), '..')
+sys.path[:0] = [os.path.join(root_dir)]
+
+from alleged.minecraft.texture import *
+
+dir_path = os.path.join(root_dir, 'texturepacks')
+
+
+def main():
+    groovy_pack = SourcePack(os.path.join(dir_path, 'GroovyStipple'), Atlas())
+    file_path = os.path.join(dir_path, 'groovystipple.zip')
+    groovy_pack.write_to(file_path)
+    print >>sys.stderr, 'Wrote ZIP to', file_path
+
+if __name__ == '__main__':
+    main()
+
