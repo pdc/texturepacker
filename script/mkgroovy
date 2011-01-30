@@ -19,9 +19,118 @@ dir_path = os.path.join(root_dir, 'texturepacks')
 
 
 def main():
-    groovy_pack = SourcePack(os.path.join(dir_path, 'GroovyStipple'), Atlas())
+    common_files = [
+        'gui/crafting.png',
+        'gui/background.png',
+        'gui/container.png',
+        'gui/crafting.png',
+        'gui/furnace.png',
+        'gui/gui.png',
+        'gui/inventory.png',
+        'item/boat.png',
+        'item/cart.png',
+        'item/sign.png',
+        'mob/cow.png',
+        'mob/creeper.png',
+        'mob/sheep.png',
+        'mob/sheep_fur.png',
+        'mob/zombie.png',
+        'news.txt',
+    ]
+    differing_files = [
+        'terrain.png',
+        'pack.png',
+    ]
+    
+    # Source packs in thgis case are incomplete directories of files.
+    
+    mixer = Mixer()
+    mixer.add_pack('groovy', SourcePack(os.path.join(dir_path, 'GroovyStipple'), Atlas()))
+    mixer.add_pack('smooth', SourcePack(os.path.join(dir_path, 'SmoothStipple'), Atlas()))
+    
+    # GroovyStipple is just a subset of the source pack.
+    groovy_pack = mixer.make({
+        'label': 'GroovyStipple R6a',
+        'desc': 'A high-visibility unrealistic look',
+        'mix': [
+            {
+                'pack': 'groovy', 
+                'files': common_files + differing_files,
+            }   
+        ]
+    })
     file_path = os.path.join(dir_path, 'groovystipple.zip')
     groovy_pack.write_to(file_path)
+    print >>sys.stderr, 'Wrote ZIP to', file_path
+    
+    # SmoothStipple is GroovyStipple with two files replaced.
+    smooth_pack = mixer.make({
+        'label': 'SmoothStipple R6a',
+        'desc': 'A high-visibility unrealistic look',
+        'mix': [
+            {
+                'pack': 'groovy', 
+                'files': common_files,
+            },
+            {
+                'pack': 'smooth',
+                'files': differing_files,
+            }   
+        ]
+    })
+    file_path = os.path.join(dir_path, 'smoothstipple.zip')
+    smooth_pack.write_to(file_path)
+    print >>sys.stderr, 'Wrote ZIP to', file_path
+    
+    # GroovyStipple45 is GroovyStipple with the track changed.
+    groovy_pack2 = mixer.make({
+        'label': 'GroovyStipple (alt track) R6a',
+        'desc': u'A high-visibility unrealistic look with 45° tracks',
+        'mix': [
+            {
+                'pack': 'groovy', 
+                'files': common_files + [
+                    'pack.png',
+                    {
+                        'file': 'terrain.png',
+                        'source': 'terrain.png',
+                        'map': {
+                            'source_rect': {
+                                'x': 0,
+                                'y': 7 * 16,
+                                'width': 16,
+                                'height': 16,
+                            },
+                            'cell_rect': {
+                                'width': 16,
+                                'height': 16,
+                            },
+                            'names': ['track_corner']
+                        },
+                        'replace': {
+                            'source': 'terrain.png',
+                            'map': {
+                                'source_rect': {
+                                    'x': 4 * 16,
+                                    'y': 10 * 16,
+                                    'width': 16,
+                                    'height': 16,
+                                },
+                                'cell_rect': {
+                                    'width': 16,
+                                    'height': 16,
+                                },
+                                'names': ['track_corner_alt'],                            
+                            },
+                            'cells': {'track_corner': 'track_corner_alt'},                            
+                        }
+                    }
+                ],
+            },
+        ]
+    })
+    file_path = os.path.join(dir_path, 'groovystipple-alt.zip')
+    groovy_pack2.write_to(file_path)
     print >>sys.stderr, 'Wrote ZIP to', file_path
 
 if __name__ == '__main__':
