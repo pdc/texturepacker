@@ -103,18 +103,15 @@ class SourcePackTests(TestCase):
         pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
         
+        
     def test_pack_from_directory(self):
-        # Create dir from scratch with contesnts of a pack.
-        os.mkdir(self.dir_pack_path)
-        os.mkdir(os.path.join(self.dir_pack_path, 'item'))
-        with open(os.path.join(self.dir_pack_path, 'item', 'sign.png'), 'wb') as strm:
-            strm.write(self.get_data('sign.png'))
-        with open(os.path.join(self.dir_pack_path, 'pack.txt'), 'wt') as strm:
-            strm.write('Sign pack\nJust a test\n')
+        pack = self.create_sign_directory()
             
         # Open it as a SourceTexturePack
-        pack = SourcePack(self.dir_pack_path, Atlas())
         self.check_pack_is_sign_pack(pack)
+        
+    def test_dirctory_pack_includes_resources(self):
+        pack = self.create_sign_directory()
         
         # Save as ZIP
         file_path = os.path.join(self.test_dir, 'bonko.zip')
@@ -124,9 +121,17 @@ class SourcePackTests(TestCase):
         pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
         
+    def create_sign_directory(self):
+        # Create dir from scratch with contesnts of a pack.
+        os.mkdir(self.dir_pack_path)
+        os.mkdir(os.path.join(self.dir_pack_path, 'item'))
+        with open(os.path.join(self.dir_pack_path, 'item', 'sign.png'), 'wb') as strm:
+            strm.write(self.get_data('sign.png'))
+        with open(os.path.join(self.dir_pack_path, 'pack.txt'), 'wt') as strm:
+            strm.write('Sign pack\nJust a test\n')
         
-        
-        
+        pack = SourcePack(self.dir_pack_path, Atlas())
+        return pack
 
 
 class RecipePackTests(TestCase):

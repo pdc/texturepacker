@@ -9,6 +9,7 @@ Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 
 import sys
 import os
+import weakref
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
@@ -46,7 +47,6 @@ class PackBase(object):
     (which say how textures are arranged within resources)."""
     def __init__(self, atlas):
         self.atlas = atlas
-        self.resources = {}
 
     def get_resource(self, name):
         """Retrieve a resource object.
@@ -62,19 +62,25 @@ class PackBase(object):
 
         """
         raise NotImplemented('{0}.get_resource'.format(self.__class__.__name__))
+        
+    def get_resource_names(self):
+        """A list of all resources in the pack."""
+        raise NotImplemented('{0}.get_resource_names'.format(self.__class__.__name__))
 
     def write_to(self, strm):
         with ZipFile(strm, 'w', ZIP_DEFLATED) as zip:
-            for name, resource in sorted(self.resources.items()):
-                zip.writestr(name, resource.get_bytes())
+            for name in sorted(self.get_resource_names()):
+                zip.writestr(name, self.get_resource(name).get_bytes())
 
 class RecipePack(PackBase):
     """A texture pack assembled from other resources."""
+    
     def __init__(self, label, desc):
         super(RecipePack, self).__init__(Atlas())
         self.label = label
         self.desc = desc
 
+        self.resources = {}
         self.add_resource(TextResource('pack.txt', u'{label}\n{desc}'.format(label=label, desc=desc)))
 
     def add_resource(self, resource):
@@ -82,6 +88,9 @@ class RecipePack(PackBase):
 
     def get_resource(self, name):
         return self.resources[name]
+        
+    def get_resource_names(self):
+        return self.resources.keys()
 
 
 class SourcePack(PackBase):
@@ -93,6 +102,7 @@ class SourcePack(PackBase):
             self.dir_path = zip_data
         else:
             self.zip = ZipFile(zip_data)
+        self.loaded_resources = weakref.WeakValueDictionary()
 
     def __del__(self):
         if hasattr(self, 'zip'):
@@ -100,7 +110,7 @@ class SourcePack(PackBase):
             del self.zip
 
     def get_resource(self, name):
-        res = self.resources.get(name)
+        res = self.loaded_resources.get(name)
         if res:
             return res
         if name.endswith('.txt'):
@@ -108,7 +118,7 @@ class SourcePack(PackBase):
             res = TextResource(name, text)
         else:
             res = SourceResource(self, name)
-        self.resources[name] = res
+        self.loaded_resources[name] = res
         return res
 
     def get_resource_bytes(self, name):
@@ -116,6 +126,16 @@ class SourcePack(PackBase):
             with open(os.path.join(self.dir_path, name), 'rb') as strm:
                 return strm.read()
         return self.zip.read(name)
+
+    def get_resource_names(self):
+        # We want all resources, not just recently mentioned ones.
+        if hasattr(self, 'dir_path'):
+            for subdir, subdirs, file_names in os.walk(self.dir_path):
+                if subdir.startswith(self.dir_path):
+                    subdir = subdir[len(self.dir_path) + 1:]
+                for file_name in file_names:
+                    if file_name.endswith('.png') or file_name.endswith('.txt'):
+                        yield subdir + '/' + file_name if subdir else file_name
 
     @property
     def label(self):
