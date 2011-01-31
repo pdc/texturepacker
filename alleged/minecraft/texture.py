@@ -166,14 +166,14 @@ class SourceResource(ResourceBase):
             self.image = Image.open(strm)
         return self.image
 
-class Map(object):
+class MapBase(object):
         pass
 
 class NotInMap(Exception):
     def __init__(self, name):
         super(NotInMap, self).__init__('{0!r} not found in map'.format(name))
 
-class GridMap(Map):
+class GridMap(MapBase):
     def __init__(self, source_box, cell_box, names):
         """Create a grid map with this size and names.
 
@@ -207,7 +207,7 @@ class GridMap(Map):
         return (self.im_left + self.cell_wd * u, self.im_top + self.cell_ht * v,
             self.im_left + self.cell_wd * (u + 1), self.im_top + self.cell_ht * (v + 1))
 
-class CompositeMap(Map):
+class CompositeMap(MapBase):
     """A map that combines several other maps.
 
     Each submap is searched in turn for the desired item.
@@ -247,9 +247,36 @@ class Atlas(object):
         self.maps = dict(maps)
 
     def add_map(self, name, map):
+        """Add a map to the collection
+        
+        Arguments --
+            name -- will be used to retrieve this map with get_map
+            map -- the map, a subclass of MapBase"""
         self.maps[name] = map
 
     def get_map(self, spec):
+        """Get the specified map.
+        
+        Arguments --
+            spec (string, list, or dict) -- specifies a map
+            
+        Returns --
+            a map
+            
+        Raises --
+            NotInAtlas the named map canot be found
+            
+        If spec is a string, it names a map added with add_map.
+        
+        If it is a dictionary it specifies a new map.
+        At present this is alwaus a GridMap. It must define
+        cell_rect, source_rect, and names (a list).
+        
+        If it is a lisst, its elements must recursively
+        be map specs and the result is the composition of all the maps.
+        (Order is important if more than one map defines the same
+        name: the earliest-listed map will be used.)
+        """
         if isinstance(spec, basestring):
             try:
                 return self.maps[spec]
@@ -290,21 +317,49 @@ def pil_box(left=None, top=None, right=None, bottom=None, x=None, y=None, width=
 
 
 class CompositeResource(ResourceBase):
+    """An image made by replacing some cells in an image with parts of another"""
     def __init__(self, name, base_res, base_map):
+        """Create a composite resouce (with no substitutions)
+        
+        Arguments --
+            name -- what this resource will be named
+                (usually a file name like terrain.png)
+            base_res -- a resource to copy as the basis of the new one
+            base_map -- the map describing cells in the new resource
+                (this may include cells not in the base resource
+                assuming these cells will be filled in later)"""
         super(CompositeResource, self).__init__(name)
         self.res = base_res
         self.map = base_map
         self.replacements = []
         self.image = None
 
-    def replace(self, res, map, cells):
+    def replace(self, source_res, source_map, cells):
+        """Replacing cell(s) in the image with cells from another
+        
+        Arguments --
+            res (image resource) -- copy image data out of this 
+            map -- gives names to cells within res
+            cells (dict or list)-- specifies cells to modify
+            
+        If cells is a dict, keys are cell names within this resouce,
+        and values are the cell to get image data from in res.
+        If cells is a list, the named cells are replaced with
+        the same-named cells in the source.
+        """
         if not hasattr(cells, 'items'):
             cells = dict((x, x) for x in cells)
-        self.replacements.append((res, map, cells))
+        self.replacements.append((source_res, source_map, cells))
+    
+        # This invalidates any cached image.
         self.im = None
         self.bytes = None
 
     def _calc(self):
+        """Called when the image data is required.
+        
+        We defer generating the image until it is required.
+        """
         im = self.res.get_image().copy()
         for src_res, src_map, cells in self.replacements:
             for dst_name, src_name in cells.iteritems():
@@ -313,13 +368,18 @@ class CompositeResource(ResourceBase):
                 src_im = src_res.get_image().crop(src_box)
                 im.paste(src_im, dst_box)
         self.image = im
+        
+    def get_image(self):
+        """Get the composite image."""
+        if self.image is None:
+            self._calc()
+        return self.image
 
     def get_bytes(self):
+        """Get the bytes representing the composite image in PNG format."""
         if self.bytes is None:
-            if self.image is None:
-                self._calc()
             strm = StringIO()
-            self.image.save(strm, 'PNG', optimize=True)
+            self.get_image().save(strm, 'PNG', optimize=True)
             self.bytes = strm.getvalue()
         return self.bytes
 
