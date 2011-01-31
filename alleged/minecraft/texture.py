@@ -298,6 +298,8 @@ class CompositeResource(ResourceBase):
         self.image = None
 
     def replace(self, res, map, cells):
+        if not hasattr(cells, 'items'):
+            cells = dict((x, x) for x in cells)
         self.replacements.append((res, map, cells))
         self.im = None
         self.bytes = None
@@ -322,6 +324,12 @@ class CompositeResource(ResourceBase):
         return self.bytes
 
 
+class NotInMixer(Exception):
+    """Raised if you ask a mixer to use a pack it does not know about."""
+    def __init__(self, pack_spec):
+        super(NotInMixer, self).__init__(
+            '{0!r}: specified pack is not in mixer'.format(pack_spec))
+
 class Mixer(object):
     """Create texture packs by mixing together existing ones.
 
@@ -333,34 +341,80 @@ class Mixer(object):
         self.atlas = Atlas()
 
     def add_pack(self, name, pack):
+        """Add this pack to the repertoire of this mixer.
+        
+        Arguments --
+            name -- the name for the pack
+            pack -- a texture pack object
+        
+        Afterwards this pack can be referred to in recipes using this name.
+        """
         self.packs[name] = pack
 
     def make(self, recipe):
+        """Create a new pack by following this this recipe.
+        
+        Arguments --
+            recipe -- a dictionary with specific contents
+                that describes how to assemble the new pack
+                using other packs.
+                
+        Returns --
+            A new pack object (subclass of PackBase).
+        """
         new_pack = RecipePack(recipe['label'], recipe['desc'])
         mix = recipe['mix']
         if hasattr(mix, 'items'):
             # Allow a single ingredient to stand in for a singleton list.
             mix = [mix]
         for ingredient in mix:
-            src_pack = self.packs[ingredient['pack']]
+            src_pack = self.get_pack(ingredient['pack'])
             for file_spec in ingredient['files']:
                 if isinstance(file_spec, basestring):
                     res = src_pack.get_resource(file_spec)
                 else:
-                    src_res = src_pack.get_resource(file_spec['source'])
+                    res_name = file_spec['file']
+                    src_res = src_pack.get_resource(file_spec.get('source', res_name))
                     src_map = self.get_pack_map(src_pack, file_spec.get('map', src_res.name))
-                    res = CompositeResource(file_spec['file'], src_res, src_map)
+                    res = CompositeResource(res_name, src_res, src_map)
                     specs = file_spec['replace']
                     if hasattr(specs, 'items'):
                         specs = [specs]
                     for spec in specs:
-                        src_res = src_pack.get_resource(spec['source'])
-                        src_map = self.get_pack_map(src_pack, spec.get('map', src_res.name))
+                        src2_pack = self.get_pack(spec.get('pack'), src_pack)
+                        src2_res = src2_pack.get_resource(
+                                spec.get('source', res_name))
+                        src2_map = self.get_pack_map(src2_pack, 
+                                spec.get('map', src2_res.name))
                         cells = spec['cells']
-                        res.replace(src_res, src_map, cells)
+                        res.replace(src2_res, src2_map, cells)
                 new_pack.add_resource(res)
         return new_pack
-
+        
+    def get_pack(self, pack_spec, fallback_pack=None):
+        """Get a pack specified, or return the fallback pack.
+        
+        Arguments --
+            pack_spec --
+                Specifies a pack. It names one of the packs
+                added with add_pack.
+            fallback_pack --
+                If the pack_spec is the empty string or None,
+                then use this value instead.
+                
+        Returns --
+            A pack object
+            
+        Raises --
+            NotInMixer -- when the specified pack does not exist.            
+        """
+        if not pack_spec and fallback_pack:
+            return fallback_pack
+        result = self.packs.get(pack_spec)
+        if not result:
+            raise NotInMixer(pack_spec)
+        return result
+        
     def get_pack_map(self, pack, spec):
         """Get a map from the pack if possible, otherwise try the global atlas."""
         try:

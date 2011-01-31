@@ -365,6 +365,31 @@ class MixerTests(TestCase):
                 ]
             }
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
+        
+    def test_a_b_replace_two_packs(self):
+        self.check_recipe({
+            'mix': {
+                'pack': 'alpha_only',
+                'files': [
+                    {
+                        'file': 'a.png',
+                        'replace': [
+                            {   # rearrange existing image
+                                # source implicitly same as file
+                                'cells': {
+                                    'a': 'd', 'd': 'a'
+                                }
+                            },
+                            { # grab bits from another image
+                                'pack': 'only_bravo',
+                                'source': 'b.png',
+                                'cells': ['b', 'c'],
+                            },
+                        ]
+                    }
+                ]
+            }
+        }, {'a.png': 'a_b_replace.png'}, ['b.png'])
 
 
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
@@ -378,7 +403,9 @@ class MixerTests(TestCase):
         mixer = Mixer()
         mixer.add_pack('alpha_bravo', self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)}))
         mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': ('c.png', simple_map)}))
-
+        mixer.add_pack('alpha_only', self.make_source_pack('A', 'Has A', {'a.png': ('a.png', simple_map)}))
+        mixer.add_pack('only_bravo', self.make_source_pack('B', 'Has B', {'b.png': ('b.png', simple_map)}))
+        
         pack = mixer.make(recipe)
 
         self.assertEqual('Composite pack', pack.label)
