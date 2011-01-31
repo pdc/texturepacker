@@ -110,6 +110,15 @@ class SourcePack(PackBase):
             del self.zip
 
     def get_resource(self, name):
+        """Get the named resource
+        
+        Arguments -- 
+            name -- specifies the resource to return
+            
+        Returns --
+            A resource (subclass of ResourceBase)
+            
+        """
         res = self.loaded_resources.get(name)
         if res:
             return res
@@ -136,7 +145,10 @@ class SourcePack(PackBase):
                 for file_name in file_names:
                     if file_name.endswith('.png') or file_name.endswith('.txt'):
                         yield subdir + '/' + file_name if subdir else file_name
-
+        else:
+            for name in self.zip.namelist():
+                yield name
+            
     @property
     def label(self):
         res = self.get_resource('pack.txt')
@@ -470,7 +482,20 @@ class Mixer(object):
         """
         if not pack_spec and fallback_pack:
             return fallback_pack
-        result = self.packs.get(pack_spec)
+        if isinstance(pack_spec, basestring):
+            result = self.packs.get(pack_spec)
+        else:
+            if 'data' in pack_spec:
+                data = pack_spec['data']
+            else:
+                url = pack_spec['href']
+                if url.startswith('data:application/zip;base64,'):
+                    data = b64decode(url[28:])
+                else:
+                    raise NotInMixer(pack_spec)
+            strm = StringIO(data)
+            atlas = Atlas()
+            result = SourcePack(strm, atlas)
         if not result:
             raise NotInMixer(pack_spec)
         return result

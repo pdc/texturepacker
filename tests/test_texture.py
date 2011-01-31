@@ -14,7 +14,7 @@ import unittest
 from alleged.minecraft.texture import *
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
-from base64 import b64decode
+from base64 import b64encode
 import shutil
 
 
@@ -291,6 +291,43 @@ class CompositeResourceTests(TestCase):
 
 
 class MixerTests(TestCase):
+    
+    def test_get_pack_by_name(self):
+        mixer = Mixer()
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+        pack1 = self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        mixer.add_pack('zuul', pack1)
+        
+        pack2 = mixer.get_pack('zuul')
+        self.assertTrue(pack1 is pack2)
+        
+    def test_get_pack_by_data(self):
+        mixer = Mixer()
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+        pack1 = self.make_source_pack('Zipple', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        strm = StringIO()
+        pack1.write_to(strm)
+        
+        pack2 = mixer.get_pack({'data': strm.getvalue()})
+        self.assertEqual('Zipple', pack2.label)
+        self.assertRepresentIdenticalImages(pack1.get_resource('a.png').get_bytes(), 
+                pack2.get_resource('a.png').get_bytes())
+                
+    def test_get_pack_by_base64(self):
+        mixer = Mixer()
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+        pack1 = self.make_source_pack('Zipple', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        strm = StringIO()
+        pack1.write_to(strm)
+        
+        url = 'data:application/zip;base64,' + b64encode(strm.getvalue())
+        print url
+        pack2 = mixer.get_pack({'href': url})
+        self.assertEqual('Zipple', pack2.label)
+        self.assertRepresentIdenticalImages(pack1.get_resource('a.png').get_bytes(), 
+                pack2.get_resource('a.png').get_bytes())
+                
+        
     def test_b_plus_c(self):
         self.check_recipe({
             'mix': [
