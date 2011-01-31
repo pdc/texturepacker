@@ -347,6 +347,25 @@ class MixerTests(TestCase):
                 }
             ]
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
+        
+        
+    def test_a_b_replace_single_mix(self):
+        self.check_recipe({
+            'mix': {
+                'pack': 'alpha_bravo',
+                'files': [
+                    {
+                        'file': 'a.png',
+                        'source': 'b.png',
+                        'replace': {
+                            'source': 'a.png',
+                            'cells': {'a': 'd', 'd': 'a'},
+                        }
+                    }
+                ]
+            }
+        }, {'a.png': 'a_b_replace.png'}, ['b.png'])
+
 
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
         recipe.update({

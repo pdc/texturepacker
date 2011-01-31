@@ -337,7 +337,11 @@ class Mixer(object):
 
     def make(self, recipe):
         new_pack = RecipePack(recipe['label'], recipe['desc'])
-        for ingredient in recipe['mix']:
+        mix = recipe['mix']
+        if hasattr(mix, 'items'):
+            # Allow a single ingredient to stand in for a singleton list.
+            mix = [mix]
+        for ingredient in mix:
             src_pack = self.packs[ingredient['pack']]
             for file_spec in ingredient['files']:
                 if isinstance(file_spec, basestring):
