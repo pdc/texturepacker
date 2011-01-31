@@ -482,20 +482,31 @@ class Mixer(object):
         """
         if not pack_spec and fallback_pack:
             return fallback_pack
+            
+        # Varfious ways of decoding the pack spec.
+        result = None
+        data = None
+        atlas = None
         if isinstance(pack_spec, basestring):
             result = self.packs.get(pack_spec)
-        else:
-            if 'data' in pack_spec:
-                data = pack_spec['data']
-            else:
-                url = pack_spec['href']
-                if url.startswith('data:application/zip;base64,'):
-                    data = b64decode(url[28:])
-                else:
-                    raise NotInMixer(pack_spec)
-            strm = StringIO(data)
-            atlas = Atlas()
-            result = SourcePack(strm, atlas)
+        elif 'href' in pack_spec:
+            url = pack_spec['href']
+            if url.startswith('data:application/zip;base64,'):
+                data = b64decode(url[28:])
+            elif url.startswith('file:///'):
+                result = SourcePack(url[7:], atlas or Atlas())
+        elif 'file' in pack_spec:
+            result = SourcePack(pack_spec['file'], atlas or Atlas())
+        elif 'data' in pack_spec:
+            data = pack_spec['data']
+        elif 'base64' in pack_spec:
+            data = b64decode(pack_spec['base64'])
+            
+        # If we have data, unpack it.
+        if not result and data:
+            result = SourcePack(StringIO(data), atlas or Atlas())
+            
+        # Have we succeeded?
         if not result:
             raise NotInMixer(pack_spec)
         return result

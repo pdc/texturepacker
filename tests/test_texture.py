@@ -291,41 +291,68 @@ class CompositeResourceTests(TestCase):
 
 
 class MixerTests(TestCase):
-    
     def test_get_pack_by_name(self):
+        pack1 = self.sample_pack()
+        
         mixer = Mixer()
-        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
-        pack1 = self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
         mixer.add_pack('zuul', pack1)
         
         pack2 = mixer.get_pack('zuul')
         self.assertTrue(pack1 is pack2)
         
-    def test_get_pack_by_data(self):
-        mixer = Mixer()
+    def sample_pack(self):
         simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
-        pack1 = self.make_source_pack('Zipple', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        return self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        
+    def sample_pack_and_bytes(self):
+        pack1 = self.sample_pack()        
         strm = StringIO()
         pack1.write_to(strm)
+        return pack1, strm.getvalue()
         
-        pack2 = mixer.get_pack({'data': strm.getvalue()})
-        self.assertEqual('Zipple', pack2.label)
-        self.assertRepresentIdenticalImages(pack1.get_resource('a.png').get_bytes(), 
-                pack2.get_resource('a.png').get_bytes())
+    def assert_same_packs(self, pack1, pack2):
+        self.assertEqual(pack1.label, pack2.label)
+        self.assertEqual(pack1.desc, pack2.desc)
+        for n in pack1.get_resource_names():
+            if n.endswith('.txt'):
+                self.assertEqual(pack1.get_resource(n).get_content(),
+                    pack2.get_resource(n).get_content())
+            else:
+                self.assertRepresentIdenticalImages(
+                        pack1.get_resource(n).get_bytes(), 
+                        pack2.get_resource(n).get_bytes())
+                        
+    def test_get_pack_by_data(self):
+        pack1, data1 = self.sample_pack_and_bytes()
+        pack2 = Mixer().get_pack({'data': data1})
+        self.assert_same_packs(pack1, pack2)
                 
     def test_get_pack_by_base64(self):
-        mixer = Mixer()
-        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
-        pack1 = self.make_source_pack('Zipple', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
-        strm = StringIO()
-        pack1.write_to(strm)
+        pack1, data1 = self.sample_pack_and_bytes()
+        pack2 = Mixer().get_pack({'base64': b64encode(data1)})
+        self.assert_same_packs(pack1, pack2)
         
-        url = 'data:application/zip;base64,' + b64encode(strm.getvalue())
-        print url
-        pack2 = mixer.get_pack({'href': url})
-        self.assertEqual('Zipple', pack2.label)
-        self.assertRepresentIdenticalImages(pack1.get_resource('a.png').get_bytes(), 
-                pack2.get_resource('a.png').get_bytes())
+    def test_get_pack_by_data_url(self):
+        pack1, data1 = self.sample_pack_and_bytes()
+        url = 'data:application/zip;base64,' + b64encode(data1)
+        pack2 = Mixer().get_pack({'href': url})
+        self.assert_same_packs(pack1, pack2)
+        
+    def test_get_pack_from_file(self):
+        pack1 = self.sample_pack()
+        file_path = os.path.join(self.test_dir, 'zum.zip')
+        with open(file_path, 'wb') as strm:
+            pack1.write_to(strm)
+        pack2 = Mixer().get_pack({'file': file_path})
+        self.assert_same_packs(pack1, pack2)
+                
+    def test_get_pack_from_file_uri(self):
+        pack1 = self.sample_pack()
+        file_path = os.path.join(self.test_dir, 'zum.zip')
+        with open(file_path, 'wb') as strm:
+            pack1.write_to(strm)
+        pack2 = Mixer().get_pack({'href': 'file://' + os.path.abspath(file_path)})
+        self.assert_same_packs(pack1, pack2)
                 
         
     def test_b_plus_c(self):
