@@ -1,4 +1,6 @@
 PIL==1.1.7
 distribute==0.6.14
+httplib2==0.6.0
+mock==0.7.0b4
 nose==1.0.0
 wsgiref==0.1.2

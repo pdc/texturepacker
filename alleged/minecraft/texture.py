@@ -14,6 +14,28 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
 import Image
+import httplib2
+
+
+_http = None
+_cache = None
+def set_http_cache(cache):
+    """Future HTTP requests will use this cache.
+    
+    Arguments --
+        cache -- either the name of a directory to store files
+            in, or an httplib2 cache object
+    """
+    global _cache
+    _cache = cache
+    _http = None
+    
+def _get_http():
+    """Helper function to get the HTTP object."""
+    global _http
+    if _http is None:
+        _http = httplib2.Http()
+    return _http
 
 class ResourceBase(object):
     def __init__(self, name):
@@ -495,6 +517,10 @@ class Mixer(object):
                 data = b64decode(url[28:])
             elif url.startswith('file:///'):
                 result = SourcePack(url[7:], atlas or Atlas())
+            else:
+                response, body = _get_http().request(url)
+                if response['status'] in [200, 304]:
+                    data = body
         elif 'file' in pack_spec:
             result = SourcePack(pack_spec['file'], atlas or Atlas())
         elif 'data' in pack_spec:

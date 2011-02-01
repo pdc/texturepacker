@@ -10,12 +10,14 @@ Copyright (c) 2011 Damian Cugley. All rights reserved.
 import sys
 import os
 import unittest
+from mock import Mock, patch
 
 from alleged.minecraft.texture import *
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64encode
 import shutil
+import httplib2
 
 
 class TestCase(unittest.TestCase):
@@ -353,7 +355,31 @@ class MixerTests(TestCase):
             pack1.write_to(strm)
         pack2 = Mixer().get_pack({'href': 'file://' + os.path.abspath(file_path)})
         self.assert_same_packs(pack1, pack2)
-                
+        
+    @patch('httplib2.Http.request')
+    def test_get_pack_from_http(self, mock_meth):
+        # Arrange that downloading any URL returns our pack.
+        pack1, data1 = self.sample_pack_and_bytes()
+        mock_meth.return_value = ({
+            'status': '200',
+            'content-type': 'application/zip',
+            'content-length': str(len(data1)),
+        }, data1)
+        
+        pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
+        self.assertEqual('http://example.org/frog.zip', mock_meth.call_args[0][0])
+        self.assert_same_packs(pack1, pack2)   
+        
+    @patch('httplib2.Http.request')
+    def test_get_pack_from_http(self, mock_meth):
+        # Arrange that downloading any URL fails.
+        pack1, data1 = self.sample_pack_and_bytes()
+        mock_meth.return_value = ({
+            'status': '404',
+        }, 'Not found')
+        
+        with self.assertRaises(NotInMixer):
+            pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
         
     def test_b_plus_c(self):
         self.check_recipe({
