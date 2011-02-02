@@ -17,7 +17,7 @@ from alleged.minecraft.texture import *
 
 src_dir = os.path.join(root_dir, 'texturepacks')
 
-out_dir = os.path.expanduser('~/Library/ApplicationSupport/minecraft/texturepacks')
+out_dir = os.path.expanduser('~/Library/Application Support/minecraft/texturepacks')
 if not os.path.exists(out_dir):
     out_dir = src_dir
 
@@ -49,91 +49,112 @@ def main():
         'terrain.png',
         'pack.png',
     ]
-    
+
     # Source packs in thgis case are incomplete directories of files.
-    
+
     mixer = Mixer()
     mixer.add_pack('groovy', SourcePack(os.path.join(src_dir, 'GroovyStipple'), Atlas()))
     mixer.add_pack('smooth', SourcePack(os.path.join(src_dir, 'SmoothStipple'), Atlas()))
-    
+
     # GroovyStipple is just a subset of the source pack.
     groovy_pack = mixer.make({
-        'label': 'GroovyStipple R6a',
+        'label': 'GroovyStipple R7',
         'desc': 'A high-visibility unrealistic look',
         'mix': [
             {
-                'pack': 'groovy', 
+                'pack': 'groovy',
                 'files': common_files + differing_files,
-            }   
+            }
         ]
     })
     save(groovy_pack, 'groovystipple.zip')
-    
+
     # SmoothStipple is GroovyStipple with two files replaced.
     smooth_pack = mixer.make({
-        'label': 'SmoothStipple R6a',
+        'label': 'SmoothStipple R7',
         'desc': 'A high-visibility unrealistic look',
         'mix': [
             {
-                'pack': 'groovy', 
+                'pack': 'groovy',
                 'files': common_files,
             },
             {
                 'pack': 'smooth',
                 'files': differing_files,
-            }   
+            }
         ]
     })
     save(smooth_pack, 'smoothstipple.zip')
-    
+
     # GroovyStipple45 is GroovyStipple with the track changed.
+    alt_terrain = {
+        'file': 'terrain.png',
+        'source': 'terrain.png',
+        'map': {
+            'source_rect': {
+                'x': 0,
+                'y': 7 * 16,
+                'width': 16,
+                'height': 16,
+            },
+            'cell_rect': {
+                'width': 16,
+                'height': 16,
+            },
+            'names': ['track_corner']
+        },
+        'replace': {
+            'source': 'terrain.png',
+            'map': {
+                'source_rect': {
+                    'x': 4 * 16,
+                    'y': 10 * 16,
+                    'width': 16,
+                    'height': 16,
+                },
+                'cell_rect': {
+                    'width': 16,
+                    'height': 16,
+                },
+                'names': ['track_corner_alt'],
+            },
+            'cells': {'track_corner': 'track_corner_alt'},
+        }
+    }
     groovy_pack_alt = mixer.make({
-        'label': 'GroovyStipple (alt track) R6a',
+        'label': 'GroovyStipple (alt track) R7',
         'desc': u'A high-visibility unrealistic look with 45° tracks',
         'mix': [
             {
-                'pack': 'groovy', 
+                'pack': 'groovy',
                 'files': common_files + [
                     'pack.png',
-                    {
-                        'file': 'terrain.png',
-                        'source': 'terrain.png',
-                        'map': {
-                            'source_rect': {
-                                'x': 0,
-                                'y': 7 * 16,
-                                'width': 16,
-                                'height': 16,
-                            },
-                            'cell_rect': {
-                                'width': 16,
-                                'height': 16,
-                            },
-                            'names': ['track_corner']
-                        },
-                        'replace': {
-                            'source': 'terrain.png',
-                            'map': {
-                                'source_rect': {
-                                    'x': 4 * 16,
-                                    'y': 10 * 16,
-                                    'width': 16,
-                                    'height': 16,
-                                },
-                                'cell_rect': {
-                                    'width': 16,
-                                    'height': 16,
-                                },
-                                'names': ['track_corner_alt'],                            
-                            },
-                            'cells': {'track_corner': 'track_corner_alt'},                            
-                        }
-                    }
+                    alt_terrain,
                 ],
             },
         ]
     })
     save(groovy_pack_alt, 'groovystipple-alt.zip')
+
+    smooth_pack_alt = mixer.make({
+        'label': 'SmoothStipple (alt track) R7',
+        'desc': u'A high-visibility unrealistic look with 45° tracks',
+        'mix': [
+            {
+                'pack': 'groovy',
+                'files': common_files,
+            },
+            {
+                'pack': 'smooth',
+                'files': [
+                    'pack.png',
+                    alt_terrain,
+
+                ]
+            },
+        ]
+    })
+    save(smooth_pack_alt, 'smoothstipple-alt.zip')
 
 if __name__ == '__main__':
     main()
