@@ -21,7 +21,7 @@ _http = None
 _cache = None
 def set_http_cache(cache):
     """Future HTTP requests will use this cache.
-    
+
     Arguments --
         cache -- either the name of a directory to store files
             in, or an httplib2 cache object
@@ -29,7 +29,7 @@ def set_http_cache(cache):
     global _cache
     _cache = cache
     _http = None
-    
+
 def _get_http():
     """Helper function to get the HTTP object."""
     global _http
@@ -84,7 +84,7 @@ class PackBase(object):
 
         """
         raise NotImplemented('{0}.get_resource'.format(self.__class__.__name__))
-        
+
     def get_resource_names(self):
         """A list of all resources in the pack."""
         raise NotImplemented('{0}.get_resource_names'.format(self.__class__.__name__))
@@ -96,7 +96,7 @@ class PackBase(object):
 
 class RecipePack(PackBase):
     """A texture pack assembled from other resources."""
-    
+
     def __init__(self, label, desc):
         super(RecipePack, self).__init__(Atlas())
         self.label = label
@@ -110,7 +110,7 @@ class RecipePack(PackBase):
 
     def get_resource(self, name):
         return self.resources[name]
-        
+
     def get_resource_names(self):
         return self.resources.keys()
 
@@ -119,7 +119,7 @@ class SourcePack(PackBase):
     """A texture pack that gets resources from a ZIP file."""
     def __init__(self, zip_data, atlas):
         super(SourcePack, self).__init__(atlas)
-        if (isinstance(zip_data, basestring) 
+        if (isinstance(zip_data, basestring)
                 and os.path.isdir(zip_data)):
             self.dir_path = zip_data
         else:
@@ -133,13 +133,13 @@ class SourcePack(PackBase):
 
     def get_resource(self, name):
         """Get the named resource
-        
-        Arguments -- 
+
+        Arguments --
             name -- specifies the resource to return
-            
+
         Returns --
             A resource (subclass of ResourceBase)
-            
+
         """
         res = self.loaded_resources.get(name)
         if res:
@@ -170,7 +170,7 @@ class SourcePack(PackBase):
         else:
             for name in self.zip.namelist():
                 yield name
-            
+
     @property
     def label(self):
         res = self.get_resource('pack.txt')
@@ -282,7 +282,7 @@ class Atlas(object):
 
     def add_map(self, name, map):
         """Add a map to the collection
-        
+
         Arguments --
             name -- will be used to retrieve this map with get_map
             map -- the map, a subclass of MapBase"""
@@ -290,22 +290,22 @@ class Atlas(object):
 
     def get_map(self, spec):
         """Get the specified map.
-        
+
         Arguments --
             spec (string, list, or dict) -- specifies a map
-            
+
         Returns --
             a map
-            
+
         Raises --
             NotInAtlas the named map canot be found
-            
+
         If spec is a string, it names a map added with add_map.
-        
+
         If it is a dictionary it specifies a new map.
         At present this is alwaus a GridMap. It must define
         cell_rect, source_rect, and names (a list).
-        
+
         If it is a lisst, its elements must recursively
         be map specs and the result is the composition of all the maps.
         (Order is important if more than one map defines the same
@@ -354,7 +354,7 @@ class CompositeResource(ResourceBase):
     """An image made by replacing some cells in an image with parts of another"""
     def __init__(self, name, base_res, base_map):
         """Create a composite resouce (with no substitutions)
-        
+
         Arguments --
             name -- what this resource will be named
                 (usually a file name like terrain.png)
@@ -370,12 +370,12 @@ class CompositeResource(ResourceBase):
 
     def replace(self, source_res, source_map, cells):
         """Replacing cell(s) in the image with cells from another
-        
+
         Arguments --
-            res (image resource) -- copy image data out of this 
+            res (image resource) -- copy image data out of this
             map -- gives names to cells within res
             cells (dict or list)-- specifies cells to modify
-            
+
         If cells is a dict, keys are cell names within this resouce,
         and values are the cell to get image data from in res.
         If cells is a list, the named cells are replaced with
@@ -384,14 +384,14 @@ class CompositeResource(ResourceBase):
         if not hasattr(cells, 'items'):
             cells = dict((x, x) for x in cells)
         self.replacements.append((source_res, source_map, cells))
-    
+
         # This invalidates any cached image.
         self.im = None
         self.bytes = None
 
     def _calc(self):
         """Called when the image data is required.
-        
+
         We defer generating the image until it is required.
         """
         im = self.res.get_image().copy()
@@ -402,7 +402,7 @@ class CompositeResource(ResourceBase):
                 src_im = src_res.get_image().crop(src_box)
                 im.paste(src_im, dst_box)
         self.image = im
-        
+
     def get_image(self):
         """Get the composite image."""
         if self.image is None:
@@ -436,23 +436,23 @@ class Mixer(object):
 
     def add_pack(self, name, pack):
         """Add this pack to the repertoire of this mixer.
-        
+
         Arguments --
             name -- the name for the pack
             pack -- a texture pack object
-        
+
         Afterwards this pack can be referred to in recipes using this name.
         """
         self.packs[name] = pack
 
-    def make(self, recipe):
+    def make(self, recipe, base=None):
         """Create a new pack by following this this recipe.
-        
+
         Arguments --
             recipe -- a dictionary with specific contents
                 that describes how to assemble the new pack
                 using other packs.
-                
+
         Returns --
             A new pack object (subclass of PackBase).
         """
@@ -462,85 +462,116 @@ class Mixer(object):
             # Allow a single ingredient to stand in for a singleton list.
             mix = [mix]
         for ingredient in mix:
-            src_pack = self.get_pack(ingredient['pack'])
+            src_pack = self.get_pack(ingredient['pack'], base=base)
             for file_spec in ingredient['files']:
                 if isinstance(file_spec, basestring):
                     res = src_pack.get_resource(file_spec)
                 else:
                     res_name = file_spec['file']
                     src_res = src_pack.get_resource(file_spec.get('source', res_name))
-                    src_map = self.get_pack_map(src_pack, file_spec.get('map', src_res.name))
+                    src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name))
                     res = CompositeResource(res_name, src_res, src_map)
                     specs = file_spec['replace']
                     if hasattr(specs, 'items'):
                         specs = [specs]
                     for spec in specs:
-                        src2_pack = self.get_pack(spec.get('pack'), src_pack)
+                        src2_pack = self.get_pack(spec.get('pack'), src_pack, base=base)
                         src2_res = src2_pack.get_resource(
                                 spec.get('source', res_name))
-                        src2_map = self.get_pack_map(src2_pack, 
+                        src2_map = self.get_map(src2_pack.atlas,
                                 spec.get('map', src2_res.name))
                         cells = spec['cells']
                         res.replace(src2_res, src2_map, cells)
                 new_pack.add_resource(res)
         return new_pack
-        
-    def get_pack(self, pack_spec, fallback_pack=None):
+
+    def get_pack(self, pack_spec, fallback_pack=None, base=None):
         """Get a pack specified, or return the fallback pack.
-        
+
         Arguments --
             pack_spec --
-                Specifies a pack. It names one of the packs
-                added with add_pack.
-            fallback_pack --
+                Specifies a pack.
+                If it is a string, it names one of the packs
+                added with add_pack. If it is a dictionary, then
+                the meaning depends on its attributes:
+                    file -- names a file containing a ZIP archive;
+                    href -- secifies a URI from which data may
+                        be downloaded (HTTP, file, and data URIs
+                        are supported so far);
+                    data -- value must be a ZIP archive;
+                    base64 -- value must be a ZIP archive,
+                        converted to ASCII with the base64 codec.
+            fallback_pack (optional) --
                 If the pack_spec is the empty string or None,
                 then use this value instead.
-                
+            base (optional URI) --
+                If the pack uses relative URL or file name,
+                then it is interpreted relative to this.
+                Must be a file or http URL.
+
         Returns --
             A pack object
-            
+
         Raises --
-            NotInMixer -- when the specified pack does not exist.            
+            NotInMixer -- when the specified pack does not exist.
         """
         if not pack_spec and fallback_pack:
             return fallback_pack
-            
+
         # Varfious ways of decoding the pack spec.
         result = None
         data = None
         atlas = None
         if isinstance(pack_spec, basestring):
             result = self.packs.get(pack_spec)
-        elif 'href' in pack_spec:
+            # Have we succeeded?
+            if not result:
+                raise NotInMixer(pack_spec)
+            return result
+
+        if 'maps' in pack_spec:
+            atlas = Atlas()
+            for name, map_spec in pack_spec['maps'].items():
+                atlas.add_map(name, self.get_map(atlas, map_spec))
+        atlas = atlas or Atlas()
+
+        if 'href' in pack_spec:
             url = pack_spec['href']
             if url.startswith('data:application/zip;base64,'):
                 data = b64decode(url[28:])
             elif url.startswith('file:///'):
-                result = SourcePack(url[7:], atlas or Atlas())
+                result = SourcePack(url[7:], atlas)
             else:
                 response, body = _get_http().request(url)
                 if response['status'] in [200, 304]:
                     data = body
         elif 'file' in pack_spec:
-            result = SourcePack(pack_spec['file'], atlas or Atlas())
+            file_path = pack_spec['file']
+            if base and base.startswith('file:///'):
+                base_path = base[7:]
+                if not os.path.exists(base_path) or not os.path.isdir(base_path):
+                    base_path = os.path.dirname(base_path)
+                file_path = os.path.join(base_path, file_path)
+            result = SourcePack(file_path, atlas)
         elif 'data' in pack_spec:
             data = pack_spec['data']
         elif 'base64' in pack_spec:
             data = b64decode(pack_spec['base64'])
-            
+
         # If we have data, unpack it.
         if not result and data:
-            result = SourcePack(StringIO(data), atlas or Atlas())
-            
+            result = SourcePack(StringIO(data), atlas)
+
         # Have we succeeded?
         if not result:
             raise NotInMixer(pack_spec)
         return result
-        
-    def get_pack_map(self, pack, spec):
+
+    def get_map(self, atlas, spec):
         """Get a map from the pack if possible, otherwise try the global atlas."""
         try:
-            return pack.atlas.get_map(spec)
+            if atlas:
+                return atlas.get_map(spec)
         except NotInAtlas:
             pass
         return self.atlas.get_map(spec)

@@ -80,7 +80,7 @@ class SourcePackTests(TestCase):
         self.dir_pack_path = os.path.join(self.test_dir, 'bonka')
         if os.path.exists(self.dir_pack_path):
             shutil.rmtree(self.dir_pack_path)
-            
+
     def test_sign(self):
         pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': ('sign.png', None)})
         self.check_pack_is_sign_pack(pack)
@@ -104,25 +104,25 @@ class SourcePackTests(TestCase):
         # Open it as a SourceTexturePack
         pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
-        
-        
+
+
     def test_pack_from_directory(self):
         pack = self.create_sign_directory()
-            
+
         # Open it as a SourceTexturePack
         self.check_pack_is_sign_pack(pack)
-        
+
     def test_dirctory_pack_includes_resources(self):
         pack = self.create_sign_directory()
-        
+
         # Save as ZIP
         file_path = os.path.join(self.test_dir, 'bonko.zip')
         pack.write_to(file_path)
-        
+
         # Reopen & recheck
         pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
-        
+
     def create_sign_directory(self):
         # Create dir from scratch with contesnts of a pack.
         os.mkdir(self.dir_pack_path)
@@ -131,7 +131,7 @@ class SourcePackTests(TestCase):
             strm.write(self.get_data('sign.png'))
         with open(os.path.join(self.dir_pack_path, 'pack.txt'), 'wt') as strm:
             strm.write('Sign pack\nJust a test\n')
-        
+
         pack = SourcePack(self.dir_pack_path, Atlas())
         return pack
 
@@ -295,23 +295,23 @@ class CompositeResourceTests(TestCase):
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
         pack1 = self.sample_pack()
-        
+
         mixer = Mixer()
         mixer.add_pack('zuul', pack1)
-        
+
         pack2 = mixer.get_pack('zuul')
         self.assertTrue(pack1 is pack2)
-        
+
     def sample_pack(self):
         simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
         return self.make_source_pack('AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
-        
+
     def sample_pack_and_bytes(self):
-        pack1 = self.sample_pack()        
+        pack1 = self.sample_pack()
         strm = StringIO()
         pack1.write_to(strm)
         return pack1, strm.getvalue()
-        
+
     def assert_same_packs(self, pack1, pack2):
         self.assertEqual(pack1.label, pack2.label)
         self.assertEqual(pack1.desc, pack2.desc)
@@ -321,25 +321,25 @@ class MixerTests(TestCase):
                     pack2.get_resource(n).get_content())
             else:
                 self.assertRepresentIdenticalImages(
-                        pack1.get_resource(n).get_bytes(), 
+                        pack1.get_resource(n).get_bytes(),
                         pack2.get_resource(n).get_bytes())
-                        
+
     def test_get_pack_by_data(self):
         pack1, data1 = self.sample_pack_and_bytes()
         pack2 = Mixer().get_pack({'data': data1})
         self.assert_same_packs(pack1, pack2)
-                
+
     def test_get_pack_by_base64(self):
         pack1, data1 = self.sample_pack_and_bytes()
         pack2 = Mixer().get_pack({'base64': b64encode(data1)})
         self.assert_same_packs(pack1, pack2)
-        
+
     def test_get_pack_by_data_url(self):
         pack1, data1 = self.sample_pack_and_bytes()
         url = 'data:application/zip;base64,' + b64encode(data1)
         pack2 = Mixer().get_pack({'href': url})
         self.assert_same_packs(pack1, pack2)
-        
+
     def test_get_pack_from_file(self):
         pack1 = self.sample_pack()
         file_path = os.path.join(self.test_dir, 'zum.zip')
@@ -347,7 +347,7 @@ class MixerTests(TestCase):
             pack1.write_to(strm)
         pack2 = Mixer().get_pack({'file': file_path})
         self.assert_same_packs(pack1, pack2)
-                
+
     def test_get_pack_from_file_uri(self):
         pack1 = self.sample_pack()
         file_path = os.path.join(self.test_dir, 'zum.zip')
@@ -355,7 +355,7 @@ class MixerTests(TestCase):
             pack1.write_to(strm)
         pack2 = Mixer().get_pack({'href': 'file://' + os.path.abspath(file_path)})
         self.assert_same_packs(pack1, pack2)
-        
+
     @patch('httplib2.Http.request')
     def test_get_pack_from_http(self, mock_meth):
         # Arrange that downloading any URL returns our pack.
@@ -365,11 +365,20 @@ class MixerTests(TestCase):
             'content-type': 'application/zip',
             'content-length': str(len(data1)),
         }, data1)
-        
+
         pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
         self.assertEqual('http://example.org/frog.zip', mock_meth.call_args[0][0])
-        self.assert_same_packs(pack1, pack2)   
-        
+        self.assert_same_packs(pack1, pack2)
+
+    def test_get_pack_from_relative_file(self):
+        pack1 = self.sample_pack()
+        file_path = os.path.join(self.test_dir, 'zum.zip')
+        with open(file_path, 'wb') as strm:
+            pack1.write_to(strm)
+        pack2 = Mixer().get_pack({'file': 'zum.zip'},
+                base='file://' + os.path.join(self.test_dir, 'zip.json'))
+        self.assert_same_packs(pack1, pack2)
+
     @patch('httplib2.Http.request')
     def test_get_pack_from_http(self, mock_meth):
         # Arrange that downloading any URL fails.
@@ -377,10 +386,10 @@ class MixerTests(TestCase):
         mock_meth.return_value = ({
             'status': '404',
         }, 'Not found')
-        
+
         with self.assertRaises(NotInMixer):
             pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
-        
+
     def test_b_plus_c(self):
         self.check_recipe({
             'mix': [
@@ -418,7 +427,6 @@ class MixerTests(TestCase):
             ]
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
 
-
     def test_a_b_replace_using_pack_atlas(self):
         self.check_recipe({
             'mix': [
@@ -437,8 +445,8 @@ class MixerTests(TestCase):
                 }
             ]
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
-        
-        
+
+
     def test_a_b_replace_single_mix(self):
         self.check_recipe({
             'mix': {
@@ -455,7 +463,7 @@ class MixerTests(TestCase):
                 ]
             }
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
-        
+
     def test_a_b_replace_two_packs(self):
         self.check_recipe({
             'mix': {
@@ -481,6 +489,53 @@ class MixerTests(TestCase):
             }
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
 
+    def test_a_b_replace_two_files(self):
+        with open(os.path.join(self.test_dir, 'xa.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'aa', 'aaaa', {'a.png': ('a.png', None)})
+        with open(os.path.join(self.test_dir, 'xb.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'bb', 'bb', {'b.png': ('b.png', None)})
+        recipe = {
+            'label': 'ab',
+            'desc': 'ababababk',
+            'mix': {
+                'pack': {
+                    'file': 'xb.zip',  # relative file name
+                    'maps': {
+                        'b.png': {
+                            'source_rect': {'width': 32, 'height': 32},
+                            'cell_rect': {'width': 16, 'height': 16},
+                            'names': ['a', 'b', 'c', 'd'],
+                        }
+                    }
+                },
+                'files': [
+                    {
+                        'file': 'ab.png',
+                        'source': 'b.png',
+                        'replace': {
+                            'pack': {
+                                'file': os.path.join(self.test_dir, 'xa.zip'), # absolute file name
+                                'maps': {
+                                    'a.png': {
+                                        'source_rect': {'width': 32, 'height': 32},
+                                        'cell_rect': {'width': 16, 'height': 16},
+                                        'names': ['a', 'b', 'c', 'd'],
+                                    }
+                                }
+                            },
+                            'source': 'a.png',
+                            'cells': {'d': 'a', 'a': 'd'},
+                        }
+                    }
+                ]
+            }
+        }
+        pack = Mixer().make(recipe, base='file://' + os.path.abspath(self.test_dir))
+
+        self.assertEqual('ab', pack.label)
+        self.assertEqual('ababababk', pack.desc)
+        self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
+
 
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
         recipe.update({
@@ -495,7 +550,7 @@ class MixerTests(TestCase):
         mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': ('c.png', simple_map)}))
         mixer.add_pack('alpha_only', self.make_source_pack('A', 'Has A', {'a.png': ('a.png', simple_map)}))
         mixer.add_pack('only_bravo', self.make_source_pack('B', 'Has B', {'b.png': ('b.png', simple_map)}))
-        
+
         pack = mixer.make(recipe)
 
         self.assertEqual('Composite pack', pack.label)
