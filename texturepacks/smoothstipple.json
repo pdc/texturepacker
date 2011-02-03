@@ -1,0 +1,34 @@
+{
+  "label": "SmoothStipple R7",
+  "desc": "A high-visibility, unrealistic look",
+  "mix": [
+    {
+      "pack": {"file": "GroovyStipple"},
+      "files": [
+        "gui/crafting.png",
+        "gui/background.png",
+        "gui/container.png",
+        "gui/crafting.png",
+        "gui/furnace.png",
+        "gui/gui.png",
+        "gui/inventory.png",
+        "item/boat.png",
+        "item/cart.png",
+        "item/sign.png",
+        "mob/cow.png",
+        "mob/creeper.png",
+        "mob/sheep.png",
+        "mob/sheep_fur.png",
+        "mob/zombie.png",
+        "news.txt"
+      ]
+    },
+    {
+      "pack": {"file": "SmoothStipple"},
+      "files": [
+        "pack.png",
+        "terrain.png"
+      ]
+    }
+  ]
+}
