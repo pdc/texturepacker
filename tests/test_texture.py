@@ -398,6 +398,27 @@ class MixerTests(TestCase):
             ]
         }, {'b.png': 'b.png', 'c.png': 'c.png'}, ['a.png'])
 
+    def test_c_replaces_b(self):
+        self.check_recipe({
+            "mix": [
+                {
+                    'pack': 'alpha_bravo',
+                    'files': [
+                        'a.png',
+                    ]
+                },
+                {
+                    'pack': 'charlie',
+                    'files': [
+                        {
+                            'file': 'b.png',
+                            'source': 'c.png',
+                        }
+                    ]
+                }
+            ]
+        }, {'a.png': 'a.png', 'b.png': 'c.png'}, ['c.png'])
+
     def test_a_b_replace_using_expliict_maps(self):
         self.check_recipe({
             'mix': [

@@ -200,6 +200,19 @@ class SourceResource(ResourceBase):
             self.image = Image.open(strm)
         return self.image
 
+
+class RenamedResource(ResourceBase):
+    def __init__(self, name, res):
+        self.name = name
+        self.res = res
+
+    def get_bytes(self):
+        return self.res.get_bytes()
+
+    def get_image(self):
+        return self.res.get_image()
+
+
 class MapBase(object):
         pass
 
@@ -469,19 +482,24 @@ class Mixer(object):
                 else:
                     res_name = file_spec['file']
                     src_res = src_pack.get_resource(file_spec.get('source', res_name))
-                    src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name))
-                    res = CompositeResource(res_name, src_res, src_map)
-                    specs = file_spec['replace']
-                    if hasattr(specs, 'items'):
-                        specs = [specs]
-                    for spec in specs:
-                        src2_pack = self.get_pack(spec.get('pack'), src_pack, base=base)
-                        src2_res = src2_pack.get_resource(
-                                spec.get('source', res_name))
-                        src2_map = self.get_map(src2_pack.atlas,
-                                spec.get('map', src2_res.name))
-                        cells = spec['cells']
-                        res.replace(src2_res, src2_map, cells)
+                    if 'replace' in file_spec:
+                        src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name))
+                        res = CompositeResource(res_name, src_res, src_map)
+                        specs = file_spec['replace']
+                        if hasattr(specs, 'items'):
+                            specs = [specs]
+                        for spec in specs:
+                            src2_pack = self.get_pack(spec.get('pack'), src_pack, base=base)
+                            src2_res = src2_pack.get_resource(
+                                    spec.get('source', res_name))
+                            src2_map = self.get_map(src2_pack.atlas,
+                                    spec.get('map', src2_res.name))
+                            cells = spec['cells']
+                            res.replace(src2_res, src2_map, cells)
+                    elif res_name == src_res.name:
+                        res = src_res
+                    else:
+                        res = RenamedResource(res_name, src_res)
                 new_pack.add_resource(res)
         return new_pack
 
