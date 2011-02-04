@@ -15,6 +15,7 @@ from StringIO import StringIO
 from base64 import b64decode
 import Image
 import httplib2
+import fnmatch
 
 
 _http = None
@@ -476,32 +477,50 @@ class Mixer(object):
             mix = [mix]
         for ingredient in mix:
             src_pack = self.get_pack(ingredient['pack'], base=base)
-            for file_spec in ingredient['files']:
-                if isinstance(file_spec, basestring):
-                    res = src_pack.get_resource(file_spec)
-                else:
-                    res_name = file_spec['file']
-                    src_res = src_pack.get_resource(file_spec.get('source', res_name))
-                    if 'replace' in file_spec:
-                        src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name))
-                        res = CompositeResource(res_name, src_res, src_map)
-                        specs = file_spec['replace']
-                        if hasattr(specs, 'items'):
-                            specs = [specs]
-                        for spec in specs:
-                            src2_pack = self.get_pack(spec.get('pack'), src_pack, base=base)
-                            src2_res = src2_pack.get_resource(
-                                    spec.get('source', res_name))
-                            src2_map = self.get_map(src2_pack.atlas,
-                                    spec.get('map', src2_res.name))
-                            cells = spec['cells']
-                            res.replace(src2_res, src2_map, cells)
-                    elif res_name == src_res.name:
-                        res = src_res
-                    else:
-                        res = RenamedResource(res_name, src_res)
+            for res in self.iter_resources(src_pack, ingredient['files'], base=base):
                 new_pack.add_resource(res)
         return new_pack
+
+    def iter_resources(self, src_pack, resources_spec, base):
+        """Given a files spec, yield a sequence of resources.
+
+
+        """
+        for file_spec in resources_spec:
+            if isinstance(file_spec, basestring):
+                if '*' in file_spec:
+                    # Its a wildcard: straight copy of all matching extant resources.
+                    res_names = src_pack.get_resource_names()
+                    res_names = fnmatch.filter(res_names, file_spec)
+                    for res_name in res_names:
+                        yield src_pack.get_resource(res_name)
+                else:
+                    # The simplest case: a single named resource.
+                    res = src_pack.get_resource(file_spec)
+                    yield res
+            else:
+                # A recipe for creating a new resource from one or more sources.
+                res_name = file_spec['file']
+                src_res = src_pack.get_resource(file_spec.get('source', res_name))
+                if 'replace' in file_spec:
+                    src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name))
+                    res = CompositeResource(res_name, src_res, src_map)
+                    specs = file_spec['replace']
+                    if hasattr(specs, 'items'):
+                        specs = [specs]
+                    for spec in specs:
+                        src2_pack = self.get_pack(spec.get('pack'), src_pack, base=base)
+                        src2_res = src2_pack.get_resource(
+                                spec.get('source', res_name))
+                        src2_map = self.get_map(src2_pack.atlas,
+                                spec.get('map', src2_res.name))
+                        cells = spec['cells']
+                        res.replace(src2_res, src2_map, cells)
+                elif res_name == src_res.name:
+                    res = src_res
+                else:
+                    res = RenamedResource(res_name, src_res)
+                yield res
 
     def get_pack(self, pack_spec, fallback_pack=None, base=None):
         """Get a pack specified, or return the fallback pack.

@@ -419,6 +419,30 @@ class MixerTests(TestCase):
             ]
         }, {'a.png': 'a.png', 'b.png': 'c.png'}, ['c.png'])
 
+    def test_c_replaces_b_star(self):
+        # Same as the above, except using `*` to copy
+        # all missing files from alpha_bravo
+        # instead of listing them explicity.
+        self.check_recipe({
+            "mix": [
+                {
+                    'pack': 'alpha_bravo',
+                    'files': [
+                        '*.png',
+                    ]
+                },
+                {
+                    'pack': 'charlie',
+                    'files': [
+                        {
+                            'file': 'b.png',
+                            'source': 'c.png',
+                        }
+                    ]
+                },
+            ]
+        }, {'a.png': 'a.png', 'b.png': 'c.png'}, ['c.png'])
+
     def test_a_b_replace_using_expliict_maps(self):
         self.check_recipe({
             'mix': [
