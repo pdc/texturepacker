@@ -9,16 +9,22 @@ Copyright (c) 2011 Alleged Literature. All rights reserved.
 
 import sys
 import os
+
+sys.path[1:1] = [os.path.dirname(os.path.dirname(__file__))]
+
 import getopt
 
 import json
+import yaml
 from alleged.minecraft.texture import Mixer
 
-VERSION = '0.0 2011-02-03'
+VERSION = '0.0 2011-02-05'
 
 
 help_message = '''
-The help message goes here.
+{argv0} [--output=FILE] FILE...
+{argv0} --help
+{argv0} --version
 '''
 
 
@@ -45,7 +51,7 @@ def main(argv=None):
             if opt == "-v":
                 verbose += 1
             elif opt in ("-h", "--help"):
-                print >>sys.stderr, help_message
+                print >>sys.stderr, help_message.format(argv0=os.path.split(argv[0])[1])
                 return 0
             elif opt in ("-V", "--version"):
                 print >>sys.stderr, VERSION
@@ -56,8 +62,15 @@ def main(argv=None):
                 raise Usage('Unexpected option {0!r}'.format(opt))
 
         for arg in args:
-            with open(arg, 'rb') as strm:
-                recipe = json.load(strm)
+            if arg.endswith('.json'):
+                with open(arg, 'rb') as strm:
+                    recipe = json.load(strm)
+            elif arg.endswith('.yaml') or arg.endswith('.yml'):
+                with open(arg, 'rb') as strm:
+                    recipe = yaml.load(strm)
+            else:
+                raise Usage('{0!r}: expected .yaml or .json file name')
+
             base = 'file://' + os.path.abspath(arg)
             pack = mixer.make(recipe, base=base)
             if out_file == '-':

@@ -1,0 +1,55 @@
+label: "InsaneCraft - By LechD (alt glass)"
+desc: "Pattern Flavored Goodness!"
+mix:
+  pack:
+    file: "/Users/pdc/Library/Application Support/minecraft/texturepacks/insanecraft.zip"
+    maps:
+      terrain.png:
+        source_rect:
+          width: 256
+          height: 80
+        cell_rect:
+          width: 16
+          height: 16
+        names: [
+          grass, stone, dirt, dirt_side_grass, planks, step_side, stop_top, brick,
+              tnt_side, tnt_top, tnt_bottom, web, rose, dendelion, water, sapling,
+          cobble, bedrock, sand, gravel, log_side, log_top, iron, gold,
+              diamond, chest_top, chest_side, chest_front, red_mushroom, gray_mushroom, "1E", fire,
+          gold_ore, iron_ore, coal_ore, bookcase, mossy_cobble, obsidian, "26", "27",
+            "28", large_chest_front_left, large_chest_front_right, workbench_top, furnace_front, furnace_side, dispenser, fire1,
+          sponge, glass, diamond ore, redstone ore, leaves, leaves_unfancy, "36", "37",
+            "38", large_chest_back_left, large_chest_back_right, workbench_front, workbench_side, fornace_front_lit, furnace_top, "3F",
+          wool, spawner, snow, ice, dirt_side_snow, cactus_top, cactus_side, cactus_bottom,
+            clay, reeds, record_player_side, record_player_top, "4C", "4D", "4E", "4F"
+          ]
+  files:
+    - "*.png"
+    -
+      file: "terrain.png"
+      replace:
+        cells:
+          - glass
+        pack:
+          file: /Users/pdc/Library/Application Support/minecraft/texturepacks/groovystipple.zip
+          maps:
+            terrain.png:
+              source_rect:
+                width: 256
+                height: 80
+              cell_rect:
+                width: 16
+                height: 16
+              names: [
+                grass, stone, dirt, dirt_side_grass, planks, step_side, stop_top, brick,
+                    tnt_side, tnt_top, tnt_bottom, web, rose, dendelion, water, sapling,
+                cobble, bedrock, sand, gravel, log_side, log_top, iron, gold,
+                    diamond, chest_top, chest_side, chest_front, red_mushroom, gray_mushroom, "1E", fire,
+                gold_ore, iron_ore, coal_ore, bookcase, mossy_cobble, obsidian, "26", "27",
+                  "28", large_chest_front_left, large_chest_front_right, workbench_top, furnace_front, furnace_side, dispenser, fire1,
+                sponge, glass, diamond ore, redstone ore, leaves, leaves_unfancy, "36", "37",
+                  "38", large_chest_back_left, large_chest_back_right, workbench_front, workbench_side, fornace_front_lit, furnace_top, "3F",
+                wool, spawner, snow, ice, dirt_side_snow, cactus_top, cactus_side, cactus_bottom,
+                  clay, reeds, record_player_side, record_player_top, "4C", "4D", "4E", "4F"
+              ]
+
