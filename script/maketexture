@@ -22,7 +22,7 @@ VERSION = '0.0 2011-02-05'
 
 
 help_message = '''
-{argv0} [--output=FILE] FILE...
+{argv0} [--output=FILE|DIR|-] FILE...
 {argv0} --help
 {argv0} --version
 '''
@@ -44,7 +44,7 @@ def main(argv=None):
 
         mixer = Mixer()
         verbose = 0
-        out_file = None
+        out_arg = None
 
         # option processing
         for opt, arg in opts:
@@ -57,7 +57,7 @@ def main(argv=None):
                 print >>sys.stderr, VERSION
                 return 0
             elif opt in ("-o", "--output"):
-                out_file = arg
+                out_arg = arg
             else:
                 raise Usage('Unexpected option {0!r}'.format(opt))
 
@@ -73,15 +73,20 @@ def main(argv=None):
 
             base = 'file://' + os.path.abspath(arg)
             pack = mixer.make(recipe, base=base)
-            if out_file == '-':
+            if out_arg == '-':
                 pack.write_to(sys.stdout)
+                out_arg = None
             else:
-                if not out_file:
-                    out_file = os.path.splitext(arg)[0] + '.zip'
+                out_file = os.path.splitext(arg)[0] + '.zip'
+                if out_arg:
+                    if os.path.isdir(out_arg):
+                        out_file = os.path.join(out_arg, os.path.basename(out_file))
+                    else:
+                        out_file = out_arg
+                        out_arg = None
                 pack.write_to(out_file)
                 if verbose:
                     print >>sys.stderr, 'Wrote ZIP to', out_file
-            out_file = None
 
     except Usage, err:
         print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
