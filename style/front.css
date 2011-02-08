@@ -1,0 +1,120 @@
+@import url(airstream/stylesheet.css);
+@import url(museoslab_500_macroman/stylesheet.css);
+@import url(museoslab_500italic_macroman/stylesheet.css);
+
+body {
+    margin-top: 1.0em;
+    
+    font-family: Verdana, "Droid Sans", sans-serif;
+    font-family: "MuseoSlab500";
+    line-height: 1.25;
+    color: #CBA;
+    background: #420;
+    background: -webkit-gradient(linear, left top, left bottom, 
+        from(#530), color-stop(5%, #420), color-stop(90%, #310), to(#200));
+}
+
+#container {
+  margin: 0 auto;
+  width: 960px;
+}
+
+#main {
+    float: left;
+    width: 640px;
+}
+
+#download {
+    float: left;
+    margin: 12em 0 0 0;
+    width: 320px;
+}
+
+#footer {
+    clear: both;
+}
+
+h1, h2, h3 {
+    margin: 1em 10px 0.5em;
+    
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 200;
+    color: rgba(255, 255, 255, 0.5);
+}
+h1 { 
+    font-family: "AirstreamRegular", Arial, Helvetica, sans-serif;
+    font-size: 3.8em;
+    font-weight: 200;
+}
+h1 a { 
+    text-decoration: none 
+}
+
+h2 { 
+    font-size: 1.5em; 
+}
+
+h3 { 
+    text-align: center; color: #CCC; 
+}
+
+section p {
+    margin: 1.25em 10px;
+}
+
+a:link { 
+    color: #CA6; 
+}
+
+#description { 
+    font-size: 1.25em; 
+    margin: 1em 10px;
+    
+    font-family: "MuseoSlab500Italic";
+}
+
+#download {
+    position: relative;
+}
+
+#download p {
+    margin-right: 90px;
+}
+
+#zip_link img {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+#tar_link img {
+    display: block;
+    position: absolute;
+    top: 90px;
+    right: 0;
+}
+
+
+
+pre { 
+    background: #310; 
+    background: rgba(0, 0, 0, 0.25);
+    color: #CFC; 
+    padding: 15px;
+}
+hr { 
+    border: 0; 
+    width: 80%; 
+    border-bottom: 1px solid #aaa
+}
+.footer { text-align:center; padding-top:30px; font-style: italic; }
+
+#fork_me img {
+    displayu: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
