@@ -5,9 +5,9 @@
 body {
     margin-top: 1.0em;
     
+    font-size: 13px;
     font-family: Verdana, "Droid Sans", sans-serif;
-    font-family: "MuseoSlab500";
-    line-height: 1.25;
+    line-height: 1.4;
     color: #CBA;
     background: #420;
     background: -webkit-gradient(linear, left top, left bottom, 
@@ -37,8 +37,8 @@ body {
 h1, h2, h3 {
     margin: 1em 10px 0.5em;
     
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 200;
+    font-family: "MuseoSlab500", Arial, Helvetica, sans-serif;
+    font-weight: normal;
     color: rgba(255, 255, 255, 0.5);
 }
 h1 { 
@@ -64,6 +64,9 @@ section p {
 
 a:link { 
     color: #CA6; 
+}
+a:visited { 
+    color: #CB8;
 }
 
 #description { 
