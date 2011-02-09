@@ -581,6 +581,57 @@ class MixerTests(TestCase):
         self.assertEqual('ababababk', pack.desc)
         self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
 
+    def test_a_b_replace_two_files_declared(self):
+        with open(os.path.join(self.test_dir, 'xa.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'aa', 'aaaa', {'a.png': ('a.png', None)})
+        with open(os.path.join(self.test_dir, 'xb.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'bb', 'bb', {'b.png': ('b.png', None)})
+        recipe = {
+            'label': 'ab',
+            'desc': 'ababababk',
+            'packs': {
+                'aa': {
+                    'file': os.path.join(self.test_dir, 'xa.zip'), # absolute file name
+                    'maps': {
+                        'a.png': {
+                            'source_rect': {'width': 32, 'height': 32},
+                            'cell_rect': {'width': 16, 'height': 16},
+                            'names': ['a', 'b', 'c', 'd'],
+                        }
+                    }
+                },
+                'bb': {
+                    'file': 'xb.zip',  # relative file name
+                    'maps': {
+                        'b.png': {
+                            'source_rect': {'width': 32, 'height': 32},
+                            'cell_rect': {'width': 16, 'height': 16},
+                            'names': ['a', 'b', 'c', 'd'],
+                        }
+                    }
+                }
+            },
+            'mix': {
+                'pack': 'bb',
+                'files': [
+                    {
+                        'file': 'ab.png',
+                        'source': 'b.png',
+                        'replace': {
+                            'pack': 'aa',
+                            'source': 'a.png',
+                            'cells': {'d': 'a', 'a': 'd'},
+                        }
+                    }
+                ]
+            }
+        }
+        pack = Mixer().make(recipe, base='file://' + os.path.abspath(self.test_dir))
+
+        self.assertEqual('ab', pack.label)
+        self.assertEqual('ababababk', pack.desc)
+        self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
+
 
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
         recipe.update({

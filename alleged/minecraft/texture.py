@@ -471,6 +471,11 @@ class Mixer(object):
             A new pack object (subclass of PackBase).
         """
         new_pack = RecipePack(recipe['label'], recipe['desc'])
+
+        if 'packs' in recipe:
+            for name, pack_spec in recipe['packs'].items():
+                self.add_pack(name, self.get_pack(pack_spec, base=base))
+
         mix = recipe['mix']
         if hasattr(mix, 'items'):
             # Allow a single ingredient to stand in for a singleton list.
