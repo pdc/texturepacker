@@ -6,93 +6,93 @@
         <link rel="stylesheet" href="style/front.css" type="text/css">
     </head>
     <body>
-		<div id="container">
-			<section id="main">
-			    <h1><a href="http://github.com/pdc/minecraft-texture-maker">Minecraft Texture Maker</a></h1>
+        <div id="container">
+            <section id="main">
+                <h1>Minecraft Texture Maker</h1>
 
-			    <div id="description">
-			      	Build &amp; remix texture packs for 
-					Minecraft
-			    </div>
+                <div id="description">
+                    Build &amp; remix texture packs for
+                    Minecraft
+                </div>
 
-			    <p>
-					Define <a href="https://github.com/pdc/minecraft-texture-maker/wiki/Recipe">recipes</a> 
-					that specify how to create a <a href="http://www.minecraftwiki.net/wiki/Texture_Pack">texture pack</a> 
-					for <a href="http://minecraft.net/">Minecraft</a>
-					from PNG files, 
-					or from resources pulled out of existing texture packs. 
-					Use <code>maketexture</code> to build the texture pack 
-					automatically—no Photoshop required.
-				</p>
-					
-				<h2>Dependencies</h2>
-				<p>
-					Requires Python 2.7 and several Python modules listed in
-					the file <a href="https://github.com/pdc/minecraft-texture-maker/blob/master/REQUIREMENTS"><code>REQUIREMENTS</code></a>.
-				</p>
-				
-				
-				<h2>Install</h2>
-				<p>
+                <p>
+                    Define <a href="https://github.com/pdc/minecraft-texture-maker/wiki/Recipe">recipes</a>
+                    that specify how to create a <a href="http://www.minecraftwiki.net/wiki/Texture_Pack">texture pack</a>
+                    for <a href="http://minecraft.net/">Minecraft</a>
+                    from PNG files,
+                    or from resources pulled out of existing texture packs.
+                    Use <code>maketexture</code> to build the texture pack
+                    automatically—no Photoshop required.
+                </p>
+
+                <h2>Dependencies</h2>
+                <p>
+                    Requires Python 2.7 and several Python modules listed in
+                    the file <a href="https://github.com/pdc/minecraft-texture-maker/blob/master/REQUIREMENTS"><code>REQUIREMENTS</code></a>.
+                </p>
+
+
+                <h2>Install</h2>
+                <p>
+
 					Distribute 
 					(the replacement for Setuptools, in turn the 
 					replacement for Distutils)  has  been superseded 
 					by a future package 
 					Distutils2. Until the future arrives,
-					you will need to install this package by hand.
-				</p>
-			
-			   <p>
-					Start by downloading and unpacking the source.
+					you will need to install this package by hand.  
+              </p>
+
+               <p>
+					Start by unpacking the source code.
 					You can also clone the project with <a href="http://git-scm.com">Git</a>
-			     	by running:
-			     	<pre>$ git clone git://github.com/pdc/minecraft-texture-maker</pre>
-			   </p>	
-			
-				<p>
-					Then (possibly in a virtual environment created with 
-					virtualenv), install the dependencies:
-				</p>
-				
-				<pre><code>$ pip install -r REQUIREMENTS</code></pre>
-				
-				<p>
-					You can then run tests and build the sample texture packs:
-				</p>
-				
-				<pre><code>$ nosetests tests
+                 	by running:
+                 	<pre>$ git clone git://github.com/pdc/minecraft-texture-maker</pre>
+               </p>
+
+                <p>
+                    Then (possibly in a virtual environment created with
+                    virtualenv), install the dependencies:
+                </p>
+
+                <pre><code>$ pip install -r REQUIREMENTS</code></pre>
+
+                <p>
+                    You can then run tests and build the sample texture packs:
+                </p>
+
+                <pre><code>$ nosetests tests
 $ script/maketexture -v texturepacks/groovystipple.json</code></pre>
 
-				<p>
-					The work backlog is in the <a href="https://github.com/pdc/minecraft-texture-maker/wiki">wiki</a> for now.
-				</p>
-			</section>
+                <p>
+                    I intend to add proper installer files soon.
+                    The work backlog is in the <a href="https://github.com/pdc/minecraft-texture-maker/wiki">wiki</a> for now.
+                </p>
+            </section>
 
-			<section id="download">
+            <section id="download">
 
-			   <h2>Download</h2>
-			   <p>
-			     You can download this project in either
-			     <a href="http://github.com/pdc/minecraft-texture-maker/zipball/master" id="zip_link">zip<img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a> or
-			     <a href="http://github.com/pdc/minecraft-texture-maker/tarball/master" id="tar_link">tar<img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a> formats.
-			   </p>
-			
-				<h2>License</h2>
-				<p>LGPL</p>
-				
-				<h2>Contact</h2>
-				<p>
-					Damian Cugley (pdc@alleged.org.uk)
-				</p>
-			</section>
+               <h2>Download</h2>
+               <p>
+                 You can download this project in either
+                 <a href="http://github.com/pdc/minecraft-texture-maker/zipball/master" id="zip_link">zip<img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a> or
+                 <a href="http://github.com/pdc/minecraft-texture-maker/tarball/master" id="tar_link">tar<img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a> formats.
+               </p>
 
-		    <section id="footer">
-				<p>
-					Get the source code on GitHub:
-		     		<a id="fork_me" href="http://github.com/pdc/minecraft-texture-maker">pdc/minecraft-texture-maker<img src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="" /></a></a>
-		   </section>
-		</div>
+                <h2>License</h2>
+                <p>LGPL</p>
 
-  
+                <h2>Contact</h2>
+                <p>
+                    Damian Cugley (pdc@alleged.org.uk)
+                </p>
+            </section>
+
+            <section id="footer">
+                <p>
+                    Get the source code on GitHub:
+                    <a id="fork_me" href="http://github.com/pdc/minecraft-texture-maker">pdc/minecraft-texture-maker<img src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="" /></a></a>
+           </section>
+        </div>
     </body>
 </html>

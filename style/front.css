@@ -4,13 +4,13 @@
 
 body {
     margin-top: 1.0em;
-    
+
     font-size: 13px;
-    font-family: Verdana, "Droid Sans", sans-serif;
+    font-family: Georgia, sans-serif;
     line-height: 1.4;
     color: #CBA;
     background: #420;
-    background: -webkit-gradient(linear, left top, left bottom, 
+    background: -webkit-gradient(linear, left top, left bottom,
         from(#530), color-stop(5%, #420), color-stop(90%, #310), to(#200));
 }
 
@@ -36,78 +36,83 @@ body {
 
 h1, h2, h3 {
     margin: 1em 10px 0.5em;
-    
+
     font-family: "MuseoSlab500", Arial, Helvetica, sans-serif;
     font-weight: normal;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.7);
 }
-h1 { 
+
+h1 {
+    font-size: 4em;
+
     font-family: "AirstreamRegular", Arial, Helvetica, sans-serif;
-    font-size: 3.8em;
-    font-weight: 200;
-}
-h1 a { 
-    text-decoration: none 
+    font-weight: normal;
+    color: #FFF;
+    color: rgba(255, 255, 255, 0.9);
 }
 
-h2 { 
-    font-size: 1.5em; 
+h1 a {
+    text-decoration: none
 }
 
-h3 { 
-    text-align: center; color: #CCC; 
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    text-align: center; color: #CCC;
 }
 
 section p {
     margin: 1.25em 10px;
 }
 
-a:link { 
-    color: #CA6; 
+a:link {
+    color: #CA6;
 }
-a:visited { 
+a:visited {
     color: #CB8;
 }
 
-#description { 
-    font-size: 1.25em; 
-    margin: 1em 10px;
-    
+#description {
+    font-size: 1.5em;
+    margin: 0 10px 1em;
+
     font-family: "MuseoSlab500Italic";
 }
 
 #download {
-    position: relative;
 }
 
 #download p {
-    margin-right: 90px;
+    position: relative;
+    padding-bottom: 90px;
 }
 
 #zip_link img {
     display: block;
     position: absolute;
-    top: 0;
-    right: 0;
+    bottom: 0;
+    left: 0;
 }
 #tar_link img {
     display: block;
     position: absolute;
-    top: 90px;
-    right: 0;
+    bottom: 0;
+    left: 90px;
 }
 
 
 
-pre { 
-    background: #310; 
+pre {
+    background: #310;
     background: rgba(0, 0, 0, 0.25);
-    color: #CFC; 
+    color: #CFC;
     padding: 15px;
 }
-hr { 
-    border: 0; 
-    width: 80%; 
+hr {
+    border: 0;
+    width: 80%;
     border-bottom: 1px solid #aaa
 }
 .footer { text-align:center; padding-top:30px; font-style: italic; }
