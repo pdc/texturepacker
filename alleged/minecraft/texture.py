@@ -16,6 +16,7 @@ from base64 import b64decode
 import Image
 import httplib2
 import fnmatch
+import json
 
 
 _http = None
@@ -290,7 +291,7 @@ class Atlas(object):
     that defines the map inline, as it were.
     """
 
-    __slots__ = ['maps']
+    #__slots__ = ['maps']
     def __init__(self, maps={}):
         self.maps = dict(maps)
 
@@ -447,6 +448,7 @@ class Mixer(object):
     def __init__(self):
         self.packs = {}
         self.atlas = Atlas()
+        self._atlas_cache = weakref.WeakValueDictionary()
 
     def add_pack(self, name, pack):
         """Add this pack to the repertoire of this mixer.
@@ -563,19 +565,14 @@ class Mixer(object):
         # Varfious ways of decoding the pack spec.
         result = None
         data = None
-        atlas = None
+
         if isinstance(pack_spec, basestring):
             result = self.packs.get(pack_spec)
-            # Have we succeeded?
             if not result:
                 raise NotInMixer(pack_spec)
             return result
 
-        if 'maps' in pack_spec:
-            atlas = Atlas()
-            for name, map_spec in pack_spec['maps'].items():
-                atlas.add_map(name, self.get_map(atlas, map_spec))
-        atlas = atlas or Atlas()
+        atlas = self.get_atlas(pack_spec.get('maps'), base)
 
         if 'href' in pack_spec:
             url = pack_spec['href']
@@ -588,12 +585,7 @@ class Mixer(object):
                 if response['status'] in [200, 304]:
                     data = body
         elif 'file' in pack_spec:
-            file_path = pack_spec['file']
-            if base and base.startswith('file:///'):
-                base_path = base[7:]
-                if not os.path.exists(base_path) or not os.path.isdir(base_path):
-                    base_path = os.path.dirname(base_path)
-                file_path = os.path.join(base_path, file_path)
+            file_path = self.resolve_file_path(pack_spec['file'], base)
             result = SourcePack(file_path, atlas)
         elif 'data' in pack_spec:
             data = pack_spec['data']
@@ -609,6 +601,14 @@ class Mixer(object):
             raise NotInMixer(pack_spec)
         return result
 
+    def resolve_file_path(self, file_path, base):
+        if base and base.startswith('file:///'):
+            base_path = base[7:]
+            if not os.path.exists(base_path) or not os.path.isdir(base_path):
+                base_path = os.path.dirname(base_path)
+            file_path = os.path.join(base_path, file_path)
+        return file_path
+
     def get_map(self, atlas, spec):
         """Get a map from the pack if possible, otherwise try the global atlas."""
         try:
@@ -617,3 +617,29 @@ class Mixer(object):
         except NotInAtlas:
             pass
         return self.atlas.get_map(spec)
+
+    def get_atlas(self, atlas_spec, base):
+        """Get an atlas from this spec.
+
+        The spec is either a dictionary mapping
+        resource names to map specs,
+        or is a dictionary with a single member
+        'file' specifying a file to read the atlas from.
+        """
+        atlas = None
+        if atlas_spec:
+            if atlas_spec.keys() == ['file']:
+                file_path = self.resolve_file_path(atlas_spec['file'], base)
+                atlas = self._atlas_cache.get(file_path)
+                if atlas:
+                    return atlas
+                atlas = Atlas()
+                self._atlas_cache[file_path] = atlas
+                with open(file_path, 'rb') as strm:
+                    atlas_spec = json.load(strm)
+                print atlas_spec
+
+            atlas = atlas or Atlas()
+            for name, map_spec in atlas_spec.items():
+                atlas.add_map(name, self.get_map(atlas, map_spec))
+        return atlas

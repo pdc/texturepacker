@@ -18,6 +18,7 @@ from StringIO import StringIO
 from base64 import b64encode
 import shutil
 import httplib2
+import json
 
 
 class TestCase(unittest.TestCase):
@@ -609,6 +610,58 @@ class MixerTests(TestCase):
                             'names': ['a', 'b', 'c', 'd'],
                         }
                     }
+                }
+            },
+            'mix': {
+                'pack': 'bb',
+                'files': [
+                    {
+                        'file': 'ab.png',
+                        'source': 'b.png',
+                        'replace': {
+                            'pack': 'aa',
+                            'source': 'a.png',
+                            'cells': {'d': 'a', 'a': 'd'},
+                        }
+                    }
+                ]
+            }
+        }
+        pack = Mixer().make(recipe, base='file://' + os.path.abspath(self.test_dir))
+
+        self.assertEqual('ab', pack.label)
+        self.assertEqual('ababababk', pack.desc)
+        self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
+
+    def test_a_b_replace_external_atlas(self):
+        with open(os.path.join(self.test_dir, 'ab_maps.json'), 'wb') as strm:
+            json.dump({
+                'a.png': {
+                    'source_rect': {'width': 32, 'height': 32},
+                    'cell_rect': {'width': 16, 'height': 16},
+                    'names': ['a', 'b', 'c', 'd'],
+                },
+                'b.png': {
+                    'source_rect': {'width': 32, 'height': 32},
+                    'cell_rect': {'width': 16, 'height': 16},
+                    'names': ['a', 'b', 'c', 'd'],
+                }
+            }, strm)
+        with open(os.path.join(self.test_dir, 'xa.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'aa', 'aaaa', {'a.png': ('a.png', None)})
+        with open(os.path.join(self.test_dir, 'xb.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'bb', 'bb', {'b.png': ('b.png', None)})
+        recipe = {
+            'label': 'ab',
+            'desc': 'ababababk',
+            'packs': {
+                'aa': {
+                    'file': os.path.join(self.test_dir, 'xa.zip'), # absolute file name
+                    'maps': {'file': 'ab_maps.json'}
+                },
+                'bb': {
+                    'file': 'xb.zip',  # relative file name
+                    'maps': {'file': 'ab_maps.json'}
                 }
             },
             'mix': {
