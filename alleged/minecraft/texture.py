@@ -39,6 +39,28 @@ def _get_http():
         _http = httplib2.Http()
     return _http
 
+
+def resolve_file_path(file_path, base):
+    """Given a file path and a base URL, return a file path."""
+    if base and hasattr(base, 'items'):
+        if 'file' in base:
+            base = 'file:///' + base['file']
+    if base and base.startswith('file:///'):
+        base_path = base[7:]
+        if not os.path.exists(base_path) or not os.path.isdir(base_path):
+            base_path = os.path.dirname(base_path)
+        file_path = os.path.join(base_path, file_path)
+    return file_path
+
+class Loader(object):
+    def __init__(self):
+        pass
+
+    def get_bytes(self, spec, base=None):
+        with open(resolve_file_path(spec['file'], base), 'rb') as strm:
+            return strm.read()
+
+
 class ResourceBase(object):
     def __init__(self, name):
         self.name = name
@@ -449,6 +471,7 @@ class Mixer(object):
         self.packs = {}
         self.atlas = Atlas()
         self._atlas_cache = weakref.WeakValueDictionary()
+        self.loader = Loader()
 
     def add_pack(self, name, pack):
         """Add this pack to the repertoire of this mixer.
@@ -585,7 +608,7 @@ class Mixer(object):
                 if response['status'] in [200, 304]:
                     data = body
         elif 'file' in pack_spec:
-            file_path = self.resolve_file_path(pack_spec['file'], base)
+            file_path = resolve_file_path(pack_spec['file'], base)
             result = SourcePack(file_path, atlas)
         elif 'data' in pack_spec:
             data = pack_spec['data']
@@ -600,14 +623,6 @@ class Mixer(object):
         if not result:
             raise NotInMixer(pack_spec)
         return result
-
-    def resolve_file_path(self, file_path, base):
-        if base and base.startswith('file:///'):
-            base_path = base[7:]
-            if not os.path.exists(base_path) or not os.path.isdir(base_path):
-                base_path = os.path.dirname(base_path)
-            file_path = os.path.join(base_path, file_path)
-        return file_path
 
     def get_map(self, atlas, spec):
         """Get a map from the pack if possible, otherwise try the global atlas."""
@@ -628,8 +643,8 @@ class Mixer(object):
         """
         atlas = None
         if atlas_spec:
-            if atlas_spec.keys() == ['file']:
-                file_path = self.resolve_file_path(atlas_spec['file'], base)
+            if 'file' in atlas_spec:
+                file_path = resolve_file_path(atlas_spec['file'], base)
                 atlas = self._atlas_cache.get(file_path)
                 if atlas:
                     return atlas

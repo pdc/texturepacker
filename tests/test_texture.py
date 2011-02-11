@@ -293,6 +293,37 @@ class CompositeResourceTests(TestCase):
         self.assertRepresentIdenticalImages(self.get_data('a_b_replace.png'), bytes)
 
 
+class ExternalResourceTests(TestCase):
+    def setUp(self):
+        super(ExternalResourceTests, self).setUp()
+        with open(os.path.join(self.test_dir, 'stuff.json'), 'wb') as strm:
+            json.dump({'foo': 'bar', 'baz': 'quux'}, strm)
+        self.loader = Loader()
+
+    def test_bytes_file(self):
+        file_path = os.path.join(self.test_dir, 'stuff.json')
+        with open(file_path, 'rb') as strm:
+            expected_bytes = strm.read()
+        actual_bytes = self.loader.get_bytes({'file': file_path}, base=None)
+        self.assertEqual(expected_bytes, actual_bytes)
+
+    def test_base(self):
+        file_path = os.path.join(self.test_dir, 'stuff.json')
+        with open(file_path, 'rb') as strm:
+            expected_bytes = strm.read()
+        actual_bytes = self.loader.get_bytes({'file': 'stuff.json'}, base='file:///' + self.test_dir)
+        self.assertEqual(expected_bytes, actual_bytes)
+
+    def test_base2(self):
+        file_path = os.path.join(self.test_dir, 'stuff.json')
+        with open(file_path, 'rb') as strm:
+            expected_bytes = strm.read()
+        actual_bytes = self.loader.get_bytes({'file': 'stuff.json'}, base={'file': self.test_dir})
+        self.assertEqual(expected_bytes, actual_bytes)
+
+
+
+
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
         pack1 = self.sample_pack()
