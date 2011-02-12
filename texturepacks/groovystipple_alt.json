@@ -4,21 +4,7 @@
   "mix": {
     "pack": {
       "file": "GroovyStipple",
-      "maps": {
-        "terrain.png": [
-          {
-            "source_rect": {"x": 0, "y": 112, "width": 16, "height": 16},
-            "cell_rect": {"width": 16, "height": 16},
-            "names": ["track_corner"]
-          },
-          {
-            "source_rect": {"x": 64, "y": 160, "width": 16, "height": 16},
-            "cell_rect": {"width": 16, "height": 16},
-            "names": ["track_corner1"]
-          }
-        ]
-      }
-    },
+      "maps": {"file": "maps/stipple.maps.json"}},
     "files": [
       "gui/crafting.png",
       "gui/background.png",
@@ -41,10 +27,4 @@
         "file": "terrain.png",
         "replace": {
           "cells": {
-            "track_corner": "track_corner1"
-          }
-        }
-      }
-    ]
-  }
-}
+            "track_corner": "track_corner1"}}}]}}

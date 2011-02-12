@@ -296,32 +296,59 @@ class CompositeResourceTests(TestCase):
 class ExternalResourceTests(TestCase):
     def setUp(self):
         super(ExternalResourceTests, self).setUp()
-        with open(os.path.join(self.test_dir, 'stuff.json'), 'wb') as strm:
-            json.dump({'foo': 'bar', 'baz': 'quux'}, strm)
+        self.file_name = 'stuff.json'
+        self.file_path = os.path.join(self.test_dir, self.file_name)
+        self.stuff = {'foo': 'bar', 'baz': 'quux'}
+        with open(self.file_path, 'wb') as strm:
+            json.dump(self.stuff, strm)
         self.loader = Loader()
 
     def test_bytes_file(self):
-        file_path = os.path.join(self.test_dir, 'stuff.json')
-        with open(file_path, 'rb') as strm:
+        with open(self.file_path, 'rb') as strm:
             expected_bytes = strm.read()
-        actual_bytes = self.loader.get_bytes({'file': file_path}, base=None)
+        actual_bytes = self.loader.get_bytes({'file': self.file_path}, base=None)
         self.assertEqual(expected_bytes, actual_bytes)
 
     def test_base(self):
-        file_path = os.path.join(self.test_dir, 'stuff.json')
-        with open(file_path, 'rb') as strm:
+        with open(self.file_path, 'rb') as strm:
             expected_bytes = strm.read()
-        actual_bytes = self.loader.get_bytes({'file': 'stuff.json'}, base='file:///' + self.test_dir)
+        actual_bytes = self.loader.get_bytes({'file': self.file_name}, base='file:///' + self.test_dir)
         self.assertEqual(expected_bytes, actual_bytes)
 
     def test_base2(self):
-        file_path = os.path.join(self.test_dir, 'stuff.json')
-        with open(file_path, 'rb') as strm:
+        with open(self.file_path, 'rb') as strm:
             expected_bytes = strm.read()
-        actual_bytes = self.loader.get_bytes({'file': 'stuff.json'}, base={'file': self.test_dir})
+        actual_bytes = self.loader.get_bytes({'file': self.file_name}, base={'file': self.test_dir})
         self.assertEqual(expected_bytes, actual_bytes)
 
+    def test_base3(self):
+        with open(self.file_path, 'rb') as strm:
+            expected_bytes = strm.read()
+        actual_bytes = self.loader.get_bytes({'file': self.file_name},
+                base={'file': os.path.join(self.test_dir, 'other.json')})
+        self.assertEqual(expected_bytes, actual_bytes)
 
+    def test_get_spec(self):
+        spec = self.loader.maybe_get_spec({'file': self.file_path}, base=None)
+        self.assertEqual(self.stuff, spec)
+
+    def test_get_spec_inline(self):
+        spec = self.loader.maybe_get_spec({'alpha': 'omega'}, base=None)
+        self.assertEqual({'alpha': 'omega'}, spec)
+
+    def test_get_spec_twice_loads_it_once(self):
+        # testing caching
+        spec1 = self.loader.maybe_get_spec({'file': self.file_path}, base=None)
+        spec2 = self.loader.maybe_get_spec({'file': self.file_name}, base={'file': self.test_dir})
+        self.assertTrue(spec1 is spec2)
+
+    def test_url_1(self):
+        self.assertEqual('file://' + os.path.abspath(self.file_path),
+            self.loader.get_url({'file': self.file_path}, base=None))
+
+    def test_url_1(self):
+        self.assertEqual('file://' + os.path.abspath(self.file_path),
+            self.loader.get_url({'file': self.file_name}, base={'file': self.test_dir}))
 
 
 class MixerTests(TestCase):

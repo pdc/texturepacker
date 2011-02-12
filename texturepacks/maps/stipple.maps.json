@@ -1,0 +1,20 @@
+{
+  "terrain.png": [
+    {
+      "source_rect": {"width": 256, "height": 48},
+      "cell_rect": {"width": 16, "height": 16},
+      "names": [
+        "grass", "stone", "dirt", "dirt_grass", "planks", "step_side", "stop_top", "brick",
+            "tnt_side", "tnt_top", "tnt_bottom", "web", "rose", "dendelion", "water", "sapling",
+        "cobble", "bedrock", "sand", "gravel", "log_side", "log_top", "iron", "gold",
+            "diamond", "chest_top", "chest_side", "chest_front", "red_mushroom", "gray_mushroom", "1E", "fire",
+        "gold_ore", "iron_ore", "coal_ore", "bookcase", "mossy_cobble", "obsidian", "26", "27",
+          "28", "large_chest_front_left", "large_chest_front_right", "workbench_top", "furnace_front", "furnace_side", "dispenser", "fire1"]},
+    {
+      "source_rect": {"x": 0, "y": 112, "width": 16, "height": 16},
+      "cell_rect": {"width": 16, "height": 16},
+      "names": ["track_corner"]},
+    {
+      "source_rect": {"x": 64, "y": 160, "width": 16, "height": 16},
+      "cell_rect": {"width": 16, "height": 16},
+      "names": ["track_corner1"]}]}

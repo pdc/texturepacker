@@ -54,11 +54,62 @@ def resolve_file_path(file_path, base):
 
 class Loader(object):
     def __init__(self):
-        pass
+        self._specs = {}
+        self._things = {}
+
+    def get_url(self, spec, base=None):
+        """Given a spec, return URL for the resource it specifes.
+
+        The spec can have a 'file' member specifying a file path.
+        """
+        if spec.keys() == ['file']:
+            file_path = resolve_file_path(spec['file'], base)
+            return 'file:///' + os.path.abspath(file_path).lstrip('/\\')
+
+    def get_stream(self, spec, base=None):
+        """Given a spec, return input stream it specifies.
+
+        The spec can have a 'file' member specifying a file path.
+        """
+        url = self.get_url(spec, base)
+        if url:
+            if url.startswith('file:///'):
+                return open(url[7:], 'rb')
+
+    def get_url_stream(self, url):
+        """Given a spec, return input stream it specifies.
+
+        The spec can have a 'file' member specifying a file path.
+        """
+        if url.startswith('file:///'):
+            return open(url[7:], 'rb')
+        raise NotImplemented('{0!r}: unknown URL scheme'.format(url))
 
     def get_bytes(self, spec, base=None):
-        with open(resolve_file_path(spec['file'], base), 'rb') as strm:
+        """Given a spec, return the data at the location specified.
+
+        The spec can have a 'file' member specifying a file path.
+        """
+        with self.get_stream(spec, base) as strm:
             return strm.read()
+
+    def maybe_get_spec(self, spec, base=None):
+        """Given a spec, return spec it refers to or the spec.
+
+        The spec can have a 'file' member specifying a file path.
+
+        If there is no reference to external spec, then
+        return this spec.
+        """
+        url = self.get_url(spec, base)
+        if not url:
+            return spec
+        spec = self._specs.get(url)
+        if spec:
+            return spec
+        spec = json.load(self.get_url_stream(url))
+        self._specs[url] = spec
+        return spec
 
 
 class ResourceBase(object):
@@ -643,18 +694,7 @@ class Mixer(object):
         """
         atlas = None
         if atlas_spec:
-            if 'file' in atlas_spec:
-                file_path = resolve_file_path(atlas_spec['file'], base)
-                atlas = self._atlas_cache.get(file_path)
-                if atlas:
-                    return atlas
-                atlas = Atlas()
-                self._atlas_cache[file_path] = atlas
-                with open(file_path, 'rb') as strm:
-                    atlas_spec = json.load(strm)
-                print atlas_spec
-
-            atlas = atlas or Atlas()
-            for name, map_spec in atlas_spec.items():
-                atlas.add_map(name, self.get_map(atlas, map_spec))
+            atlas_spec = self.loader.maybe_get_spec(atlas_spec, base)
+            atlas = Atlas((name, self.get_map(atlas, map_spec))
+                for name, map_spec in atlas_spec.items())
         return atlas
