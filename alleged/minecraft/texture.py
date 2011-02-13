@@ -548,6 +548,9 @@ class Mixer(object):
         """
         new_pack = RecipePack(recipe['label'], recipe['desc'])
 
+        if 'maps' in recipe:
+            self.get_atlas(recipe['maps'], base, self.atlas)
+
         if 'packs' in recipe:
             for name, pack_spec in recipe['packs'].items():
                 self.add_pack(name, self.get_pack(pack_spec, base=base))
@@ -684,17 +687,30 @@ class Mixer(object):
             pass
         return self.atlas.get_map(spec)
 
-    def get_atlas(self, atlas_spec, base):
+    def get_atlas(self, atlas_spec, base, atlas=None):
         """Get an atlas from this spec.
+
+        Arguments --
+            atlas_spec -- dict or list specifying atlas
+            base -- used when licating external references (if any)
+            atlas -- merge new atlas data in to this atlas.
+                Default is to create a new atlas.
 
         The spec is either a dictionary mapping
         resource names to map specs,
         or is a dictionary with a single member
         'file' specifying a file to read the atlas from.
         """
-        atlas = None
+        if not atlas:
+            atlas = Atlas()
         if atlas_spec:
-            atlas_spec = self.loader.maybe_get_spec(atlas_spec, base)
-            atlas = Atlas((name, self.get_map(atlas, map_spec))
-                for name, map_spec in atlas_spec.items())
+            if hasattr(atlas_spec, 'items'):
+                atlas_spec = self.loader.maybe_get_spec(atlas_spec, base)
+            if hasattr(atlas_spec, 'items'):
+                for name, map_spec in atlas_spec.items():
+                    atlas.add_map(name, self.get_map(atlas, map_spec))
+            else:
+                # Atlas is a list of atlasses to be merged.
+                for spec in atlas_spec:
+                    self.get_atlas(spec, base, atlas)
         return atlas
