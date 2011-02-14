@@ -247,7 +247,7 @@ class AtlasTests(TestCase):
         self.atlas.add_map('b.png', map_b)
 
     def test_named_map(self):
-        m = self.atlas.get_map('a.png')
+        m = self.atlas.get_map('a.png', None)
         self.assertEqual((0, 0, 16, 16), m.get_box('yellow'))
 
     def test_grid_map(self):
@@ -255,7 +255,7 @@ class AtlasTests(TestCase):
             'source_rect': {'width': 32, 'height': 32},
             'cell_rect': {'width': 16, 'height': 16},
             'names': ['p', 'q', 'r', 's']
-        })
+        }, None)
         self.assertEqual((16, 16, 32, 32), m.get_box('s'))
 
     def test_composite_map(self):
@@ -266,7 +266,7 @@ class AtlasTests(TestCase):
                 'cell_rect': {'width': 16, 'height': 16},
                 'names': ['p', 'q', 'r', 's']
             }
-        ])
+        ], None)
         self.assertEqual((0, 0, 16, 16), m.get_box('yellow'))
         self.assertEqual((48, 16, 64, 32), m.get_box('s'))
 
@@ -761,6 +761,80 @@ class MixerTests(TestCase):
             'desc': 'ababababk',
             'maps': [
                 {'file': 'a.map.json'}, # external ref
+                { # inline spec
+                    'b.png': {
+                        'source_rect': {'width': 32, 'height': 32},
+                        'cell_rect': {'width': 16, 'height': 16},
+                        'names': ['ba', 'bb', 'bc', 'bd'],
+                    }
+                }
+            ],
+            'packs': {
+                'aa': {
+                    'file': os.path.join(self.test_dir, 'xa.zip'), # absolute file name
+                },
+                'bb': {
+                    'file': 'xb.zip',  # relative file name
+                }
+            },
+            'mix': {
+                'pack': 'bb',
+                'files': [
+                    {
+                        'file': 'ab.png',
+                        'source': 'b.png',
+                        'replace': {
+                            'pack': 'aa',
+                            'source': 'a.png',
+                            'cells': {'bd': 'aa', 'ba': 'ad'},
+                        }
+                    }
+                ]
+            }
+        }
+        pack = Mixer().make(recipe, base='file://' + os.path.abspath(self.test_dir))
+
+        self.assertEqual('ab', pack.label)
+        self.assertEqual('ababababk', pack.desc)
+        self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
+
+    def test_composite_atlas_multi_files(self):
+        # This eleaborate set-up represents the case where
+        # we have a beta 1.2 atlas which we want to augment
+        # to describe a texure pack woith extra (alternate) textures.
+        map_dir = os.path.join(self.test_dir, 'mapz')
+        if not os.path.exists(map_dir):
+            os.mkdir(map_dir)
+        with open(os.path.join(map_dir, 'a1.map.json'), 'wb') as strm:
+            json.dump({
+                'a.png': {
+                    'source_rect': {'width': 32, 'height': 16},
+                    'cell_rect': {'width': 16, 'height': 16},
+                    'names': ['aa', 'ab'],
+                }
+            }, strm)
+        with open(os.path.join(map_dir, 'a2.map.json'), 'wb') as strm:
+            json.dump([ # composite of many atlases
+                {'file': 'a1.map.json'},
+                {
+                    'a.png': [ # composite map
+                        'a.png', # from a1.map.json
+                        {
+                            'source_rect': {'y': 16, 'width': 32, 'height': 16},
+                            'cell_rect': {'width': 16, 'height': 16},
+                            'names': ['ac', 'ad'],
+                        }]
+                }
+            ], strm)
+        with open(os.path.join(self.test_dir, 'xa.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'aa', 'aaaa', {'a.png': ('a.png', None)})
+        with open(os.path.join(self.test_dir, 'xb.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'bb', 'bb', {'b.png': ('b.png', None)})
+        recipe = {
+            'label': 'ab',
+            'desc': 'ababababk',
+            'maps': [
+                {'file': 'mapz/a2.map.json'}, # external ref
                 { # inline spec
                     'b.png': {
                         'source_rect': {'width': 32, 'height': 32},

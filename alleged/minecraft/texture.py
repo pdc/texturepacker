@@ -376,11 +376,12 @@ class Atlas(object):
             map -- the map, a subclass of MapBase"""
         self.maps[name] = map
 
-    def get_map(self, spec):
+    def get_map(self, spec, base):
         """Get the specified map.
 
         Arguments --
             spec (string, list, or dict) -- specifies a map
+            base -- how to interpret file names
 
         Returns --
             a map
@@ -413,7 +414,7 @@ class Atlas(object):
             cell_box = cell_box[2:]
             return GridMap(source_box, cell_box, names)
         # It had better be a list of maps if we get this far.
-        return CompositeMap(self.get_map(x) for x in spec)
+        return CompositeMap(self.get_map(x, base) for x in spec)
 
 
 def pil_box(left=None, top=None, right=None, bottom=None, x=None, y=None, width=None, height=None):
@@ -587,7 +588,7 @@ class Mixer(object):
                 res_name = file_spec['file']
                 src_res = src_pack.get_resource(file_spec.get('source', res_name))
                 if 'replace' in file_spec:
-                    src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name))
+                    src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name), base)
                     res = CompositeResource(res_name, src_res, src_map)
                     specs = file_spec['replace']
                     if hasattr(specs, 'items'):
@@ -597,7 +598,7 @@ class Mixer(object):
                         src2_res = src2_pack.get_resource(
                                 spec.get('source', res_name))
                         src2_map = self.get_map(src2_pack.atlas,
-                                spec.get('map', src2_res.name))
+                                spec.get('map', src2_res.name), base)
                         cells = spec['cells']
                         res.replace(src2_res, src2_map, cells)
                 elif res_name == src_res.name:
@@ -678,14 +679,14 @@ class Mixer(object):
             raise NotInMixer(pack_spec)
         return result
 
-    def get_map(self, atlas, spec):
+    def get_map(self, atlas, spec, base):
         """Get a map from the pack if possible, otherwise try the global atlas."""
         try:
             if atlas:
-                return atlas.get_map(spec)
+                return atlas.get_map(spec, base)
         except NotInAtlas:
             pass
-        return self.atlas.get_map(spec)
+        return self.atlas.get_map(spec, base)
 
     def get_atlas(self, atlas_spec, base, atlas=None):
         """Get an atlas from this spec.
@@ -704,13 +705,14 @@ class Mixer(object):
         if not atlas:
             atlas = Atlas()
         if atlas_spec:
+            atlas_base = {'file': resolve_file_path(atlas_spec['file'], base)} if 'file' in atlas_spec else base
             if hasattr(atlas_spec, 'items'):
                 atlas_spec = self.loader.maybe_get_spec(atlas_spec, base)
             if hasattr(atlas_spec, 'items'):
                 for name, map_spec in atlas_spec.items():
-                    atlas.add_map(name, self.get_map(atlas, map_spec))
+                    atlas.add_map(name, self.get_map(atlas, map_spec, atlas_base))
             else:
                 # Atlas is a list of atlasses to be merged.
                 for spec in atlas_spec:
-                    self.get_atlas(spec, base, atlas)
+                    self.get_atlas(spec, atlas_base, atlas)
         return atlas
