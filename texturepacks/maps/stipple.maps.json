@@ -1,9 +1,0 @@
-[
-  {"file": "beta1_2.maps.yaml"},
-  {
-  "terrain.png": [
-    "terrain.png",
-    {
-      "source_rect": {"x": 64, "y": 160, "width": 16, "height": 16},
-      "cell_rect": {"width": 16, "height": 16},
-      "names": ["track_corner1"]}]}]

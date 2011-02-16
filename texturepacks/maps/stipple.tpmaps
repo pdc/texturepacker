@@ -1,0 +1,11 @@
+# Stipple textures have one alternate tile, the angular track corner.
+-
+  file: beta1_2.tpmaps
+-
+  terrain.png:
+    - terrain.png
+    -
+      source_rect: {x: 64, y: 160, width: 16, height: 16}
+      cell_rect: {width: 16, height: 16}
+      names:
+        - track_corner1

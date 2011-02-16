@@ -4,7 +4,7 @@
   "mix": {
     "pack": {
       "file": "/Users/pdc/Library/Application Support/minecraft/texturepacks/Frenden6_1a.zip",
-      "maps": {"file": "maps/frenden6_1a.maps.yaml"}
+      "maps": {"file": "maps/frenden6_1a.tpmaps"}
     },
     "files": [
       "*.png",

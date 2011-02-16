@@ -62,14 +62,15 @@ def main(argv=None):
                 raise Usage('Unexpected option {0!r}'.format(opt))
 
         for arg in args:
-            if arg.endswith('.json'):
+            suf = os.path.splitext(arg)[1]
+            if suf == '.json':
                 with open(arg, 'rb') as strm:
                     recipe = json.load(strm)
-            elif arg.endswith('.yaml') or arg.endswith('.yml'):
+            elif suf in ['.yaml', '.yml', '.tprx']:
                 with open(arg, 'rb') as strm:
                     recipe = yaml.load(strm)
             else:
-                raise Usage('{0!r}: expected .yaml or .json file name')
+                raise Usage('{0!r}: expected file name ending in one of .tprx, .yaml, .yml, .json'.format(arg))
 
             base = 'file://' + os.path.abspath(arg)
             pack = mixer.make(recipe, base=base)

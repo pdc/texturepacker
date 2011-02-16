@@ -1,0 +1,18 @@
+label: "InsaneCraft - By LechD (alt glass)"
+desc: "Pattern Flavored Goodness!"
+mix:
+  pack:
+    file: "/Users/pdc/Library/Application Support/minecraft/texturepacks/insanecraft.zip"
+    maps:
+      file: maps/beta1_2.tpmaps
+  files:
+    - "*.png"
+    -
+      file: "terrain.png"
+      replace:
+        cells:
+          - glass
+        pack:
+          file: GroovyStipple
+          maps:
+            file: maps/beta1_2.tpmaps

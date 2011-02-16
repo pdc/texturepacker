@@ -24,7 +24,7 @@
     {
       "pack": {
         "file": "SmoothStipple",
-        "maps": {"file": "maps/stipple.maps.json"}},
+        "maps": {"file": "maps/stipple.tpmaps"}},
       "files": [
         "pack.png",
         {

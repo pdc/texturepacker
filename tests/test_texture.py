@@ -358,8 +358,6 @@ class ExternalResourceTests(TestCase):
             self.loader.get_url({'file': self.file_name}, base={'file': self.test_dir}))
 
 
-
-
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
         pack1 = self.sample_pack()

@@ -4,7 +4,7 @@
   "mix": {
     "pack": {
       "file": "GroovyStipple",
-      "maps": {"file": "maps/stipple.maps.json"}},
+      "maps": {"file": "maps/stipple.tpmaps"}},
     "files": [
       "gui/crafting.png",
       "gui/background.png",
