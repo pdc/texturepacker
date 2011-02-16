@@ -1,0 +1,7 @@
+# Frenden’s pack is beta 1.2 with some alternate textures added.
+- file: beta1_2.maps.yaml
+- terrain.png:
+    - terrain.png
+    - source_rect: {x: 64, y: 160, width: 256, height: 32}
+      cell_rect: {width: 16, height: 16}
+      names: [cobble1, planks1, planks2, dispenser1]

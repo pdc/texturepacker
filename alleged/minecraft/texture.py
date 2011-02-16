@@ -17,6 +17,7 @@ import Image
 import httplib2
 import fnmatch
 import json
+import yaml
 
 
 _http = None
@@ -77,12 +78,17 @@ class Loader(object):
                 return open(url[7:], 'rb')
 
     def get_url_stream(self, url):
-        """Given a spec, return input stream it specifies.
+        """Given a URL, return input stream it specifies.
 
-        The spec can have a 'file' member specifying a file path.
+        Returns --
+            meta, strm
+            where --
+                meta is a dict containing 'content-type'
+                strm is a file-like object
         """
         if url.startswith('file:///'):
-            return open(url[7:], 'rb')
+            meta = {'content-type': 'application/json' if url.endswith('.json') else 'application/yaml'}
+            return meta, open(url[7:], 'rb')
         raise NotImplemented('{0!r}: unknown URL scheme'.format(url))
 
     def get_bytes(self, spec, base=None):
@@ -107,7 +113,11 @@ class Loader(object):
         spec = self._specs.get(url)
         if spec:
             return spec
-        spec = json.load(self.get_url_stream(url))
+        meta, strm = self.get_url_stream(url)
+        if meta['content-type'] == 'application/json':
+            spec = json.load(strm)
+        else:
+            spec = yaml.load(strm)
         self._specs[url] = spec
         return spec
 

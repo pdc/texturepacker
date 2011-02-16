@@ -332,6 +332,13 @@ class ExternalResourceTests(TestCase):
         spec = self.loader.maybe_get_spec({'file': self.file_path}, base=None)
         self.assertEqual(self.stuff, spec)
 
+    def test_get_spec_yaml(self):
+        file_path = os.path.join(self.test_dir, 'nonsense.yaml')
+        with open(file_path, 'wt') as strm:
+            strm.write('hello: world\nthis:\n- that\n- the other\n')
+        spec = self.loader.maybe_get_spec({'file': file_path}, base=None)
+        self.assertEqual({'hello': 'world', 'this': ['that', 'the other']}, spec)
+
     def test_get_spec_inline(self):
         spec = self.loader.maybe_get_spec({'alpha': 'omega'}, base=None)
         self.assertEqual({'alpha': 'omega'}, spec)
@@ -346,9 +353,11 @@ class ExternalResourceTests(TestCase):
         self.assertEqual('file://' + os.path.abspath(self.file_path),
             self.loader.get_url({'file': self.file_path}, base=None))
 
-    def test_url_1(self):
+    def test_url_2(self):
         self.assertEqual('file://' + os.path.abspath(self.file_path),
             self.loader.get_url({'file': self.file_name}, base={'file': self.test_dir}))
+
+
 
 
 class MixerTests(TestCase):

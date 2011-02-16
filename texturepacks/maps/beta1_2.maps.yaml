@@ -1,0 +1,306 @@
+# Describes the layout of texture packs for minecraft Beta 1.2
+# Many of the names are made up by me
+# and are not official names from Mojang.
+
+terrain.png:
+  - source_rect: {width: 256, height: 128}
+    cell_rect: {width: 16, height: 16}
+    names: [
+        grass, stone, dirt, dirt_grass, planks, step_side, step_top, brick,
+            tnt_side, tnt_top, tnt_bottom, web, rose, dendelion, water, sapling,
+        cobble, bedrock, sand, gravel, log_side, log_top, iron, gold,
+            diamond, chest_top, chest_side, chest_front, red_mushroom, gray_mushroom, "1E", fire,
+        gold_ore, iron_ore, coal_ore, bookcase, mossy_cobble, obsidian, "26", "27",
+          "28", large_chest_front_right, large_chest_front_left, workbench_top, furnace_front, furnace_side, dispenser, fire1,
+        sponge, glass, diamond_ore, redstone_ore, leaves, leaves_unfancy, "36", "37",
+          "38", large_chest_back_left, large_chest_back_right, workbench_front, workbench_side, furnace_lit_front, furnace_top, "3F",
+        wool, spawner, snow, ice, dirt_snow, cactus_top, cactus_side, cactus_slice,
+          clay, cane, speaker, record_player, "4C", "4D", "4E", "4F",
+        torch, wooden_door_top, iron_door_top, ladder, redstone, redstone_line, tilled_soil_irrigated, tilled_soil,
+          crop0, crop1, crop2, crop3, crop4, crop5, crop6, crop7,
+        lever, wooden_door_bottom, iron_door_bottom, redstone_torch_lit, redstone_lit, redstone_line_lit, pumpkin_top, netherrack,
+          soulsand, glowstone, "6A", "6B", "6C", "6D", "6E", "6F",
+        track_corner, black_wool, gray_wool, redstone_torch, pine_log, birch_log, pumpkin_side, pumpkin_front,
+          pumpkin_front_lit, cake_top, cake_side, cake_slice, cake_bottom, "7D", "7E", "7F"]
+  - source_rect: {"x": 0, "y": 128, width: 48, height: 112}
+    cell_rect: {width: 16, height: 16}
+    names: [
+        track, red_wool, pink_wool,
+        lapis_lazuli, green_wool, lime_wool,
+        lapis_lazuli_ore, brown_wool, yellow_wool,
+        sandstone_top, blue_wool, light_blue_wool,
+        sandstone_side, purple_wool, magenta_wool,
+        sandstone_bottom, cyan_wool, orange_wool,
+        "E0", light_gray_wool, "E2"]
+  - source_rect: {"x": 64, "y": 128, width: 32, height: 16}
+    cell_rect: {width: 16, height: 16}
+    names: [leaves1, leaves_unfancy1]
+  - source_rect: {"x": 192, "y": 128, width: 16, height: 16}
+    cell_rect: {width: 16, height: 16}
+    names: [cake_icon]
+  - source_rect: {"x": 0, "y": 240, width: 160, height: 16}
+    cell_rect: {width: 16, height: 16}
+    names: [crack0, crack1, crack2, crack3, crack4, crack5, crack6, crack7, crack8, crack9]
+  - source_rect: {"x": 208, "y": 192, width: 48, height: 32}
+    cell_rect: {width: 16, height: 16}
+    names: [water0, water1, water2, "DD", water3, water4]
+  - source_rect: {"x": 208, "y": 224, width: 48, height: 32}
+    cell_rect: {width: 16, height: 16}
+    names: [lava0, lava1, lava2, "FD", lava3, lava4]
+art/kz.png:
+  - source_rect: {width: 128, height: 16}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - painting_1x1_1
+      - painting_1x1_2
+      - painting_1x1_3
+      - painting_1x1_4
+      - painting_1x1_5
+      - painting_1x1_6
+      - painting_1x1_8
+  - source_rect: {y: 32, width: 160, height: 16}
+    cell_rect: {width: 32, height: 16}
+    names:
+      - painting_2x1_1
+      - painting_2x1_2
+      - painting_2x1_3
+      - painting_2x1_4
+      - painting_2x1_5
+  - source_rect: {y: 64, width: 32, height: 32}
+    cell_rect: {width: 16, height: 32}
+    names:
+      - painting_1x2_1
+      - painting_1x2_2
+  - source_rect: {y: 96, width: 64, height: 32}
+    cell_rect: {width: 64, height: 32}
+    names:
+      - painting_4x2_1
+  - source_rect: {y: 128, width: 160, height: 32}
+    cell_rect: {width: 32, height: 32}
+    names:
+      - painting_2x2_1
+      - painting_2x2_2
+      - painting_2x2_3
+      - painting_2x2_4
+      - painting_2x2_5
+  - source_rect: {y: 192, width: 128, height: 64}
+    cell_rect: {width: 64, height: 64}
+    names:
+      - painting_4x4_1
+      - painting_4x4_2
+  - source_rect: {x: 192, y: 0, width: 64, height: 64}
+    cell_rect: {width: 64, height: 64}
+    names:
+      - painting_back
+  - source_rect: {x: 192, y: 64, width: 64, height: 96}
+    cell_rect: {width: 64, height: 48}
+    names:
+      - painting_4x3_1
+      - painting_4x3_2
+gui/icons.png:
+  - source_rect: {width: 16, height: 16}
+    cell_rect: {width: 16, height: 16}
+    names: [crosshair]
+  - source_rect: {x: 16, y: 0, width: 64}
+    cell_rect: {width: 8, height: 8}
+    names:
+      - heart_slot_1
+      - heart_slot_2
+      - heart_slot_3
+      - heart_slot_4
+      - heart
+      - half_heart
+      - heart_faded
+      - half_heart_faded
+  - source_rect: {x: 16, y: 8, width: 32}
+    cell_rect: {width: 8, height: 8}
+    names:
+      - armour_empty
+      - armour_half
+      - armout_full
+      - armour
+  - source_rect: {x: 16, y: 16, width: 16}
+    cell_rect: {width: 8, height: 8}
+    names:
+      - bubble
+      - bubble_pop
+gui/items.png:
+  - source_rect: {width: 80, height: 144}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - leather_cap
+      - chain_helmet
+      - iron_helmet
+      - diamond_helmet
+      - gold_helmet
+      - leather_shirt
+      - chain_chestplate
+      - iron_chestplate
+      - diamond_chestplate
+      - gold_chestplate
+      - leather_pants
+      - chain_leggings
+      - iron_leggings
+      - diamond_leggings
+      - gold_leggings
+      - leather_boots
+      - chain_boots
+      - iron_boots
+      - diamond_boots
+      - gold_boots
+      - wood_sword
+      - stone_sword
+      - iron_sword
+      - diamond_sword
+      - gold_sword
+      - wood_shovel
+      - stone_shovel
+      - iron_shovel
+      - diamond_shovel
+      - gold_shovel
+      - wood_pick
+      - stone_pick
+      - iron_pick
+      - diamond_pick
+      - gold_pick
+      - wood_axe
+      - stone_axe
+      - iron_axe
+      - diamond_axe
+      - gold_axe
+      - wood_hoe
+      - stone_hoe
+      - iron_hoe
+      - diamond_hoe
+      - gold_hoe
+  - source_rect: {x: 80, y: 0, width: 144, height: 80}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - flint_and_steel
+      - flint
+      - coal
+      - string
+      - seeds
+      - apple
+      - golden_apple
+      - egg
+      - sugar
+      - bow
+      - brick
+      - iron_ingot
+      - feather
+      - wheat
+      - painting
+      - sugar_cane
+      - bone
+      - cake
+      - arrow
+      - quiver
+      - gold_ingot
+      - sulphur
+      - bread
+      - sign
+      - wood_door
+      - iron_door
+      - "2D"
+      - compass
+      - diamond
+      - redstone
+      - clay
+      - paper
+      - book
+      - "3C"
+      - "3D"
+      - clock
+      - bowl
+      - mushroom_stew
+      - glowsone
+      - bucket
+      - bucket_water
+      - bucket_lava
+      - bucket_milk
+  - source_rect: {x: 224, y: 0, width: 16, height: 32}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - snowball
+      - slimeball
+  - source_rect: {x: 240, y: 0, width: 16, height: 64}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - helmet_slot
+      - chestplate_slot
+      - leggings_slot
+      - boots_slot
+  - source_rect: {x: 112, y: 80, width: 64, height: 32}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - raw_porkchop
+      - cooked_porkchop
+      - raw_fish
+      - cooked_fish
+      - leather
+      - saddle
+  - source_rect: {x: 224, y: 64, width: 32, height: 128}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - ink_sac
+      - gray_dye
+      - rose_red
+      - pink_dye
+      - cactus_green
+      - lime_dye
+      - brown_dye
+      - dandelion_yellow
+      - lapis_lazuli
+      - light_blue_dye
+      - purple_dye
+      - magenta_dye
+      - cyan_dye
+      - orange_dye
+      - light_gray_dye
+      - bonemeal
+  - source_rect: {x: 112, y: 144, width: 32, height: 48}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - minecart
+      - boat
+      - storage_minecart
+      - "B8"
+      - powered_minecart
+  - source_rect: {x: 0, y: 240, width: 32, height: 16}
+    cell_rect: {width: 16, height: 16}
+    names:
+      - gold_music_disc
+      - green_music_disc
+misc/dial.png:
+  source_rect: {width: 16, height: 16}
+  cell_rect: {width: 16, height: 8}
+  names: [sun, moon]
+particles.png:
+  - source_rect: {width: 64, height: 16}
+    cell_rect: {width: 8, height: 8}
+    names:
+      - smoke1
+      - smoke2
+      - smoke3
+      - smoke4
+      - smoke5
+      - smoke6
+      - smoke7
+      - smoke8
+      - splash1
+      - splash2
+      - splash3
+      - splash4
+      - splash5
+      - splash6
+      - splash7
+      - splash8
+  - source_rect: {x: 0, y: 16, width: 16, height: 24}
+    cell_rect: {width: 8, height: 8}
+    names:
+      - bubble
+      - hook
+      - flame1
+      - flame2
+      - note
