@@ -333,7 +333,7 @@ class ExternalResourceTests(TestCase):
         self.assertEqual(self.stuff, spec)
 
     def test_get_spec_yaml(self):
-        file_path = os.path.join(self.test_dir, 'nonsense.yaml')
+        file_path = os.path.join(self.test_dir, 'nonsense.tpmaps')
         with open(file_path, 'wt') as strm:
             strm.write('hello: world\nthis:\n- that\n- the other\n')
         spec = self.loader.maybe_get_spec({'file': file_path}, base=None)
@@ -921,6 +921,14 @@ class MixerTests(TestCase):
                     self.fail('Should not find {0}'.format(file_name))
                 except KeyError:
                     pass
+
+
+class TestTexturePackDir(unittest.TestCase):
+    @unittest.skipUnless(sys.platform.startswith("darwin"), "requires Mac OS X")
+    def test_mac_os_x(self):
+        expected = os.path.expanduser('~/Library/Application Support/minecraft/texturepacks')
+        actual = minecraft_texture_pack_dir_path()
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':

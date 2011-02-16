@@ -41,6 +41,18 @@ def _get_http():
     return _http
 
 
+MINECRAFT_TEXTURE_PACK_DIR_PATH_FUNCS = {
+    'windows': lambda: os.path.expandvars('%appdata%\\.minecraft\\texturepacks'),
+    'darwin': lambda: os.path.expanduser('~/Library/Application Support/minecraft/texturepacks'),
+    'default': lambda: os.path.expanduser('~/.minecraft/texturepacks'),
+}
+
+def minecraft_texture_pack_dir_path():
+    """Return the path to the directory for installing texture packs."""
+    func = (MINECRAFT_TEXTURE_PACK_DIR_PATH_FUNCS.get(sys.platform)
+        or MINECRAFT_TEXTURE_PACK_DIR_PATH_FUNCS['default'])
+    return func()
+
 def resolve_file_path(file_path, base):
     """Given a file path and a base URL, return a file path."""
     if base and hasattr(base, 'items'):
