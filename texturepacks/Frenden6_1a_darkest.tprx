@@ -1,0 +1,13 @@
+label: Frenden 6A (darkest wood)
+desc: Plans and wooden objects are darkest
+mix:
+  pack:
+    href: "minecraft:texturepacks/Frenden6_1a.zip"
+    maps: {file: maps/frenden6_1a.tpmaps}
+  files:
+    - "*.png"
+    -
+      file: terrain.png
+      replace:
+        cells:
+          planks: planks2
