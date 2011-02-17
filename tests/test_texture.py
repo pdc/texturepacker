@@ -357,6 +357,19 @@ class ExternalResourceTests(TestCase):
         self.assertEqual('file://' + os.path.abspath(self.file_path),
             self.loader.get_url({'file': self.file_name}, base={'file': self.test_dir}))
 
+    @patch('__builtin__.open')
+    def test_internal_url(self, mock_open):
+        mock_open.return_value = StringIO('fish')
+        url = 'minecraft:texturepacks/foo.tprx'
+        spec = self.loader.maybe_get_spec({'href': url}, base=None)
+        self.assertEqual('fish', spec)
+        self.assertTrue(mock_open.called)
+
+        expected_path = os.path.join(minecraft_texture_pack_dir_path(), 'foo.tprx')
+        self.assertEqual(expected_path, mock_open.call_args[0][0])
+        self.assertTrue(mock_open.call_args[0][1].startswith('r'))
+
+        # XXX Add test requiring URLDECODE
 
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):

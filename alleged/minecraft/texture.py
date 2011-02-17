@@ -41,17 +41,21 @@ def _get_http():
     return _http
 
 
-MINECRAFT_TEXTURE_PACK_DIR_PATH_FUNCS = {
-    'windows': lambda: os.path.expandvars('%appdata%\\.minecraft\\texturepacks'),
-    'darwin': lambda: os.path.expanduser('~/Library/Application Support/minecraft/texturepacks'),
-    'default': lambda: os.path.expanduser('~/.minecraft/texturepacks'),
+MINECRAFT_DIR_PATH_FUNCS = {
+    'windows': lambda: os.path.expandvars('%appdata%\\.minecraft'),
+    'darwin': lambda: os.path.expanduser('~/Library/Application Support/minecraft'),
+    'default': lambda: os.path.expanduser('~/.minecraft'),
 }
+
+def minecraft_dir_path():
+    """Return the path to the directory containing directories for Minecraft customization."""
+    func = (MINECRAFT_DIR_PATH_FUNCS.get(sys.platform)
+        or MINECRAFT_DIR_PATH_FUNCS['default'])
+    return func()
 
 def minecraft_texture_pack_dir_path():
     """Return the path to the directory for installing texture packs."""
-    func = (MINECRAFT_TEXTURE_PACK_DIR_PATH_FUNCS.get(sys.platform)
-        or MINECRAFT_TEXTURE_PACK_DIR_PATH_FUNCS['default'])
-    return func()
+    return os.path.join(minecraft_dir_path(), 'texturepacks')
 
 def resolve_file_path(file_path, base):
     """Given a file path and a base URL, return a file path."""
@@ -78,6 +82,14 @@ class Loader(object):
         if spec.keys() == ['file']:
             file_path = resolve_file_path(spec['file'], base)
             return 'file:///' + os.path.abspath(file_path).lstrip('/\\')
+        if spec.keys() == ['href']:
+            url = spec['href']
+            if url.startswith('minecraft:'):
+                file_path = url[10:].lstrip('/\\')
+                file_path = os.path.join(minecraft_dir_path(), file_path)
+                return 'file://' + file_path
+        # If we get this far we have failed to resolve the URL
+        return None
 
     def get_stream(self, spec, base=None):
         """Given a spec, return input stream it specifies.
