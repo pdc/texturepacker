@@ -469,6 +469,17 @@ class MixerTests(TestCase):
         with self.assertRaises(NotInMixer):
             pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
 
+    def test_get_pack_from_minecraft(self):
+        pack1, data1 = self.sample_pack_and_bytes()
+
+        with patch('__builtin__.open') as mock_open:
+            mock_open.return_value = StringIO(data1)
+            pack2 = Mixer().get_pack({'href': 'minecraft:texturepacks/foobar.zip'})
+            self.assert_same_packs(pack1, pack2)
+
+            expected_path = os.path.join(minecraft_texture_pack_dir_path(), 'foobar.zip')
+            self.assertEqual(expected_path, mock_open.call_args[0][0])
+
     def test_b_plus_c(self):
         self.check_recipe({
             'mix': [

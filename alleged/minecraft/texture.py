@@ -69,6 +69,8 @@ def resolve_file_path(file_path, base):
         file_path = os.path.join(base_path, file_path)
     return file_path
 
+class CouldNotLoad(Exception): pass
+
 class Loader(object):
     def __init__(self):
         self._specs = {}
@@ -79,15 +81,16 @@ class Loader(object):
 
         The spec can have a 'file' member specifying a file path.
         """
-        if spec.keys() == ['file']:
+        if 'file' in spec:
             file_path = resolve_file_path(spec['file'], base)
             return 'file:///' + os.path.abspath(file_path).lstrip('/\\')
-        if spec.keys() == ['href']:
+        if 'href' in spec:
             url = spec['href']
             if url.startswith('minecraft:'):
                 file_path = url[10:].lstrip('/\\')
                 file_path = os.path.join(minecraft_dir_path(), file_path)
                 return 'file://' + file_path
+            return url
         # If we get this far we have failed to resolve the URL
         return None
 
@@ -96,10 +99,26 @@ class Loader(object):
 
         The spec can have a 'file' member specifying a file path.
         """
+
+        # Inline data.
+        if 'data' in spec:
+            return StringIO(spec['data'])
+        if 'base64' in spec:
+            return StringIO(b64decode(spec['base64']))
+
+        # Simply a file.
+        if 'file' in spec:
+            file_path = resolve_file_path(spec['file'], base)
+            return open(file_path, 'rb')
+
+        # Various external sources decribed using a URL.
         url = self.get_url(spec, base)
         if url:
-            if url.startswith('file:///'):
-                return open(url[7:], 'rb')
+            meta, strm = self.get_url_stream(url)
+            return strm
+
+        # If we get this far, we can’t work out a way to get a stream.
+        return None
 
     def get_url_stream(self, url):
         """Given a URL, return input stream it specifies.
@@ -112,8 +131,20 @@ class Loader(object):
         """
         if url.startswith('file:///'):
             meta = {'content-type': 'application/json' if url.endswith('.json') else 'application/yaml'}
+            # XXX allow for more contenbt-types than this!
+
             return meta, open(url[7:], 'rb')
-        raise NotImplemented('{0!r}: unknown URL scheme'.format(url))
+
+        if url.startswith('data:application/zip;base64,'):
+            return {'content-type': 'application/zip'}, StringIO(b64decode(url[28:]))
+            # XXX Allow for more content-types
+
+        response, body = _get_http().request(url)
+        if response['status'] in [200, 304]:
+            return response, StringIO(body)
+            # XXX What happens when HTTP fails?
+
+        raise CouldNotLoad('{0!r}: unknown URL scheme'.format(url))
 
     def get_bytes(self, spec, base=None):
         """Given a spec, return the data at the location specified.
@@ -543,9 +574,11 @@ class CompositeResource(ResourceBase):
 
 class NotInMixer(Exception):
     """Raised if you ask a mixer to use a pack it does not know about."""
-    def __init__(self, pack_spec):
+    def __init__(self, pack_spec, exc=None):
+        extra = ': ' + unicode(exc) if exc else ''
         super(NotInMixer, self).__init__(
-            '{0!r}: specified pack is not in mixer'.format(pack_spec))
+            '{0!r}: specified pack is not in mixer{1}'.format(pack_spec, extra))
+        self.inner_exception = exc
 
 class Mixer(object):
     """Create texture packs by mixing together existing ones.
@@ -674,10 +707,6 @@ class Mixer(object):
         if not pack_spec and fallback_pack:
             return fallback_pack
 
-        # Varfious ways of decoding the pack spec.
-        result = None
-        data = None
-
         if isinstance(pack_spec, basestring):
             result = self.packs.get(pack_spec)
             if not result:
@@ -686,32 +715,18 @@ class Mixer(object):
 
         atlas = self.get_atlas(pack_spec.get('maps'), base)
 
-        if 'href' in pack_spec:
-            url = pack_spec['href']
-            if url.startswith('data:application/zip;base64,'):
-                data = b64decode(url[28:])
-            elif url.startswith('file:///'):
-                result = SourcePack(url[7:], atlas)
-            else:
-                response, body = _get_http().request(url)
-                if response['status'] in [200, 304]:
-                    data = body
-        elif 'file' in pack_spec:
-            file_path = resolve_file_path(pack_spec['file'], base)
-            result = SourcePack(file_path, atlas)
-        elif 'data' in pack_spec:
-            data = pack_spec['data']
-        elif 'base64' in pack_spec:
-            data = b64decode(pack_spec['base64'])
+        # Varfious ways of decoding the pack spec.
+        try:
+            strm = self.loader.get_stream(pack_spec, base)
+        except CouldNotLoad, e:
+            raise NotInMixer(pack_spec, e)
 
         # If we have data, unpack it.
-        if not result and data:
-            result = SourcePack(StringIO(data), atlas)
-
-        # Have we succeeded?
-        if not result:
+        if not strm:
             raise NotInMixer(pack_spec)
-        return result
+
+        return SourcePack(strm, atlas)
+
 
     def get_map(self, atlas, spec, base):
         """Get a map from the pack if possible, otherwise try the global atlas."""
