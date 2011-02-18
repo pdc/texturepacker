@@ -72,6 +72,11 @@ def resolve_file_path(file_path, base):
 
 class CouldNotLoad(Exception): pass
 
+class DudeItsADirectory(Exception):
+    def __init__(self, path):
+        self.path = path
+        super(DudeItsADirectory, self).__init__('{!r}: is a directory'.format(path))
+
 class Loader(object):
     def __init__(self):
         self._specs = {}
@@ -120,6 +125,8 @@ class Loader(object):
         # Simply a file.
         if 'file' in spec:
             file_path = resolve_file_path(spec['file'], base)
+            if os.path.isdir(file_path):
+                raise DudeItsADirectory(file_path)
             return open(file_path, 'rb')
 
         # Various external sources decribed using a URL.
@@ -732,6 +739,8 @@ class Mixer(object):
             strm = self.loader.get_stream(pack_spec, base)
         except CouldNotLoad, e:
             raise NotInMixer(pack_spec, e)
+        except DudeItsADirectory, e:
+            return SourcePack(e.path, atlas)
 
         # If we have data, unpack it.
         if not strm:

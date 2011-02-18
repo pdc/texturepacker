@@ -480,6 +480,20 @@ class MixerTests(TestCase):
             expected_path = os.path.join(minecraft_texture_pack_dir_path(), 'foobar.zip')
             self.assertEqual(expected_path, mock_open.call_args[0][0])
 
+    def test_get_pack_from_dir(self):
+        # So many permutations, so many tests …
+        pack_name = 'bilbo_baggins'
+        pack_path = os.path.join(self.test_dir, pack_name)
+        if os.path.exists(pack_path):
+            shutil.rmtree(pack_path)
+        os.mkdir(pack_path)
+        with open(os.path.join(pack_path, 'a.png'), 'wb') as strm:
+            strm.write(self.get_data('a.png'))
+        with open(os.path.join(pack_path, 'b.png'), 'wb') as strm:
+            strm.write(self.get_data('b.png'))
+        pack = Mixer().get_pack({'file': pack_name}, base={'file': self.test_dir})
+        self.assertEqual(set(['a.png', 'b.png']), set(pack.get_resource_names()))
+
     def test_b_plus_c(self):
         self.check_recipe({
             'mix': [
