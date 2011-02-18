@@ -18,6 +18,7 @@ import httplib2
 import fnmatch
 import json
 import yaml
+from urlparse import urljoin
 
 
 _http = None
@@ -83,13 +84,23 @@ class Loader(object):
         """
         if 'file' in spec:
             file_path = resolve_file_path(spec['file'], base)
-            return 'file:///' + os.path.abspath(file_path).lstrip('/\\')
+            if os.path.isdir(file_path):
+                file_path += '/'
+            url = 'file:///' + os.path.abspath(file_path).lstrip('/\\')
+            return url
         if 'href' in spec:
             url = spec['href']
             if url.startswith('minecraft:'):
                 file_path = url[10:].lstrip('/\\')
                 file_path = os.path.join(minecraft_dir_path(), file_path)
                 return 'file://' + file_path
+
+            if base:
+                if hasattr('base', 'items'):
+                    base_url = self.get_url(base)
+                    url = urljoin(base_url, url)
+                else:
+                    url = urljoin(base, url)
             return url
         # If we get this far we have failed to resolve the URL
         return None
@@ -139,10 +150,11 @@ class Loader(object):
             return {'content-type': 'application/zip'}, StringIO(b64decode(url[28:]))
             # XXX Allow for more content-types
 
-        response, body = _get_http().request(url)
-        if response['status'] in [200, 304]:
-            return response, StringIO(body)
-            # XXX What happens when HTTP fails?
+        if url.startswith('http'):
+            response, body = _get_http().request(url)
+            if response['status'] in ['200', '304']:
+                return response, StringIO(body)
+            raise CouldNotLoad('{0!r}: could not load: status={1}'.format(url, response['status']))
 
         raise CouldNotLoad('{0!r}: unknown URL scheme'.format(url))
 
@@ -754,7 +766,11 @@ class Mixer(object):
         if not atlas:
             atlas = Atlas()
         if atlas_spec:
-            atlas_base = {'file': resolve_file_path(atlas_spec['file'], base)} if 'file' in atlas_spec else base
+            atlas_base = (base
+                if not hasattr(atlas_spec, 'items')
+                else {'file': resolve_file_path(atlas_spec['file'], base)}
+                if 'file' in atlas_spec
+                else self.loader.get_url(atlas_spec, base))
             if hasattr(atlas_spec, 'items'):
                 atlas_spec = self.loader.maybe_get_spec(atlas_spec, base)
             if hasattr(atlas_spec, 'items'):

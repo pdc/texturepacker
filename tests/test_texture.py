@@ -534,6 +534,7 @@ class MixerTests(TestCase):
         }, {'a.png': 'a.png', 'b.png': 'c.png'}, ['c.png'])
 
     def test_a_b_replace_using_expliict_maps(self):
+        # Previous tests used maps preloaded in to the Mixer.
         self.check_recipe({
             'mix': [
                 {
@@ -583,6 +584,7 @@ class MixerTests(TestCase):
 
 
     def test_a_b_replace_single_mix(self):
+        # The difference here is that the mix can be 1 dict instead of a lst
         self.check_recipe({
             'mix': {
                 'pack': 'alpha_bravo',
@@ -775,7 +777,7 @@ class MixerTests(TestCase):
         self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
 
     def test_composite_atlas(self):
-        with open(os.path.join(self.test_dir, 'a.map.json'), 'wb') as strm:
+        with open(os.path.join(self.test_dir, 'a.tpmaps'), 'wb') as strm:
             json.dump({
                 'a.png': {
                     'source_rect': {'width': 32, 'height': 32},
@@ -791,7 +793,7 @@ class MixerTests(TestCase):
             'label': 'ab',
             'desc': 'ababababk',
             'maps': [
-                {'file': 'a.map.json'}, # external ref
+                {'file': 'a.tpmaps'}, # external ref
                 { # inline spec
                     'b.png': {
                         'source_rect': {'width': 32, 'height': 32},
@@ -836,7 +838,7 @@ class MixerTests(TestCase):
         map_dir = os.path.join(self.test_dir, 'mapz')
         if not os.path.exists(map_dir):
             os.mkdir(map_dir)
-        with open(os.path.join(map_dir, 'a1.map.json'), 'wb') as strm:
+        with open(os.path.join(map_dir, 'a1.tpmaps'), 'wb') as strm:
             json.dump({
                 'a.png': {
                     'source_rect': {'width': 32, 'height': 16},
@@ -844,12 +846,12 @@ class MixerTests(TestCase):
                     'names': ['aa', 'ab'],
                 }
             }, strm)
-        with open(os.path.join(map_dir, 'a2.map.json'), 'wb') as strm:
+        with open(os.path.join(map_dir, 'a2.tpmaps'), 'wb') as strm:
             json.dump([ # composite of many atlases
-                {'file': 'a1.map.json'},
+                {'file': 'a1.tpmaps'},
                 {
                     'a.png': [ # composite map
-                        'a.png', # from a1.map.json
+                        'a.png', # from a1.tpmaps
                         {
                             'source_rect': {'y': 16, 'width': 32, 'height': 16},
                             'cell_rect': {'width': 16, 'height': 16},
@@ -865,7 +867,7 @@ class MixerTests(TestCase):
             'label': 'ab',
             'desc': 'ababababk',
             'maps': [
-                {'file': 'mapz/a2.map.json'}, # external ref
+                {'file': 'mapz/a2.tpmaps'}, # external ref
                 { # inline spec
                     'b.png': {
                         'source_rect': {'width': 32, 'height': 32},
@@ -898,6 +900,84 @@ class MixerTests(TestCase):
             }
         }
         pack = Mixer().make(recipe, base='file://' + os.path.abspath(self.test_dir))
+
+        self.assertEqual('ab', pack.label)
+        self.assertEqual('ababababk', pack.desc)
+        self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
+
+    @patch('httplib2.Http.request')
+    def test_composite_atlas_multi_http(self, mock_request):
+        # This eleaborate set-up represents the case where
+        # we have a beta 1.2 atlas which we want to augment
+        # to describe a texure pack woith extra (alternate) textures.
+        files = [
+            json.dumps([ # composite of many atlases
+                {'href': 'a1.tpmaps'},
+                {
+                    'a.png': [ # composite map
+                        'a.png', # from a1.tpmaps
+                        {
+                            'source_rect': {'y': 16, 'width': 32, 'height': 16},
+                            'cell_rect': {'width': 16, 'height': 16},
+                            'names': ['ac', 'ad'],
+                        }]
+                }
+            ]),
+            json.dumps({
+                'a.png': {
+                    'source_rect': {'width': 32, 'height': 16},
+                    'cell_rect': {'width': 16, 'height': 16},
+                    'names': ['aa', 'ab'],
+                }
+            })
+        ]
+        mock_request.side_effect = lambda *args, **kwargs: ({'status': '200', 'content-type': 'application/json'}, files.pop(0))
+
+        with open(os.path.join(self.test_dir, 'xa.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'aa', 'aaaa', {'a.png': ('a.png', None)})
+        with open(os.path.join(self.test_dir, 'xb.zip'), 'wb') as strm:
+            self.write_pack_contents(strm, 'bb', 'bb', {'b.png': ('b.png', None)})
+        recipe = {
+            'label': 'ab',
+            'desc': 'ababababk',
+            'maps': [
+                {'href': 'http://example.org/mapz/a2.tpmaps'}, # external ref
+                { # inline spec
+                    'b.png': {
+                        'source_rect': {'width': 32, 'height': 32},
+                        'cell_rect': {'width': 16, 'height': 16},
+                        'names': ['ba', 'bb', 'bc', 'bd'],
+                    }
+                }
+            ],
+            'packs': {
+                'aa': {
+                    'file': os.path.join(self.test_dir, 'xa.zip'), # absolute file name
+                },
+                'bb': {
+                    'file': 'xb.zip',  # relative file name
+                }
+            },
+            'mix': {
+                'pack': 'bb',
+                'files': [
+                    {
+                        'file': 'ab.png',
+                        'source': 'b.png',
+                        'replace': {
+                            'pack': 'aa',
+                            'source': 'a.png',
+                            'cells': {'bd': 'aa', 'ba': 'ad'},
+                        }
+                    }
+                ]
+            }
+        }
+        pack = Mixer().make(recipe, base='file://' + os.path.abspath(self.test_dir))
+
+        self.assertEqual(2, mock_request.call_count)
+        self.assertEqual('http://example.org/mapz/a2.tpmaps', mock_request.call_args_list[0][0][0])
+        self.assertEqual('http://example.org/mapz/a1.tpmaps', mock_request.call_args_list[1][0][0])
 
         self.assertEqual('ab', pack.label)
         self.assertEqual('ababababk', pack.desc)
