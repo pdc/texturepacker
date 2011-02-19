@@ -13,6 +13,7 @@ import weakref
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
+from datetime import datetime
 import Image
 import httplib2
 import fnmatch
@@ -339,6 +340,17 @@ class SourcePack(PackBase):
     def desc(self):
         res = self.get_resource('pack.txt')
         return res.get_content().split('\n', 1)[1].rstrip()
+        
+    def get_last_modified(self):
+        """Get a timestamp for the last time the content of the pack was changed.
+        
+        Note that the contents timestamps are what matter;
+        the same files archived twice will have the same
+        last-modified time.
+        """
+        ymdhms = max(inf.date_time for inf in self.zip.infolist())
+        return datetime(*ymdhms)
+            
 
 
 class SourceResource(ResourceBase):

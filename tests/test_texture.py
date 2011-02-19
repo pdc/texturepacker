@@ -13,6 +13,7 @@ import unittest
 from mock import Mock, patch
 
 from alleged.minecraft.texture import *
+from datetime import datetime, timedelta
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64encode
@@ -1047,6 +1048,21 @@ class TestTexturePackDir(unittest.TestCase):
         expected = os.path.expanduser('~/Library/Application Support/minecraft/texturepacks')
         actual = minecraft_texture_pack_dir_path()
         self.assertEqual(expected, actual)
+        
+        
+class TestLastModified(TestCase):
+    def test_file_pack(self):
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+
+        file_path = os.path.join(self.test_dir, 'manga.zip')
+        before = datetime.now() + timedelta(seconds=-2)
+        with open(file_path, 'wb') as strm:
+            self.write_pack_contents(strm,'AB', 'Has A and B', {'a.png': ('a.png', simple_map), 'b.png': ('b.png', simple_map)})
+        after = datetime.now() + timedelta(seconds=2)
+        
+        pack = SourcePack(file_path, Atlas())
+        self.assertTrue(before <= pack.get_last_modified() <= after,
+            'Expected {0} <= {1} <= {2}'.format(before, pack.get_last_modified(), after))
 
 
 if __name__ == '__main__':
