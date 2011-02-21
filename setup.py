@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 setup(
-    name='minecraft-texture-maker',
+    name='texturepacker',
     version='0.1',
     description='Assemble texture packs for Minecraft',
     long_description="""Provides program 'maketexture' for assembling texture packs for Minecraft
@@ -20,7 +20,7 @@ added items.
 """,
     author='Damian Cugley',
     author_email='pdc@alleged.org.uk',
-    url = 'http://pdc.github.com/minecraft-texture-maker/',
+    url = 'http://pdc.github.com/texturepacker/',
 
     requires=[
         'PIL(>=1.1.7)',

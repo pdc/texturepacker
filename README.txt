@@ -1,10 +1,12 @@
-Minecraft Texture Maker
-=======================
+Texturepacker
+=============
+
+Minecraft Texture-Pack Maker
 
 Purpose
 -------
 
-Minecraft Texture Maker provides program ``maketexture`` for assembling
+Texturepacker provides program ``maketexture`` for assembling
 texture packs for Minecraft using recipes written in a simple language
 expressed using JSON or as Python dicts, and a library of Python classes
 that can be used to do the same thing in your own programs.
