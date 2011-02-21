@@ -1,0 +1,6 @@
+recursive-include examples *.tprx *.tpmaps
+recursive-include examples/GroovyStipple *.png *.txt
+recursive-include examples/SmoothStipple *.png *.txt
+include REQUIREMENTS
+include tests/*.py tests/test_data/*.png
+include README.*

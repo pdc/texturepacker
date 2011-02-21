@@ -75,7 +75,7 @@ class CouldNotLoad(Exception): pass
 class DudeItsADirectory(Exception):
     def __init__(self, path):
         self.path = path
-        super(DudeItsADirectory, self).__init__('{!r}: is a directory'.format(path))
+        super(DudeItsADirectory, self).__init__('{0!r}: is a directory'.format(path))
 
 class Loader(object):
     def __init__(self):
