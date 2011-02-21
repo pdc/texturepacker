@@ -16,13 +16,14 @@ import getopt
 
 import json
 import yaml
-from alleged.minecraft.texture import Mixer, minecraft_texture_pack_dir_path
+from texturepacker import Mixer, minecraft_texture_pack_dir_path
 
-VERSION = '0.0 2011-02-05'
+VERSION = '0.1 2011-02-21'
 
 
 help_message = '''
-{argv0} [--output=FILE|DIR|-] FILE...
+{argv0} [-v] [ --output=FILE | - ] FILE
+{argv0} [-v] [ --output=DIR | --install ] FILE...
 {argv0} --help
 {argv0} --version
 '''
