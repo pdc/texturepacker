@@ -1,6 +1,6 @@
-@import url(airstream/stylesheet.css);
 @import url(museoslab_500_macroman/stylesheet.css);
 @import url(museoslab_500italic_macroman/stylesheet.css);
+@import url(http://fonts.googleapis.com/css?family=Syncopate:regular);
 
 body {
     margin-top: 1.0em;
@@ -37,7 +37,7 @@ body {
 h1, h2, h3 {
     margin: 1em 10px 0.5em;
 
-    font-family: "MuseoSlab500", Arial, Helvetica, sans-serif;
+    font-family: "Syncopate", Arial, Helvetica, sans-serif;
     font-weight: normal;
     color: rgba(255, 255, 255, 0.7);
 }
@@ -45,7 +45,7 @@ h1, h2, h3 {
 h1 {
     font-size: 4em;
 
-    font-family: "AirstreamRegular", Arial, Helvetica, sans-serif;
+    font-family: "Syncopate", Arial, Helvetica, sans-serif;
     font-weight: normal;
     color: #FFF;
     color: rgba(255, 255, 255, 0.9);
