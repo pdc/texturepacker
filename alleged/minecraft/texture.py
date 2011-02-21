@@ -13,6 +13,7 @@ import weakref
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
+from datetime import datetime
 import Image
 import httplib2
 import fnmatch
@@ -316,6 +317,17 @@ class SourcePack(PackBase):
             with open(os.path.join(self.dir_path, name), 'rb') as strm:
                 return strm.read()
         return self.zip.read(name)
+        
+    def get_resource_last_modified(self, name):
+        """Helper function to get last-modified of a resource.
+        
+        Used by the resource’s get_last_modified method."""
+        if hasattr(self, 'dir_path'):
+            file_path = os.path.join(self.dir_path, name)
+            t = os.stat(file_path).st_mtime
+            return datetime.fromtimestamp(t)
+        inf = self.zip.getinfo(name)
+        return datetime(*inf.date_time)
 
     def get_resource_names(self):
         # We want all resources, not just recently mentioned ones.
@@ -339,6 +351,25 @@ class SourcePack(PackBase):
     def desc(self):
         res = self.get_resource('pack.txt')
         return res.get_content().split('\n', 1)[1].rstrip()
+        
+    def get_last_modified(self):
+        """Get a timestamp for the last time the content of the pack was changed.
+        
+        Note that the contents timestamps are what matter;
+        the same files archived twice will have the same
+        last-modified time.
+        """
+        if hasattr(self, 'dir_path'):
+            t = None
+            for subdir, subdirs, files in os.walk(self.dir_path):
+                for file_name in files:
+                    s = os.stat(os.path.join(subdir, file_name))
+                    if not t or s.st_mtime > t:
+                        t = s.st_mtime
+            return datetime.fromtimestamp(t)
+        # Is a Zip
+        ymdhms = max(inf.date_time for inf in self.zip.infolist())
+        return datetime(*ymdhms)
 
 
 class SourceResource(ResourceBase):
@@ -352,6 +383,9 @@ class SourceResource(ResourceBase):
         if self.bytes is None:
             self.bytes = self.source.get_resource_bytes(self.name)
         return self.bytes
+        
+    def get_last_modified(self):
+        return self.source.get_resource_last_modified(self.name)
 
     def get_image(self):
         if self.image is None:

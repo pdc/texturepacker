@@ -13,7 +13,8 @@ import unittest
 from mock import Mock, patch
 
 from alleged.minecraft.texture import *
-from zipfile import ZipFile, ZIP_DEFLATED
+from datetime import datetime, timedelta
+from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64encode
 import shutil
@@ -1032,7 +1033,8 @@ class MixerTests(TestCase):
                 self.assertRepresentIdenticalImages(
                         self.get_data(resource_name),
                         zip.read(file_name),
-                        'Expected contents of {actual} to match {expected}'.format(actual=file_name, expected=resource_name))
+                        'Expected contents of {actual} to match {expected}'.format(
+                                actual=file_name, expected=resource_name))
             for file_name in expected_absent:
                 try:
                     zip.read(file_name)
@@ -1047,6 +1049,72 @@ class TestTexturePackDir(unittest.TestCase):
         expected = os.path.expanduser('~/Library/Application Support/minecraft/texturepacks')
         actual = minecraft_texture_pack_dir_path()
         self.assertEqual(expected, actual)
+        
+        
+class TestLastModified(TestCase):
+    def assert_datetime_between(self, before, actual, after, epsilon):
+        """Assert that the 3 datetimes are in nondecreasing order.
+        
+        Arguments --
+            before, actual, after -- three datetime values to compare
+            epsilon -- timedelta represeneding the precision of actual.
+            
+        Two datetimes will be considered equal if they differ by 
+        no more than epsilon.
+        
+        The epsilon parameter is required because filetimes are 
+        recorded to the nearest second, and ZIP archive members
+        to the nearest 2 seconds.
+        """
+        self.assertTrue(before - epsilon <= actual  <= after + epsilon,
+            'Expected {0} <= {1} <= {2} within {3}'.format(
+                before, actual, after, epsilon))
+
+    def test_file_pack(self):
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+
+        file_path = os.path.join(self.test_dir, 'manga.zip')
+        before = datetime.now()
+        with open(file_path, 'wb') as strm:
+            self.write_pack_contents(strm,'AB', 'Has A and B', 
+                    {'a.png': ('a.png', simple_map)})
+        after = datetime.now()
+        
+        fake_time = (2010, 2, 20, 10, 39, 55)
+        with ZipFile(file_path, 'a') as zip:
+            zip.writestr(ZipInfo('b.png', fake_time), self.get_data('b.png'))
+        
+        pack = SourcePack(file_path, Atlas())
+        self.assert_datetime_between(before, pack.get_last_modified(), after, timedelta(seconds=2))
+                     
+        res_a = pack.get_resource('a.png')
+        # In this case the timne recorded is the instant the
+        # resource was added to the ZIP since we do not specify a timestamp.
+        self.assert_datetime_between(before, res_a.get_last_modified(), after,timedelta(seconds=2))
+
+        res_b = pack.get_resource('b.png')
+        dt = datetime(*fake_time)
+        self.assert_datetime_between(dt, res_b.get_last_modified(), dt, timedelta(seconds=2))
+        
+    def test_directory_pack(self):
+        dir_path = os.path.join(self.test_dir, 'happipakq')
+        if os.path.exists(dir_path):
+            shutil.rmtree(dir_path)
+        os.mkdir(dir_path)
+        before = datetime.now()
+        with open(os.path.join(dir_path, 'a.png'), 'wb') as strm:
+            strm.write(self.get_data('a.png'))
+        after = datetime.now()
+        shutil.copy2(os.path.join(self.data_dir, 'b.png'),
+                os.path.join(self.test_dir, 'b.png'))
+        # Since that copied the last-modified time of the file,
+        # we now have a dir containing files with 2 different modified times.
+        
+        pack = SourcePack(dir_path, Atlas())
+        self.assert_datetime_between(before, pack.get_last_modified(), after, timedelta(seconds=1))
+            
+        res_a = pack.get_resource('a.png')
+        self.assert_datetime_between(before, res_a.get_last_modified(), after,timedelta(seconds=1))
 
 
 if __name__ == '__main__':
