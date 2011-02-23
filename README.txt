@@ -25,18 +25,23 @@ Installation
 Requirements:
 
 - Python 2.7
-- packages listed in the ``REQUIREMENTS`` file
+- Distribute (or Setuptools might work)
 
-You should be able to install with the following commands::
+You should be able to install with the following command::
 
-    $ pip install -r REQUIREMENTS
     $ python setup.py install
 
-You can test it worked with Nose::
+You can test it worked by running it on an example recipe::
 
+    $ maketexture -v examples/groovystipple.zip
+
+(These are included in the source distribution but will not be
+included in a binary install.)
+
+To run automated tests, you need to install 2 more packages and
+then use Nose::
+
+    $ pip install nose mock
     $ nosetests tests
 
 This should print a lot of dots and then report OK at the end.
-
-
-
