@@ -1,34 +1,50 @@
-{
-  "label": "SmoothStipple R7",
-  "desc": "A high-visibility, unrealistic look",
-  "mix": [
-    {
-      "pack": {"file": "GroovyStipple"},
-      "files": [
-        "gui/crafting.png",
-        "gui/background.png",
-        "gui/container.png",
-        "gui/crafting.png",
-        "gui/furnace.png",
-        "gui/gui.png",
-        "gui/inventory.png",
-        "item/boat.png",
-        "item/cart.png",
-        "item/sign.png",
-        "mob/cow.png",
-        "mob/creeper.png",
-        "mob/sheep.png",
-        "mob/sheep_fur.png",
-        "mob/zombie.png",
-        "news.txt"
-      ]
-    },
-    {
-      "pack": {"file": "SmoothStipple"},
-      "files": [
-        "pack.png",
-        "terrain.png"
-      ]
-    }
-  ]
-}
+label: SmoothStipple R8,
+desc: A high-visibility, unrealistic look,
+mix:
+  -
+    pack:
+      file: GroovyStipple
+      maps:
+        file: maps/beta-1.3.tpmaps
+    files:
+      - gui/crafting.png
+      - gui/background.png
+      - gui/container.png
+      - gui/crafting.png
+      - gui/furnace.png
+      - gui/gui.png
+      - gui/inventory.png
+      - item/boat.png
+      - item/cart.png
+      - item/sign.png
+      - mob/cow.png
+      - mob/creeper.png
+      - mob/sheep.png
+      - mob/sheep_fur.png
+      - mob/zombie.png
+      - news.txt
+  -
+    pack:
+      file: SmoothStipple
+      maps:
+        file: maps/beta-1.3.tpmaps
+    files:
+      - pack.png
+      -
+        file: terrain.png
+        replace:
+          pack:
+            href: minecraft:bin/minecraft.jar
+            maps:
+              file: maps/beta-1.3.tpmaps
+          cells:
+            - repeater
+            - repeater_lit
+            - bed_top_foot
+            - bed_top_head
+            - bed_foot
+            - bed_head
+            - bed_side_foot
+            - bed_side_head
+            - redstone_mask
+            - redstone_line_mask

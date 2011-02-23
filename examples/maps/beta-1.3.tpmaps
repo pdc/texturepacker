@@ -1,0 +1,28 @@
+-
+  file: beta1_2.tpmaps
+-
+  terrain.png:
+    -
+      terrain.png
+    -
+      source_rect: {x: 48, y: 128, width: 96, height: 48}
+      cell_rect: {width: 16, height: 16}
+      names:
+        - repeater
+        - leaves1
+        - leaves1_unfancy
+        - bed_top_foot
+        - bed_top_head
+        - "88"
+        - repeater_lit
+        - "94"
+        - bed_foot
+        - bed_side_foot
+        - bed_side_head
+        - bed_head
+        - "A3"
+        - redstone_mask
+        - redstone_line_mask
+        - "A6"
+        - "A7"
+        - "A8"
