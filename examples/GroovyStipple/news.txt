@@ -1,3 +1,8 @@
+R8. New textures for Beta 1.3. GUI for dispensers. New more rusty cart.
+
+R7. Alternative track corner to produce stright diagonals instead of
+wavy ones.
+
 R6. Revised some of the coloured wool patterns to be less sucky.
 
 R5. New terrain textures for Beta 1.2. Zombie and creeper skins. Revised

@@ -5,14 +5,14 @@ mix:
     pack:
       file: GroovyStipple
       maps:
-        file: maps/beta-1.3.tpmaps
+        file: maps/stipple.tpmaps
     files:
       - "*.png"
   -
     pack:
       file: SmoothStipple
       maps:
-        file: maps/beta-1.3.tpmaps
+        file: maps/stipple.tpmaps
     files:
       - pack.png
       -
@@ -23,13 +23,9 @@ mix:
             maps:
               file: maps/beta-1.3.tpmaps
           cells:
-            - repeater
-            - repeater_lit
             - bed_top_foot
             - bed_top_head
             - bed_foot
             - bed_head
             - bed_side_foot
             - bed_side_head
-            - redstone_mask
-            - redstone_line_mask

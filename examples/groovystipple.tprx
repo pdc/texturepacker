@@ -1,10 +1,24 @@
-{
-  "label": "GroovyStipple R7",
-  "desc": "A high-visibility, unrealistic look",
-  "mix": {
-    "pack": {"file": "GroovyStipple"},
-    "files": [
-      "*.png"
-    ]
-  }
-}
+label: GroovyStipple R8,
+desc: A high-visibility, unrealistic look.
+mix:
+  -
+    pack:
+      file: GroovyStipple
+      maps:
+        file: maps/stipple.tpmaps
+    files:
+      - "*.png"
+      -
+        file: terrain.png
+        replace:
+          pack:
+            href: minecraft:bin/minecraft.jar
+            maps:
+              file: maps/beta-1.3.tpmaps
+          cells:
+            - bed_top_foot
+            - bed_top_head
+            - bed_foot
+            - bed_head
+            - bed_side_foot
+            - bed_side_head
