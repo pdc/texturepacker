@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-# encoding: utf-8
+# -*-coding: UTF-8-*-
 """
 texture.py
 
 Created by Damian Cugley on 2011-01-12.
-Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+Copyright (c) 2011 Damian Cugley. All rights reserved.
 """
 
 import sys
@@ -20,7 +19,6 @@ import fnmatch
 import json
 import yaml
 from urlparse import urljoin
-
 
 _http = None
 _cache = None
@@ -64,12 +62,20 @@ def resolve_file_path(file_path, base):
     if base and hasattr(base, 'items'):
         if 'file' in base:
             base = 'file:///' + base['file']
-    if base and base.startswith('file:///'):
+    if base and base.startswith('file://'):
         base_path = base[7:]
         if not os.path.exists(base_path) or not os.path.isdir(base_path):
             base_path = os.path.dirname(base_path)
         file_path = os.path.join(base_path, file_path)
     return file_path
+
+def url_from_file_path(file_path):
+    """Given a file path, return a file URL."""
+    url = 'file:///' + os.path.abspath(file_path).lstrip('/\\')
+    if os.path.isdir(file_path):
+        url += '/'
+    return url
+
 
 class CouldNotLoad(Exception): pass
 
@@ -90,23 +96,21 @@ class Loader(object):
         """
         if 'file' in spec:
             file_path = resolve_file_path(spec['file'], base)
-            if os.path.isdir(file_path):
-                file_path += '/'
-            url = 'file:///' + os.path.abspath(file_path).lstrip('/\\')
-            return url
+            return url_from_file_path(file_path)
         if 'href' in spec:
             url = spec['href']
             if url.startswith('minecraft:'):
                 file_path = url[10:].lstrip('/\\')
                 file_path = os.path.join(minecraft_dir_path(), file_path)
-                return 'file://' + file_path
-
+                return url_from_file_path(file_path)
             if base:
-                if hasattr('base', 'items'):
+                if hasattr(base, 'items'):
                     base_url = self.get_url(base)
                     url = urljoin(base_url, url)
                 else:
                     url = urljoin(base, url)
+            if url.startswith('file://'):
+                url = url_from_file_path(url[7:])
             return url
         # If we get this far we have failed to resolve the URL
         return None
@@ -114,8 +118,13 @@ class Loader(object):
     def get_stream(self, spec, base=None):
         """Given a spec, return input stream it specifies.
 
-        The spec can have a 'file' member specifying a file path.
+        The spec can have a 'file' member specifying a file path,
+        an 'href' member specifying a URL, 'data' or 'base64'
+        member specifyting immediate data, or be a string,
+        which is treated as a URL.
         """
+        if isinstance(spec, basestring):
+            spec = {'href': spec}
 
         # Inline data.
         if 'data' in spec:
@@ -148,11 +157,15 @@ class Loader(object):
                 meta is a dict containing 'content-type'
                 strm is a file-like object
         """
-        if url.startswith('file:///'):
+        if url.startswith('file://'):
+            file_path = url[7:]
+            if os.path.isdir(file_path):
+                raise DudeItsADirectory(file_path)
+
             meta = {'content-type': 'application/json' if url.endswith('.json') else 'application/yaml'}
             # XXX allow for more contenbt-types than this!
 
-            return meta, open(url[7:], 'rb')
+            return meta, open(file_path, 'rb')
 
         if url.startswith('data:application/zip;base64,'):
             return {'content-type': 'application/zip'}, StringIO(b64decode(url[28:]))
@@ -281,7 +294,7 @@ class SourcePack(PackBase):
         super(SourcePack, self).__init__(atlas)
         if (isinstance(zip_data, basestring)
                 and os.path.isdir(zip_data)):
-            self.dir_path = zip_data
+            self.dir_path = zip_data.rstrip('\\/')
         else:
             self.zip = ZipFile(zip_data)
         self.loaded_resources = weakref.WeakValueDictionary()
@@ -317,10 +330,10 @@ class SourcePack(PackBase):
             with open(os.path.join(self.dir_path, name), 'rb') as strm:
                 return strm.read()
         return self.zip.read(name)
-        
+
     def get_resource_last_modified(self, name):
         """Helper function to get last-modified of a resource.
-        
+
         Used by the resource’s get_last_modified method."""
         if hasattr(self, 'dir_path'):
             file_path = os.path.join(self.dir_path, name)
@@ -351,10 +364,10 @@ class SourcePack(PackBase):
     def desc(self):
         res = self.get_resource('pack.txt')
         return res.get_content().split('\n', 1)[1].rstrip()
-        
+
     def get_last_modified(self):
         """Get a timestamp for the last time the content of the pack was changed.
-        
+
         Note that the contents timestamps are what matter;
         the same files archived twice will have the same
         last-modified time.
@@ -383,7 +396,7 @@ class SourceResource(ResourceBase):
         if self.bytes is None:
             self.bytes = self.source.get_resource_bytes(self.name)
         return self.bytes
-        
+
     def get_last_modified(self):
         return self.source.get_resource_last_modified(self.name)
 
@@ -733,8 +746,13 @@ class Mixer(object):
         Arguments --
             pack_spec --
                 Specifies a pack.
-                If it is a string, it names one of the packs
-                added with add_pack. If it is a dictionary, then
+                If it is a string and starts with a $,
+                then it names one of the packs
+                added with add_pack.
+                A string without a $ is treated as
+                a URL (same as {href: URL}).
+
+                If it is a dictionary, then
                 the meaning depends on its attributes:
                     file -- names a file containing a ZIP archive;
                     href -- secifies a URI from which data may
@@ -760,13 +778,13 @@ class Mixer(object):
         if not pack_spec and fallback_pack:
             return fallback_pack
 
-        if isinstance(pack_spec, basestring):
-            result = self.packs.get(pack_spec)
+        if isinstance(pack_spec, basestring) and pack_spec.startswith('$'):
+            result = self.packs.get(pack_spec[1:])
             if not result:
                 raise NotInMixer(pack_spec)
             return result
 
-        atlas = self.get_atlas(pack_spec.get('maps'), base)
+        atlas = self.get_atlas(hasattr(pack_spec, 'get') and pack_spec.get('maps'), base)
 
         # Varfious ways of decoding the pack spec.
         try:

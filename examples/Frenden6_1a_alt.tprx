@@ -5,7 +5,7 @@
     "pack": {
       #"href": "minecraft:texturepacks/Frenden6_1a.zip",
       "href": "http://dl.dropbox.com/u/88157/FrendenTPV6_1a/Frenden6_1a.zip",
-      "maps": {"file": "maps/frenden6_1a.tpmaps"}
+      "maps": {"href": "maps/frenden6_1a.tpmaps"}
     },
     "files": [
       "*.png",

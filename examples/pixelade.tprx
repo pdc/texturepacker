@@ -1,0 +1,36 @@
+label: "InsaneCraft - By LechD (alt glass)"
+desc: "Pattern Flavored Goodness!"
+mix:
+  pack:
+    href: "http://dl.dropbox.com/u/3890564/pixelade.zip"
+    maps:
+      href: maps/beta-1.3.tpmaps
+  files:
+    - "*.png"
+    -
+      file: "terrain.png"
+      replace:
+        -
+          cells:
+            - glass
+          pack:
+            href: GroovyStipple/
+            maps:
+              href: maps/stipple.tpmaps
+        -
+          pack:
+            href: minecraft:bin/minecraft.jar
+            maps:
+              href: maps/beta-1.3.tpmaps
+          cells:
+            - "26"
+            - repeater
+            - repeater_lit
+            - redstone_mask
+            - redstone_line_mask
+            - bed_top_foot
+            - bed_top_head
+            - bed_foot
+            - bed_head
+            - bed_side_foot
+            - bed_side_head

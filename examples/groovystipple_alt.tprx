@@ -3,9 +3,9 @@ desc: A high-visibility, unrealistic look.
 mix:
   -
     pack:
-      file: GroovyStipple
+      href: GroovyStipple/
       maps:
-        file: maps/stipple.tpmaps
+        href: maps/stipple.tpmaps
     files:
       - "*.png"
       -
@@ -18,7 +18,7 @@ mix:
             pack:
               href: minecraft:bin/minecraft.jar
               maps:
-                file: maps/beta-1.3.tpmaps
+                href: maps/beta-1.3.tpmaps
             cells:
               - bed_top_foot
               - bed_top_head
