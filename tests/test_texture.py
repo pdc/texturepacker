@@ -505,7 +505,7 @@ class MixerTests(TestCase):
             'status': '404',
         }, 'Not found')
 
-        with self.assertRaises(NotInMixer):
+        with self.assertRaises(UnknownPack):
             pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
 
     def test_get_pack_from_minecraft(self):
@@ -549,6 +549,12 @@ class MixerTests(TestCase):
 
     def test_b_plus_c(self):
         self.check_recipe({
+            'parameters': {
+                'packs': [
+                    'alpha_bravo',
+                    'charlie',
+                ]
+            },
             'mix': [
                 {'pack': '$alpha_bravo', 'files': ['b.png']},
                 {'pack': '$charlie', 'files': ['c.png']}
@@ -581,6 +587,12 @@ class MixerTests(TestCase):
         # all missing files from alpha_bravo
         # instead of listing them explicity.
         self.check_recipe({
+            'parameters': {
+                'packs': [
+                    'alpha_bravo',
+                    'charlie',
+                ]
+            },
             "mix": [
                 {
                     'pack': '$alpha_bravo',
@@ -603,6 +615,11 @@ class MixerTests(TestCase):
     def test_a_b_replace_using_expliict_maps(self):
         # Previous tests used maps preloaded in to the Mixer.
         self.check_recipe({
+            'parameters': {
+                'packs': [
+                    'alpha_bravo',
+                ]
+            },
             'mix': [
                 {
                     'pack': '$alpha_bravo',
@@ -1089,11 +1106,22 @@ class MixerTests(TestCase):
             }
         }
         pack = Mixer().make(recipe, 'file://' + os.path.join(os.path.abspath(self.test_dir), 'foo.tprx'))
-        print pack.get_resource_names()
         self.check_pack(pack, {'floo/a.png': 'a.png', 'b.png': 'b.png'}, [])
 
-
-
+    def test_parameters(self):
+        recipe = {
+            'label': 'monster',
+            'desc': 'foo',
+            'parameters': {
+                'packs': ['alphabeta'],
+            },
+            'mix': {
+                'pack': '$alphabeta',
+                'files': ['*.png'],
+            }
+        }
+        with self.assertRaises(MissingParameter):
+            pack = Mixer().make(recipe, None)
 
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
         recipe.update({

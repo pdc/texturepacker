@@ -22,8 +22,8 @@ VERSION = '0.1 2011-02-21'
 
 
 help_message = '''
-{argv0} [-v] [ --output=FILE | - ] FILE
-{argv0} [-v] [ --output=DIR | --install ] FILE...
+{argv0} [-v] [ --output=FILE | - ] [ NAME=URL]... FILE
+{argv0} [-v] [ --output=DIR | --install ] [ NAME=URL]... FILE...
 {argv0} --help
 {argv0} --version
 '''
@@ -39,7 +39,7 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:vV", ["help", "output=", 'version', 'install'])
+            opts, args = getopt.getopt(argv[1:], "ho:vV", ["help", "output=", 'version', 'install', ])
         except getopt.error, msg:
             raise Usage(msg)
 
@@ -64,24 +64,34 @@ def main(argv=None):
             else:
                 raise Usage('Unexpected option {0!r}'.format(opt))
 
+        recipes = []
         for arg in args:
-            suf = os.path.splitext(arg)[1]
+            p = arg.find('=')
+            if p >= 0:
+                name, href = arg[:p], arg[p + 1:]
+                print name, href
+                mixer.add_pack(name, mixer.get_pack(href, base='.'))
+            else:
+                recipes.append(arg)
+
+        for recipe_file in recipes:
+            suf = os.path.splitext(recipe_file)[1]
             if suf == '.json':
-                with open(arg, 'rb') as strm:
+                with open(recipe_file, 'rb') as strm:
                     recipe = json.load(strm)
             elif suf in ['.yaml', '.yml', '.tprx']:
-                with open(arg, 'rb') as strm:
+                with open(recipe_file, 'rb') as strm:
                     recipe = yaml.load(strm)
             else:
-                raise Usage('{0!r}: expected file name ending in one of .tprx, .yaml, .yml, .json'.format(arg))
+                raise Usage('{0!r}: expected file name ending in one of .tprx, .yaml, .yml, .json'.format(recipe_file))
 
-            base = 'file://' + os.path.abspath(arg)
+            base = 'file://' + os.path.abspath(recipe_file)
             pack = mixer.make(recipe, base=base)
             if out_arg == '-':
                 pack.write_to(sys.stdout)
                 out_arg = None
             else:
-                out_file = os.path.splitext(arg)[0] + '.zip'
+                out_file = os.path.splitext(recipe_file)[0] + '.zip'
                 if out_arg:
                     if os.path.isdir(out_arg):
                         out_file = os.path.join(out_arg, os.path.basename(out_file))

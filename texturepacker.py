@@ -638,13 +638,23 @@ class CompositeResource(ResourceBase):
         return self.bytes
 
 
-class NotInMixer(Exception):
+class UnknownPack(Exception):
     """Raised if you ask a mixer to use a pack it does not know about."""
     def __init__(self, pack_spec, exc=None):
         extra = ': ' + unicode(exc) if exc else ''
-        super(NotInMixer, self).__init__(
+        super(UnknownPack, self).__init__(
             '{0!r}: specified pack is not in mixer{1}'.format(pack_spec, extra))
         self.inner_exception = exc
+
+class MissingParameter(Exception):
+    """Raised if you ask a mixer to make a recipe without supplying the needed parameters."""
+    def __init__(self, param_spec, exc=None):
+        extra = ': ' + unicode(exc) if exc else ''
+        super(MissingParameter, self).__init__(
+            '{0!r}: required parameter is not in mixer{1}'.format(param_spec, extra))
+        self.inner_exception = exc
+        self.param = param_spec
+
 
 class Mixer(object):
     """Create texture packs by mixing together existing ones.
@@ -680,6 +690,17 @@ class Mixer(object):
         Returns --
             A new pack object (subclass of PackBase).
         """
+
+        param_specss = recipe.get('parameters')
+        if param_specss:
+            pack_specs = param_specss.get('packs')
+            if pack_specs:
+                for param_spec in pack_specs:
+                    if param_spec not in self.packs:
+                        raise MissingParameter(param_spec)
+
+
+
         new_pack = RecipePack(recipe['label'], recipe['desc'])
 
         if 'maps' in recipe:
@@ -773,7 +794,7 @@ class Mixer(object):
             A pack object
 
         Raises --
-            NotInMixer -- when the specified pack does not exist.
+            UnknownPack -- when the specified pack does not exist.
         """
         if not pack_spec and fallback_pack:
             return fallback_pack
@@ -781,7 +802,7 @@ class Mixer(object):
         if isinstance(pack_spec, basestring) and pack_spec.startswith('$'):
             result = self.packs.get(pack_spec[1:])
             if not result:
-                raise NotInMixer(pack_spec)
+                raise UnknownPack(pack_spec)
             return result
 
         atlas = self.get_atlas(hasattr(pack_spec, 'get') and pack_spec.get('maps'), base)
@@ -790,13 +811,13 @@ class Mixer(object):
         try:
             strm = self.loader.get_stream(pack_spec, base)
         except CouldNotLoad, e:
-            raise NotInMixer(pack_spec, e)
+            raise UnknownPack(pack_spec, e)
         except DudeItsADirectory, e:
             return SourcePack(e.path, atlas)
 
         # If we have data, unpack it.
         if not strm:
-            raise NotInMixer(pack_spec)
+            raise UnknownPack(pack_spec)
 
         return SourcePack(strm, atlas)
 
