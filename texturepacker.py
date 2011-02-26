@@ -9,6 +9,7 @@ Copyright (c) 2011 Damian Cugley. All rights reserved.
 import sys
 import os
 import weakref
+import re
 from zipfile import ZipFile, ZIP_DEFLATED
 from StringIO import StringIO
 from base64 import b64decode
@@ -656,6 +657,8 @@ class MissingParameter(Exception):
         self.param = param_spec
 
 
+TEMPLATE_RE = re.compile(u'\{\{([^{}]+)\}\}')
+
 class Mixer(object):
     """Create texture packs by mixing together existing ones.
 
@@ -700,15 +703,16 @@ class Mixer(object):
                         raise MissingParameter(param_spec)
 
 
-
-        new_pack = RecipePack(recipe['label'], recipe['desc'])
-
         if 'maps' in recipe:
             self.get_atlas(recipe['maps'], base, self.atlas)
 
         if 'packs' in recipe:
             for name, pack_spec in recipe['packs'].items():
                 self.add_pack(name, self.get_pack(pack_spec, base=base))
+
+        label = self.expand_template(recipe['label'])
+        desc = self.expand_template(recipe['desc'])
+        new_pack = RecipePack(label, desc)
 
         mix = recipe['mix']
         if hasattr(mix, 'items'):
@@ -719,6 +723,18 @@ class Mixer(object):
             for res in self.iter_resources(src_pack, ingredient['files'], base=base):
                 new_pack.add_resource(res)
         return new_pack
+
+    def expand_template(self, tpl):
+        return TEMPLATE_RE.sub(self.expand_template_sub, tpl)
+
+    def expand_template_sub(self, m):
+        parts = m.group(1).strip().split('.')
+        x = self.get_pack('$' + parts.pop(0))
+        for part in parts:
+            x = getattr(x, part)
+            if callable(x):
+                x = x()
+        return x
 
     def iter_resources(self, src_pack, resources_spec, base):
         """Given a files spec, yield a sequence of resources.

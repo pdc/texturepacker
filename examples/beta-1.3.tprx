@@ -1,8 +1,8 @@
-label: "TBD"
-desc: "TBD"
 parameters:
   packs:
     - beta12
+label: "{{ beta12.label }} + Beta 1.3"
+desc: "{{ beta12.desc }}"
 maps:
   href: maps/beta-1.3.tpmaps
 mix:

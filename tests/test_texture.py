@@ -1108,7 +1108,7 @@ class MixerTests(TestCase):
         pack = Mixer().make(recipe, 'file://' + os.path.join(os.path.abspath(self.test_dir), 'foo.tprx'))
         self.check_pack(pack, {'floo/a.png': 'a.png', 'b.png': 'b.png'}, [])
 
-    def test_parameters(self):
+    def test_missing_parameters(self):
         recipe = {
             'label': 'monster',
             'desc': 'foo',
@@ -1123,12 +1123,39 @@ class MixerTests(TestCase):
         with self.assertRaises(MissingParameter):
             pack = Mixer().make(recipe, None)
 
+    def test_parametized_label(self):
+        recipe = {
+            'label': '{{ alpha_only.label }}{{ only_bravo.label }}',
+            'desc': '{{ alpha_only.desc }}! {{ only_bravo.desc }}!!',
+            'mix': [
+                {
+                    'pack': '$alpha_only',
+                    'files': ['*.png'],
+                },
+                {
+                    'pack': '$only_bravo',
+                    'files': ['*.png'],
+                }
+            ]
+        }
+        pack = self.make_mixer_with_packs().make(recipe)
+        self.assertEqual('AB', pack.label)
+        self.assertEqual('Has A! Has B!!', pack.desc)
+
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
         recipe.update({
             'label': 'Composite pack',
             'desc': 'A crazy mixed-up pack',
         })
+        mixer = self.make_mixer_with_packs()
+        pack = mixer.make(recipe)
 
+        self.assertEqual('Composite pack', pack.label)
+        self.assertEqual('A crazy mixed-up pack', pack.desc)
+        self.check_pack(pack, expected_resources, unexpected_resources)
+        return pack
+
+    def make_mixer_with_packs(self):
         simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
 
         mixer = Mixer()
@@ -1136,13 +1163,7 @@ class MixerTests(TestCase):
         mixer.add_pack('charlie', self.make_source_pack('C', 'Has C', {'c.png': ('c.png', simple_map)}))
         mixer.add_pack('alpha_only', self.make_source_pack('A', 'Has A', {'a.png': ('a.png', simple_map)}))
         mixer.add_pack('only_bravo', self.make_source_pack('B', 'Has B', {'b.png': ('b.png', simple_map)}))
-
-        pack = mixer.make(recipe)
-
-        self.assertEqual('Composite pack', pack.label)
-        self.assertEqual('A crazy mixed-up pack', pack.desc)
-        self.check_pack(pack, expected_resources, unexpected_resources)
-        return pack
+        return mixer
 
     def check_pack(self, pack, expected_contents, expected_absent):
         strm = StringIO()
