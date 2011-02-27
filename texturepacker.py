@@ -78,6 +78,33 @@ def url_from_file_path(file_path):
     return url
 
 
+GENERIC_RE = re.compile(r"""
+    ^
+    (?P<scheme> [\w.+-]+ ) :
+    //
+    (?P<authority>
+        [\w@:.+-]*
+    )
+    (?:
+        /
+        (?P<path> [^?#]* / )?
+        (?P<final> [^/?#]* )
+    )?
+    $
+""", re.VERBOSE + re.IGNORECASE)
+
+
+def resolve_generic_url(base_url, url_ref):
+    if GENERIC_RE.match(url_ref):
+        return url_ref
+    m = GENERIC_RE.match(base_url)
+    if url_ref.startswith('/'):
+        return m.group('scheme') + '://' + m.group('authority') + url_ref
+    return (m.group('scheme')
+            + '://' + m.group('authority') + '/'
+            + (m.group('path') or '')
+            + url_ref)
+
 class CouldNotLoad(Exception): pass
 
 class DudeItsADirectory(Exception):
@@ -89,6 +116,10 @@ class Loader(object):
     def __init__(self):
         self._specs = {}
         self._things = {}
+        self._schemes = {}
+
+    def add_scheme(self, prefix, func):
+        self._schemes[prefix] = func
 
     def get_url(self, spec, base=None):
         """Given a spec, return URL for the resource it specifes.
@@ -107,9 +138,15 @@ class Loader(object):
             if base:
                 if hasattr(base, 'items'):
                     base_url = self.get_url(base)
-                    url = urljoin(base_url, url)
                 else:
-                    url = urljoin(base, url)
+                    base_url = base
+
+                url0 = url
+                p = base_url.find(':')
+                if p > 1 and base_url[:p].lower() in self._schemes:
+                    url = resolve_generic_url(base_url, url)
+                else:
+                    url = urljoin(base_url, url)
             if url.startswith('file://'):
                 url = url_from_file_path(url[7:])
             return url
@@ -178,6 +215,13 @@ class Loader(object):
                 return response, StringIO(body)
             raise CouldNotLoad('{0!r}: could not load: status={1}'.format(url, response['status']))
 
+        p = url.find(':')
+        if p > 0:
+            prefix, path = url[:p], url[p + 1:]
+            func = self._schemes.get(prefix.lower())
+            if func:
+                return func(path)
+
         raise CouldNotLoad('{0!r}: unknown URL scheme'.format(url))
 
     def get_bytes(self, spec, base=None):
@@ -185,8 +229,11 @@ class Loader(object):
 
         The spec can have a 'file' member specifying a file path.
         """
-        with self.get_stream(spec, base) as strm:
+        strm = self.get_stream(spec, base)
+        try:
             return strm.read()
+        finally:
+            strm.close()
 
     def maybe_get_spec(self, spec, base=None):
         """Given a spec, return spec it refers to or the spec.

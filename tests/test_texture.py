@@ -372,6 +372,39 @@ class ExternalResourceTests(TestCase):
 
         # XXX Add test requiring URLDECODE
 
+    def test_custom_scheme(self):
+        mock_func = Mock()
+        mock_func.return_value = ({'content-type': 'text/plain'}, StringIO('hello'))
+        self.loader.add_scheme('bim', mock_func)
+        self.assertEqual('hello', self.loader.get_bytes('bambi', 'bim:///gooshy/gooshy/gander'))
+        self.assertEqual('///gooshy/gooshy/bambi', mock_func.call_args[0][0])
+
+class ResolveUrlTests(unittest.TestCase):
+    def test_relative(self):
+        self.assertEqual('foop:///derp/yum', resolve_generic_url('foop:///derp/herp', 'yum'))
+
+    def test_relative_final_slash(self):
+        self.assertEqual('foop:///derp/herp/yum', resolve_generic_url('foop:///derp/herp/', 'yum'))
+
+    def test_relative_zero_length_path(self):
+        self.assertEqual('foop:///derp/yum', resolve_generic_url('foop:///derp/', 'yum'))
+
+    def test_relative_omitted_path(self):
+        self.assertEqual('foop://derp/yum', resolve_generic_url('foop://derp', 'yum'))
+
+    def test_relative_omitted_authority(self):
+        self.assertEqual('foop:///derp/yum', resolve_generic_url('foop:///derp/herp', 'yum'))
+
+    def test_abspath(self):
+        self.assertEqual('foop:///yum', resolve_generic_url('foop:///derp/herp/', '/yum'))
+
+    def test_abspath_authority(self):
+        self.assertEqual('foop://bonk/yum', resolve_generic_url('foop://bonk/derp/herp/', '/yum'))
+
+    def test_absolute(self):
+        self.assertEqual('shump://bank/flank/gazank',
+                resolve_generic_url('foop://bink/fink', 'shump://bank/flank/gazank'))
+
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
         pack1 = self.sample_pack()
