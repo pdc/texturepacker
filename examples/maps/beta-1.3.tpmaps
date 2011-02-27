@@ -26,3 +26,16 @@
         - "A6"
         - "A7"
         - "A8"
+  gui/items.png:
+    -
+      gui/items.png
+    -
+      source_rect: {x: 96, y: 80, width: 16, height: 16}
+      cell_rect: {width: 16, height: 16}
+      names:
+        - repeater
+    -
+      source_rect: {x: 208, y: 32, width: 16, height: 16}
+      cell_rect: {width: 16, height: 16}
+      names:
+        - bed

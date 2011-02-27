@@ -1,0 +1,12 @@
+#! /bin/sh
+
+outdir=/Users/pdc/Projects/alleged/alleged/static/pdc/2011
+
+urls="http://dl.dropbox.com/u/3890564/pixelade.zip http://www.eldpack.com/files/eldpack_v3.3.zip http://dl.dropbox.com/u/88157/FrendenTPV6_1a/Frenden6_1a.zip"
+
+for u in $urls; do
+  b=$(basename $u .zip)
+
+  script/maketexture -vv -o $outdir/$b+beta1.3.zip \
+    examples/beta-1.3.tprx beta12=$u
+done
