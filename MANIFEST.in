@@ -4,3 +4,4 @@ recursive-include examples/SmoothStipple *.png
 include REQUIREMENTS
 include tests/*.py tests/test_data/*.png
 include README.*
+include NEWS.txt

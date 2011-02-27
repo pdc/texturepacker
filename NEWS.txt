@@ -1,0 +1,21 @@
+This file outlines changes to the package, in reverse chronological order.
+
+0.2
+===
+
+27 February 2011
+
+- Recipes can declare formal pack parameters which must be filled in to
+  make the recipe.
+
+- Labels and description in recipes can depend on labels and
+  descriptions of constituent packs.
+
+- Added support for Minecraft Beta 1.3
+
+0.1.1
+=====
+
+23 February 2011
+
+Initial release to PyPI
