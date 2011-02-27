@@ -1,4 +1,6 @@
-R8. New textures for Beta 1.3. GUI for dispensers. New more rusty cart.
+R9. Completed textures for Beta 1.3 (bed). First hack at art. New rusty minecart.
+
+R8. New textures for Beta 1.3 (redstone, repeater). GUI for dispensers. New more rusty cart.
 
 R7. Alternative track corner to produce stright diagonals instead of
 wavy ones.

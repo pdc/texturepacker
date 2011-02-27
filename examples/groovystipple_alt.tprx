@@ -1,5 +1,5 @@
-label: GroovyStipple R8,
-desc: A high-visibility, unrealistic look.
+label: GroovyStipple R9
+desc: A high-visibility, unrealistic look
 mix:
   -
     pack:
@@ -8,21 +8,10 @@ mix:
         href: maps/stipple.tpmaps
     files:
       - "*.png"
+      - news.txt
       -
         file: terrain.png
         replace:
           -
             cells:
               track_corner: track_corner1
-          -
-            pack:
-              href: minecraft:bin/minecraft.jar
-              maps:
-                href: maps/beta-1.3.tpmaps
-            cells:
-              - bed_top_foot
-              - bed_top_head
-              - bed_foot
-              - bed_head
-              - bed_side_foot
-              - bed_side_head
