@@ -1,5 +1,13 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.3
+===
+
+27 February 2011
+
+- Loader has add_scheme method so you can hook in to internal recipe
+  database
+
 0.2
 ===
 
