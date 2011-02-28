@@ -1,5 +1,13 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.4
+===
+
+Forthcoming
+
+- Support ../ when resolving partial references with custom URLs as base
+  URL
+
 0.3
 ===
 
