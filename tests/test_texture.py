@@ -380,6 +380,9 @@ class ExternalResourceTests(TestCase):
         self.assertEqual('///gooshy/gooshy/bambi', mock_func.call_args[0][0])
 
 class ResolveUrlTests(unittest.TestCase):
+    # I ended up creating my own generic URL resolver, because
+    # the standard library’s urljoin seems reluctant to tackle
+    # unknown URL schemes. (Not entirely unreasonably.)
     def test_relative(self):
         self.assertEqual('foop:///derp/yum', resolve_generic_url('foop:///derp/herp', 'yum'))
 
@@ -404,6 +407,18 @@ class ResolveUrlTests(unittest.TestCase):
     def test_absolute(self):
         self.assertEqual('shump://bank/flank/gazank',
                 resolve_generic_url('foop://bink/fink', 'shump://bank/flank/gazank'))
+
+    def test_dotdot(self):
+        self.assertEqual('smuurf://smurf/derf/lerf',
+                resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', '../lerf'))
+
+    def test_dotdotdotdot(self):
+        self.assertEqual('smuurf://smurf/lerf',
+                resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', '../../lerf'))
+
+    def test_dotdot_respects_authority(self):
+        self.assertEqual('smuurf://smurf/lerf',
+                resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', '../../../lerf'))
 
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):

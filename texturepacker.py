@@ -100,10 +100,20 @@ def resolve_generic_url(base_url, url_ref):
     m = GENERIC_RE.match(base_url)
     if url_ref.startswith('/'):
         return m.group('scheme') + '://' + m.group('authority') + url_ref
-    return (m.group('scheme')
-            + '://' + m.group('authority') + '/'
-            + (m.group('path') or '')
-            + url_ref)
+
+    scheme, authority, path = m.group('scheme'), m.group('authority'), (m.group('path') or '')
+    while url_ref.startswith('../'):
+        if path:
+            path = path[:-1]
+            q = path.rfind('/')
+            if q >= 0:
+                path = path[:q + 1]
+            else:
+                path = ''
+        url_ref = url_ref[3:]
+
+
+    return scheme + '://' + authority + '/' + path + url_ref
 
 class CouldNotLoad(Exception): pass
 
