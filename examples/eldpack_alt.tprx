@@ -1,0 +1,19 @@
+label: "{{ eldpack.label }} + alts"
+desc: "{{ eldpack.desc }}"
+packs:
+  eldpack:
+    href: http://www.eldpack.com/files/eldpack_v3.4.zip
+    maps:
+      href: maps/eldpack.tpmaps
+mix:
+  pack: $eldpack
+  files:
+    - "*.png"
+    -
+      file: terrain.png
+      replace:
+        cells:
+          dirt: dirt1
+          dirt_grass: dirt_grass1
+          cobble: cobble1
+          stone: stone1
