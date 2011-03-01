@@ -5,7 +5,7 @@ mix:
     pack:
       href: GroovyStipple/
       maps:
-        href: maps/stipple.tpmaps
+        href: maps/stipple
     files:
       - "*.png"
       - news.txt

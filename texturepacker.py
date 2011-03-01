@@ -196,7 +196,7 @@ class Loader(object):
         # If we get this far, we can’t work out a way to get a stream.
         return None
 
-    def get_url_stream(self, url):
+    def get_url_stream(self, url, ext='tpmaps'):
         """Given a URL, return input stream it specifies.
 
         Returns --
@@ -207,6 +207,10 @@ class Loader(object):
         """
         if url.startswith('file://'):
             file_path = url[7:]
+
+            if not os.path.exists(file_path) and os.path.exists(file_path + '.' + ext):
+                file_path += '.' + ext
+
             if os.path.isdir(file_path):
                 raise DudeItsADirectory(file_path)
 
@@ -245,7 +249,7 @@ class Loader(object):
         finally:
             strm.close()
 
-    def maybe_get_spec(self, spec, base=None):
+    def maybe_get_spec(self, spec, base=None, ext='tprx'):
         """Given a spec, return spec it refers to or the spec.
 
         The spec can have a 'file' member specifying a file path.
@@ -259,7 +263,7 @@ class Loader(object):
         spec = self._specs.get(url)
         if spec:
             return spec
-        meta, strm = self.get_url_stream(url)
+        meta, strm = self.get_url_stream(url, ext=ext)
         if meta['content-type'] == 'application/json':
             spec = json.load(strm)
         else:
@@ -927,7 +931,7 @@ class Mixer(object):
                 if 'file' in atlas_spec
                 else self.loader.get_url(atlas_spec, base))
             if hasattr(atlas_spec, 'items'):
-                atlas_spec = self.loader.maybe_get_spec(atlas_spec, base)
+                atlas_spec = self.loader.maybe_get_spec(atlas_spec, base, 'tpmaps')
             if hasattr(atlas_spec, 'items'):
                 for name, map_spec in atlas_spec.items():
                     atlas.add_map(name, self.get_map(atlas, map_spec, atlas_base))

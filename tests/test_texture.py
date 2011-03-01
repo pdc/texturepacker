@@ -333,6 +333,10 @@ class ExternalResourceTests(TestCase):
         spec = self.loader.maybe_get_spec({'file': self.file_path}, base=None)
         self.assertEqual(self.stuff, spec)
 
+    def test_get_spec_infer_suffix(self):
+        spec = self.loader.maybe_get_spec({'file': os.path.join(self.test_dir, 'stuff')}, base=None, ext='json')
+        self.assertEqual(self.stuff, spec)
+
     def test_get_spec_yaml(self):
         file_path = os.path.join(self.test_dir, 'nonsense.tpmaps')
         with open(file_path, 'wt') as strm:

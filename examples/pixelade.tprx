@@ -16,7 +16,7 @@ mix:
           pack:
             href: GroovyStipple/
             maps:
-              href: maps/stipple.tpmaps
+              href: maps/stipple
         -
           pack:
             href: minecraft:bin/minecraft.jar
