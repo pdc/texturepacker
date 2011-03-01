@@ -1,0 +1,16 @@
+parameters:
+  packs:
+    - frenden
+label: "{{ frenden.label }} (dark planks)"
+desc: "{{ frenden.desc }}"
+maps:
+  href: maps/frenden-62b
+mix:
+  pack: "$frenden"
+  files:
+    - "*.png"
+    -
+      file: terrain.png
+      replace:
+        cells:
+          planks: planks2
