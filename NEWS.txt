@@ -1,12 +1,12 @@
 This file outlines changes to the package, in reverse chronological order.
 
-0.4
+0.3.next
 ===
 
 Forthcoming
 
 - Support ../ when resolving partial references with custom URLs as base
-  URL
+  URL per <http://tools.ietf.org/html/rfc3986>
 
 0.3
 ===
