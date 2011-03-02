@@ -424,6 +424,18 @@ class ResolveUrlTests(unittest.TestCase):
         self.assertEqual('smuurf://smurf/lerf',
                 resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', '../../../lerf'))
 
+    def test_dot(self):
+        self.assertEqual('smuurf://smurf/derf/bink/lerf',
+                resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', './lerf'))
+
+    def test_dotslash(self):
+        self.assertEqual('smuurf://smurf/derf/bink/',
+                resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', './'))
+
+    def test_nothing_at_all(self):
+        self.assertEqual('smuurf://smurf/derf/bink/bank.frankly.dank',
+                resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', ''))
+
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
         pack1 = self.sample_pack()

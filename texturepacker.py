@@ -95,6 +95,9 @@ GENERIC_RE = re.compile(r"""
 
 
 def resolve_generic_url(base_url, url_ref):
+    if not url_ref:
+        return base_url
+
     if GENERIC_RE.match(url_ref):
         return url_ref
     m = GENERIC_RE.match(base_url)
@@ -102,15 +105,20 @@ def resolve_generic_url(base_url, url_ref):
         return m.group('scheme') + '://' + m.group('authority') + url_ref
 
     scheme, authority, path = m.group('scheme'), m.group('authority'), (m.group('path') or '')
-    while url_ref.startswith('../'):
-        if path:
-            path = path[:-1]
-            q = path.rfind('/')
-            if q >= 0:
-                path = path[:q + 1]
-            else:
-                path = ''
-        url_ref = url_ref[3:]
+    while True:
+        if url_ref.startswith('../'):
+            if path:
+                path = path[:-1]
+                q = path.rfind('/')
+                if q >= 0:
+                    path = path[:q + 1]
+                else:
+                    path = ''
+            url_ref = url_ref[3:]
+        elif url_ref.startswith('./'):
+            url_ref = url_ref[2:]
+        else:
+            break
 
 
     return scheme + '://' + authority + '/' + path + url_ref

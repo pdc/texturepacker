@@ -5,8 +5,8 @@ This file outlines changes to the package, in reverse chronological order.
 
 Forthcoming
 
-- Support ../ when resolving partial references with custom URLs as base
-  URL per <http://tools.ietf.org/html/rfc3986>
+- Support ../ and ./ when resolving partial references with custom URLs
+  as base URL per <http://tools.ietf.org/html/rfc3986>.
 
 0.3
 ===
