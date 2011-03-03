@@ -383,6 +383,7 @@ class ExternalResourceTests(TestCase):
         self.assertEqual('hello', self.loader.get_bytes('bambi', 'bim:///gooshy/gooshy/gander'))
         self.assertEqual('///gooshy/gooshy/bambi', mock_func.call_args[0][0])
 
+
 class ResolveUrlTests(unittest.TestCase):
     # I ended up creating my own generic URL resolver, because
     # the standard library’s urljoin seems reluctant to tackle
@@ -1324,7 +1325,7 @@ class TestLastModified(TestCase):
             strm.write(self.get_data('a.png'))
         after = datetime.now()
         shutil.copy2(os.path.join(self.data_dir, 'b.png'),
-                os.path.join(self.test_dir, 'b.png'))
+                os.path.join(dir_path, 'b.png'))
         # Since that copied the last-modified time of the file,
         # we now have a dir containing files with 2 different modified times.
 
@@ -1333,6 +1334,10 @@ class TestLastModified(TestCase):
 
         res_a = pack.get_resource('a.png')
         self.assert_datetime_between(before, res_a.get_last_modified(), after,timedelta(seconds=1))
+
+        res_b = pack.get_resource('b.png')
+        t = datetime.fromtimestamp(os.stat(os.path.join(dir_path, 'b.png')).st_mtime)
+        self.assert_datetime_between(t, res_b.get_last_modified(), t,timedelta(seconds=1))
 
 
 if __name__ == '__main__':
