@@ -95,6 +95,22 @@ GENERIC_RE = re.compile(r"""
 
 
 def resolve_generic_url(base_url, url_ref):
+    """Resolve a relative reference per RFC 3986
+
+    Used for the custom URI schemes supplied by
+    clients of the Mixer: HTTP URIs are processed
+    using the Python library’s urlparse module.
+
+    Arguments --
+        base_url -- absolute URL that is used
+            to interpret url_ref
+        url_ref -- may be an absolute URL
+            (which will be returned unchanged)
+            or a relative reference to be
+            resolved relative to base_url.
+
+    <http://tools.ietf.org/html/rfc3986>
+    """
     if not url_ref:
         return base_url
 
@@ -105,8 +121,19 @@ def resolve_generic_url(base_url, url_ref):
         return m.group('scheme') + '://' + m.group('authority') + url_ref
 
     scheme, authority, path = m.group('scheme'), m.group('authority'), (m.group('path') or '')
-    while True:
-        if url_ref.startswith('../'):
+
+    # Split reference up at slashes and strip out irrelevant .. and .:
+    elts = []
+    for elt in url_ref.split('/'):
+        if elt == '..' and elts and elts[-1] != '..':
+            elts.pop(-1)
+        else:
+            elts.append(elt)
+
+    # Now adjust path from base URL according to
+    # .. and . at the join.
+    while elts:
+        if elts[0] == '..':
             if path:
                 path = path[:-1]
                 q = path.rfind('/')
@@ -114,14 +141,13 @@ def resolve_generic_url(base_url, url_ref):
                     path = path[:q + 1]
                 else:
                     path = ''
-            url_ref = url_ref[3:]
-        elif url_ref.startswith('./'):
-            url_ref = url_ref[2:]
+            elts.pop(0)
+        elif elts[0] == '.':
+            elts.pop(0)
         else:
             break
 
-
-    return scheme + '://' + authority + '/' + path + url_ref
+    return scheme + '://' + authority + '/' + path + '/'.join(elts)
 
 class CouldNotLoad(Exception): pass
 

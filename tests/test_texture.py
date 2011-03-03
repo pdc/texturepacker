@@ -436,6 +436,15 @@ class ResolveUrlTests(unittest.TestCase):
         self.assertEqual('smuurf://smurf/derf/bink/bank.frankly.dank',
                 resolve_generic_url('smuurf://smurf/derf/bink/bank.frankly.dank', ''))
 
+    def test_something_dotdot_something_for_heavens_sake(self):
+        self.assertEqual('smuurf://smurf/derf/bink/bink/bib/nib/jib',
+                resolve_generic_url('smuurf://smurf/derf/bink/bink/frothwagon', 'bib/fib/../nib/jib'))
+
+    def test_something_dotdot_sneak_attacj(self):
+        self.assertEqual('smuurf://smurf/etc/passwd',
+                resolve_generic_url('smuurf://smurf/derf/bink/bink/frothwagon', 'bib/../../../../../../../../../../etc/passwd'))
+
+
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
         pack1 = self.sample_pack()
