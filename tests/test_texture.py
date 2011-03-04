@@ -1297,6 +1297,11 @@ class TestLastModified(TestCase):
             'Expected {0} <= {1} <= {2} within {3}'.format(
                 before, actual, after, epsilon))
 
+    def check_modified_since(self, x):
+        self.assertTrue(x.is_modified_since(x.get_last_modified() + timedelta(seconds=-1)))
+        self.assertFalse(x.is_modified_since(x.get_last_modified()))
+        self.assertFalse(x.is_modified_since(x.get_last_modified() + timedelta(seconds=1)))
+
     def test_file_pack(self):
         simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
 
@@ -1323,6 +1328,13 @@ class TestLastModified(TestCase):
         dt = datetime(*fake_time)
         self.assert_datetime_between(dt, res_b.get_last_modified(), dt, timedelta(seconds=2))
 
+        self.check_modified_since(res_a)
+        self.check_modified_since(res_b)
+
+        for n in pack.get_resource_names():
+            print n, pack.get_resource(n).is_modified_since(pack.get_last_modified())
+        self.check_modified_since(pack)
+
     def test_directory_pack(self):
         dir_path = os.path.join(self.test_dir, 'happipakq')
         if os.path.exists(dir_path):
@@ -1347,6 +1359,10 @@ class TestLastModified(TestCase):
         t = datetime.fromtimestamp(os.stat(os.path.join(dir_path, 'b.png')).st_mtime)
         self.assert_datetime_between(t, res_b.get_last_modified(), t,timedelta(seconds=1))
 
+        self.check_modified_since(res_a)
+        self.check_modified_since(res_b)
+        self.check_modified_since(pack)
+
     def test_composite_resource(self):
         # Create 2 resources
         simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
@@ -1367,12 +1383,17 @@ class TestLastModified(TestCase):
         res.replace(pack.get_resource('a.png'), simple_map, {'a': 'd', 'd': 'a'})
         self.assert_datetime_between(before, res.get_last_modified(), after, timedelta(seconds=2))
 
+        self.check_modified_since(res)
+        self.check_modified_since(pack)
+
     def test_renamed_resource(self):
         before = datetime.now()
         pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': ('sign.png', None)})
         after = datetime.now()
         res = RenamedResource('portent.png', pack.get_resource('item/sign.png'))
         self.assert_datetime_between(before, res.get_last_modified(), after, timedelta(seconds=2))
+
+        self.check_modified_since(res)
 
 if __name__ == '__main__':
 	unittest.main()

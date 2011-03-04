@@ -313,17 +313,26 @@ class ResourceBase(object):
         self.name = name
 
     def get_bytes(self):
-        raise NotImplemented('{0}.get_bytes'.format(self.__class__.__name))
+        raise NotImplementedError('{0}.get_bytes'.format(self.__class__.__name__))
 
     def get_image(self):
-        raise NotImplemented('{0}.get_image'.format(self.__class__.__name))
+        raise NotImplementedError('{0}.get_image'.format(self.__class__.__name__))
+
+    def get_last_modified(self):
+        """When was the laast time this resource was changed?"""
+        raise NotImplementedError('{0}.get_last_modified'.format(self.__class__.__name__))
+
+    def is_modified_since(self, then):
+        """Has this resource been modified since this date?"""
+        return self.get_last_modified() > then
 
 
 class TextResource(ResourceBase):
     """A document whose content is a literal string."""
-    def __init__(self, name, content):
+    def __init__(self, name, content, last_modified=None):
         super(TextResource, self).__init__(name)
         self.content = content
+        self.last_modified = last_modified or datetime.now()
 
     def get_content(self):
         return self.content
@@ -331,6 +340,9 @@ class TextResource(ResourceBase):
     def get_bytes(self):
         """Get the byte sequence that will go in the ZIP archive"""
         return self.get_content().encode('UTF-8')
+
+    def get_last_modified(self):
+        return self.last_modified
 
 
 class PackBase(object):
@@ -354,16 +366,44 @@ class PackBase(object):
             ResoureBase subclass instance
 
         """
-        raise NotImplemented('{0}.get_resource'.format(self.__class__.__name__))
+        raise NotImplementedError('{0}.get_resource'.format(self.__class__.__name__))
 
     def get_resource_names(self):
         """A list of all resources in the pack."""
-        raise NotImplemented('{0}.get_resource_names'.format(self.__class__.__name__))
+        raise NotImplementedError('{0}.get_resource_names'.format(self.__class__.__name__))
 
     def write_to(self, strm):
         with ZipFile(strm, 'w', ZIP_DEFLATED) as zip:
             for name in sorted(self.get_resource_names()):
                 zip.writestr(name, self.get_resource(name).get_bytes())
+
+    def get_last_modified(self):
+        """Return a datetime object giving the last time a resource was modified.
+
+        Note that what matters is the modification times of
+        the resources in the pack. For example, two zips
+        created at different times but with the same timestamps
+        recorded for their contents will have the same last-modified time.
+
+        This is returned as an instance of datetime.
+        The precision will depend on the type of pack; for fiels
+        stored in a ZIP this is only to the nearest 2 seconds
+        (because of limitations in the ZIP format).
+        """
+        return max(self.get_resource(n).get_last_modified()
+                for n in self.get_resource_names())
+
+    def is_modified_since(self, then):
+        """Return true iff this pack has had a respource changed since the given date.
+
+        Because the precision of timestamps varies according
+        to the format the pack is stored in, near misses
+        will be unreliable except when the given date
+        is the same as the result of an earlier call to get_last_modified.
+        """
+        return any(self.get_resource(n).is_modified_since(then)
+                for n in self.get_resource_names())
+
 
 class RecipePack(PackBase):
     """A texture pack assembled from other resources."""
@@ -387,7 +427,7 @@ class RecipePack(PackBase):
 
 
 class SourcePack(PackBase):
-    """A texture pack that gets resources from a ZIP file."""
+    """A texture pack that gets resources from a ZIP file or directory."""
     def __init__(self, zip_data, atlas):
         super(SourcePack, self).__init__(atlas)
         if (isinstance(zip_data, basestring)
@@ -417,7 +457,8 @@ class SourcePack(PackBase):
             return res
         if name.endswith('.txt'):
             text = self.get_resource_bytes(name).decode('UTF-8')
-            res = TextResource(name, text)
+            last_modified = self.get_resource_last_modified(name)
+            res = TextResource(name, text, last_modified)
         else:
             res = SourceResource(self, name)
         self.loaded_resources[name] = res
@@ -484,7 +525,7 @@ class SourcePack(PackBase):
 
 
 class LazyPack(PackBase):
-    """A pack specified bya URL that will be loaded when required.
+    """A pack specified by a URL that will be loaded when required.
 
     Actually performing the network operation will be deferred
     until it can no longer be avoided."""
