@@ -550,6 +550,11 @@ class MixerTests(TestCase):
         }, data1)
 
         pack2 = Mixer().get_pack('http://example.org/frog.zip')
+        # Not laoded yet:
+        self.assertFalse(mock_meth.call_args)
+
+        res = pack2.get_resource('a.png')
+        # Has now downloaded the data:
         self.assertEqual('http://example.org/frog.zip', mock_meth.call_args[0][0])
         self.assert_same_packs(pack1, pack2)
 
@@ -579,8 +584,11 @@ class MixerTests(TestCase):
             'status': '404',
         }, 'Not found')
 
-        with self.assertRaises(UnknownPack):
+        with self.assertRaises(CouldNotLoad):
             pack2 = Mixer().get_pack({'href': 'http://example.org/frog.zip'})
+
+            # Force it to be loaded:
+            res = pack2.get_resource('a.png')
 
     def test_get_pack_from_minecraft(self):
         pack1, data1 = self.sample_pack_and_bytes()
@@ -1339,6 +1347,32 @@ class TestLastModified(TestCase):
         t = datetime.fromtimestamp(os.stat(os.path.join(dir_path, 'b.png')).st_mtime)
         self.assert_datetime_between(t, res_b.get_last_modified(), t,timedelta(seconds=1))
 
+    def test_composite_resource(self):
+        # Create 2 resources
+        simple_map = GridMap((32, 32), (16, 16), ['a', 'b', 'c', 'd'])
+
+        file_path = os.path.join(self.test_dir, 'aa.zip')
+        before = datetime.now()
+        with open(file_path, 'wb') as strm:
+            self.write_pack_contents(strm,'AB', 'Has A and B',
+                    {'a.png': ('a.png', simple_map)})
+        after = datetime.now()
+
+        fake_time = (2010, 2, 20, 10, 39, 55)
+        with ZipFile(file_path, 'a') as zip:
+            zip.writestr(ZipInfo('b.png', fake_time), self.get_data('b.png'))
+
+        pack = SourcePack(file_path, Atlas({'a.png': simple_map, 'b.png': simple_map}))
+        res = CompositeResource('ab.png', pack.get_resource('b.png'), simple_map)
+        res.replace(pack.get_resource('a.png'), simple_map, {'a': 'd', 'd': 'a'})
+        self.assert_datetime_between(before, res.get_last_modified(), after, timedelta(seconds=2))
+
+    def test_renamed_resource(self):
+        before = datetime.now()
+        pack = self.make_source_pack('Sign pack', 'Just a test', {'item/sign.png': ('sign.png', None)})
+        after = datetime.now()
+        res = RenamedResource('portent.png', pack.get_resource('item/sign.png'))
+        self.assert_datetime_between(before, res.get_last_modified(), after, timedelta(seconds=2))
 
 if __name__ == '__main__':
 	unittest.main()

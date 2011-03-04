@@ -170,6 +170,8 @@ class Loader(object):
 
         The spec can have a 'file' member specifying a file path.
         """
+        if isinstance(spec, basestring):
+            spec = {'href': spec}
         if 'file' in spec:
             file_path = resolve_file_path(spec['file'], base)
             return url_from_file_path(file_path)
@@ -481,6 +483,57 @@ class SourcePack(PackBase):
         return datetime(*ymdhms)
 
 
+class LazyPack(PackBase):
+    """A pack specified bya URL that will be loaded when required.
+
+    Actually performing the network operation will be deferred
+    until it can no longer be avoided."""
+    def __init__(self, loader, url, atlas):
+        super(LazyPack, self).__init__(atlas)
+        self.loader = loader
+        self.url = url
+        self.pack = None
+
+    def get_pack(self):
+        """If we have not done so already, download the pack."""
+        if not self.pack:
+            meta, strm = self.loader.get_url_stream(self.url, 'zip')
+            # XXX exception if wrong type of data?
+            self.pack = SourcePack(strm, self.atlas)
+        return self.pack
+
+    def get_resource(self, name):
+        """Get the named resource
+
+        Arguments --
+            name -- specifies the resource to return
+
+        Returns --
+            A resource (subclass of ResourceBase)
+        """
+        return self.get_pack().get_resource(name)
+
+    def get_resource_names(self):
+        return self.get_pack().get_resource_names()
+
+    @property
+    def label(self):
+        return self.get_pack().label
+
+    @property
+    def desc(self):
+        return self.get_pack().desc
+
+    def get_last_modified(self):
+        """Get a timestamp for the last time the content of the pack was changed.
+
+        Note that the contents timestamps are what matter;
+        the same files archived twice will have the same
+        last-modified time.
+        """
+        return self.get_pack().desc
+
+
 class SourceResource(ResourceBase):
     def __init__(self, source, name):
         self.source = source
@@ -513,6 +566,9 @@ class RenamedResource(ResourceBase):
 
     def get_image(self):
         return self.res.get_image()
+
+    def get_last_modified(self):
+        return self.res.get_last_modified()
 
 
 class MapBase(object):
@@ -733,6 +789,9 @@ class CompositeResource(ResourceBase):
             self.bytes = strm.getvalue()
         return self.bytes
 
+    def get_last_modified(self):
+        return max([self.res.get_last_modified()]
+            + [x.get_last_modified() for x, _, _ in self.replacements])
 
 class UnknownPack(Exception):
     """Raised if you ask a mixer to use a pack it does not know about."""
@@ -919,8 +978,15 @@ class Mixer(object):
         atlas = self.get_atlas(hasattr(pack_spec, 'get') and pack_spec.get('maps'), base)
 
         # Varfious ways of decoding the pack spec.
+        url = self.loader.get_url(pack_spec, base)
+        if url and url.startswith('http://'):
+            return LazyPack(self.loader, url, atlas)
+
         try:
-            strm = self.loader.get_stream(pack_spec, base)
+            if url:
+                meta, strm = self.loader.get_url_stream(url)
+            else:
+                strm = self.loader.get_stream(pack_spec, base)
         except CouldNotLoad, e:
             raise UnknownPack(pack_spec, e)
         except DudeItsADirectory, e:
