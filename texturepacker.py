@@ -425,6 +425,12 @@ class RecipePack(PackBase):
     def get_resource_names(self):
         return self.resources.keys()
 
+    def is_modified_since(self, then):
+        for n in self.get_resource_names():
+            if n != 'pack.txt' and self.get_resource(n).is_modified_since(then):
+                return True
+        return False
+
 
 class SourcePack(PackBase):
     """A texture pack that gets resources from a ZIP file or directory."""

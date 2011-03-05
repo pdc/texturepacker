@@ -4,7 +4,7 @@
 maketexture.py
 
 Created by Damian Cugley on 2011-02-03.
-Copyright (c) 2011 Alleged Literature. All rights reserved.
+Copyright (c) 2011 Alleged Literature.
 """
 
 import sys
@@ -13,19 +13,37 @@ import os
 sys.path[1:1] = [os.path.dirname(os.path.dirname(__file__))]
 
 import getopt
-
 import json
 import yaml
-from texturepacker import Mixer, minecraft_texture_pack_dir_path
+from datetime import datetime
+from texturepacker import Mixer, SourcePack, Atlas, minecraft_texture_pack_dir_path
 
-VERSION = '0.1 2011-02-21'
+VERSION = '0.3.1 2011-03-05'
 
 
 help_message = '''
-{argv0} [-v] [ --output=FILE | - ] [ NAME=URL]... FILE
-{argv0} [-v] [ --output=DIR | --install ] [ NAME=URL]... FILE...
+{argv0} [-v] [--force] [ --output=FILE | - ] [ NAME=URL]... FILE
+{argv0} [-v] [--force] [ --output=DIR | --install ] [ NAME=URL]... FILE...
 {argv0} --help
 {argv0} --version
+
+OPTIONS
+    -v
+        Increatse verbosity
+    --output=FILE, -oFILE
+        Write texture pack to FILE
+    --output=DIR, -oDIR
+        Write texture pack in named directory,
+        with file name taken from recipe name + .zip
+    -output=-, -o-
+        Write texture pack to standard outout stream.
+    --install
+        Write the texture pack in to Minecraft’s directory.
+    --force
+        Force creation of texure packs,
+        even if they seem to already be up to date.
+    NAME=URL
+        Supply other packs as inputs to the recipe.
 '''
 
 
@@ -39,13 +57,14 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:vV", ["help", "output=", 'version', 'install', ])
+            opts, args = getopt.getopt(argv[1:], "ho:vV", ["help", "output=", 'version', 'install', 'force'])
         except getopt.error, msg:
             raise Usage(msg)
 
         mixer = Mixer()
         verbose = 0
         out_arg = None
+        is_forced = False
 
         # option processing
         for opt, arg in opts:
@@ -61,6 +80,8 @@ def main(argv=None):
                 out_arg = arg
             elif opt == '--install':
                 out_arg = minecraft_texture_pack_dir_path()
+            elif opt == '--force':
+                is_forced = True
             else:
                 raise Usage('Unexpected option {0!r}'.format(opt))
 
@@ -84,20 +105,40 @@ def main(argv=None):
                     recipe = yaml.load(strm)
             else:
                 raise Usage('{0!r}: expected file name ending in one of .tprx, .yaml, .yml, .json'.format(recipe_file))
+            recipe_mtime = os.stat(recipe_file).st_mtime
+            if verbose > 1:
+                print >>sys.stderr, 'recipe last modified', datetime.fromtimestamp(recipe_mtime).isoformat()
+
+            # Find last-modified time to beat.
+            then = None
+            if out_arg != '-':
+                if out_arg and not os.path.isdir(out_arg):
+                    out_file = out_arg
+                    out_arg = None
+                else:
+                    out_file = os.path.splitext(recipe_file)[0] + '.zip'
+                    if out_arg:
+                        out_file = os.path.join(out_arg, os.path.basename(out_file))
+                if not is_forced and os.path.exists(out_file) and os.stat(out_file).st_mtime > recipe_mtime:
+                    old_pack = SourcePack(out_file, Atlas())
+                    then = old_pack.get_last_modified()
+                    if verbose > 1:
+                        print >>sys.stderr, 'pack last modified', then.isoformat()
+                    if datetime.fromtimestamp(recipe_mtime) > then:
+                        then = None
 
             base = 'file://' + os.path.abspath(recipe_file)
             pack = mixer.make(recipe, base=base)
-            if out_arg == '-':
+
+            if then and not pack.is_modified_since(then):
+                if verbose:
+                    print >>sys.stderr, 'Already up-to-date:', pack.get_last_modified().isoformat()
+            elif out_arg == '-':
                 pack.write_to(sys.stdout)
                 out_arg = None
             else:
-                out_file = os.path.splitext(recipe_file)[0] + '.zip'
-                if out_arg:
-                    if os.path.isdir(out_arg):
-                        out_file = os.path.join(out_arg, os.path.basename(out_file))
-                    else:
-                        out_file = out_arg
-                        out_arg = None
+                if verbose:
+                    print >>sys.stderr, 'Not up-to-date:', pack.get_last_modified().isoformat()
                 pack.write_to(out_file)
                 if verbose:
                     print >>sys.stderr, 'Wrote ZIP to', out_file
