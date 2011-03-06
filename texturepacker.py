@@ -769,7 +769,38 @@ def pil_box(left=None, top=None, right=None, bottom=None, x=None, y=None, width=
     return left, top, right, bottom
 
 
-class CompositeResource(ResourceBase):
+class ImagingResourceBase(ResourceBase):
+    """Base class for images that are lazily constructed using the Imaging library."""
+    def __init__(self, name):
+        super(ImagingResourceBase, self).__init__(name)
+        self._image = None
+        self._bytes = None
+
+    def _calc(self):
+        """Generate the image resource and return the image"""
+        raise NotImplementedError('{n}._calc'.format(n=self.__class__.__name__))
+
+    def _invalidate(self):
+        """Call this if the recipe changes, so cached images should be discarded."""
+        self._image = None
+        self._bytes = None
+
+    def get_image(self):
+        """Get the composite image."""
+        if self._image is None:
+            self._image = self._calc()
+        return self._image
+
+    def get_bytes(self):
+        """Get the bytes representing the composite image in PNG format."""
+        if self._bytes is None:
+            strm = StringIO()
+            self.get_image().save(strm, 'PNG', optimize=True)
+            self._bytes = strm.getvalue()
+        return self._bytes
+
+
+class CompositeResource(ImagingResourceBase):
     """An image made by replacing some cells in an image with parts of another"""
     def __init__(self, name, base_res, base_map):
         """Create a composite resouce (with no substitutions)
@@ -785,7 +816,6 @@ class CompositeResource(ResourceBase):
         self.res = base_res
         self.map = base_map
         self.replacements = []
-        self.image = None
 
     def replace(self, source_res, source_map, cells):
         """Replacing cell(s) in the image with cells from another
@@ -805,8 +835,7 @@ class CompositeResource(ResourceBase):
         self.replacements.append((source_res, source_map, cells))
 
         # This invalidates any cached image.
-        self.im = None
-        self.bytes = None
+        self._invalidate()
 
     def _calc(self):
         """Called when the image data is required.
@@ -820,25 +849,37 @@ class CompositeResource(ResourceBase):
                 src_box = src_map.get_box(src_name)
                 src_im = src_res.get_image().crop(src_box)
                 im.paste(src_im, dst_box)
-        self.image = im
-
-    def get_image(self):
-        """Get the composite image."""
-        if self.image is None:
-            self._calc()
-        return self.image
-
-    def get_bytes(self):
-        """Get the bytes representing the composite image in PNG format."""
-        if self.bytes is None:
-            strm = StringIO()
-            self.get_image().save(strm, 'PNG', optimize=True)
-            self.bytes = strm.getvalue()
-        return self.bytes
+        return im
 
     def get_last_modified(self):
         return max([self.res.get_last_modified()]
             + [x.get_last_modified() for x, _, _ in self.replacements])
+
+
+class PackIconResource(ImagingResourceBase):
+    def __init__(self, res, map, names):
+        super(PackIconResource, self).__init__('pack.png')
+        self.res = res
+        self.map = map
+        self.names = names
+
+    def _calc(self):
+        src_im = self.res.get_image()
+        im = Image.new('RGBA', (64, 64), (255, 255, 255))
+        seq = [(0, 0, 32), (32, 0, 32), (32, 32, 32),
+            (16, 48, 16), (0, 48, 16), (0, 32, 16),
+            (16, 32, 8), (24, 32, 8), (24, 40, 8),
+            (16, 40, 8)]
+        for (x, y, wh), name in zip(seq, self.names):
+            dst_box = x, y, x + wh, y + wh
+            src_box = self.map.get_box(name)
+            cell_im = src_im.crop(src_box).resize((wh, wh))
+            im.paste(cell_im, dst_box)
+        return im
+
+    def get_last_modified(self):
+        return self.res.get_last_modified()
+
 
 class UnknownPack(Exception):
     """Raised if you ask a mixer to use a pack it does not know about."""
@@ -956,7 +997,10 @@ class Mixer(object):
                     yield res
             else:
                 # A recipe for creating a new resource from one or more sources.
-                res_name = file_spec['file']
+                if 'pack_icon' in file_spec:
+                    res_name = file_spec.get('file', 'pack.png')
+                else:
+                    res_name = file_spec['file']
                 src_res = src_pack.get_resource(file_spec.get('source', res_name))
                 if 'replace' in file_spec:
                     src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name), base)
@@ -974,6 +1018,9 @@ class Mixer(object):
                         res.replace(src2_res, src2_map, cells)
                 elif res_name == src_res.name:
                     res = src_res
+                elif 'pack_icon' in file_spec:
+                    src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name), base)
+                    res = PackIconResource(src_res, src_map, file_spec['pack_icon']['cells'])
                 else:
                     res = RenamedResource(res_name, src_res)
                 yield res

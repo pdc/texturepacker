@@ -1395,5 +1395,45 @@ class TestLastModified(TestCase):
 
         self.check_modified_since(res)
 
+
+class PackPngTests(TestCase):
+    def setUp(self):
+        self.map = GridMap((256, 256), (16, 16), ['{0:02X}'.format(x) for x in range(256)])
+        self.pack = self.make_source_pack('Zumpy', 'Ging', {'terrain.png': ('gingham.png', self.map)})
+
+    def test_10(self):
+        res = PackIconResource(self.pack.get_resource('terrain.png'), self.map,
+            ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'])
+            # Was DEADBEEF13DECAFBAD69 but I got the coordinates reversed in the test image.
+        #with open(os.path.join(self.test_dir, 'pack10.png'), 'wb') as strm:
+        #    strm.write(res.get_bytes())
+        self.assertRepresentIdenticalImages(self.get_data('gingham10.png'), res.get_bytes())
+
+    def test_recipe_10(self):
+        m = Mixer()
+        m.add_pack('gingham', self.pack)
+        pack = m.make({
+            'label': 'lab',
+            'desc': 'desc',
+            'mix': {
+                'pack': '$gingham',
+                'files': [
+                    'terrain.png',
+                    {
+                        'source': 'terrain.png',
+                        'pack_icon': {
+                            'cells': ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'],
+                        }
+                    }
+                ]
+            }
+        })
+        print pack.get_resource_names()
+        with open(os.path.join(self.test_dir, 'recipe_10.zip'), 'wb') as strm:
+            pack.write_to(strm)
+        self.assertRepresentIdenticalImages(self.get_data('gingham10.png'),
+            pack.get_resource('pack.png').get_bytes())
+
+
 if __name__ == '__main__':
 	unittest.main()

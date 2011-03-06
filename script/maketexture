@@ -138,7 +138,7 @@ def main(argv=None):
                 out_arg = None
             else:
                 if verbose:
-                    print >>sys.stderr, 'Not up-to-date:', pack.get_last_modified().isoformat()
+                    print >>sys.stderr, 'Recipe last modified:', pack.get_last_modified().isoformat()
                 pack.write_to(out_file)
                 if verbose:
                     print >>sys.stderr, 'Wrote ZIP to', out_file

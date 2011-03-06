@@ -1,0 +1,14 @@
+label: Glossy Pack by Vitrolic_Edge
+desc: -*-
+mix:
+  -
+    pack:
+      href: http://dl.dropbox.com/u/21369797/Glossy%20Pack%20by%20Vitrolic_Edge.zip
+      maps:
+        href: internal:/rx/maps/beta-12
+    files:
+      - terrain.png
+      - particles.png
+      -
+        file: gui/items.png
+        source: items.png
