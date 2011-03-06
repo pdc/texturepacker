@@ -1405,8 +1405,8 @@ class PackPngTests(TestCase):
         res = PackIconResource(self.pack.get_resource('terrain.png'), self.map,
             ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'])
             # Was DEADBEEF13DECAFBAD69 but I got the coordinates reversed in the test image.
-        #with open(os.path.join(self.test_dir, 'pack10.png'), 'wb') as strm:
-        #    strm.write(res.get_bytes())
+        with open(os.path.join(self.test_dir, 'pack10.png'), 'wb') as strm:
+            strm.write(res.get_bytes())
         self.assertRepresentIdenticalImages(self.get_data('gingham10.png'), res.get_bytes())
 
     def test_recipe_10(self):

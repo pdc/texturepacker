@@ -865,11 +865,11 @@ class PackIconResource(ImagingResourceBase):
 
     def _calc(self):
         src_im = self.res.get_image()
-        im = Image.new('RGBA', (64, 64), (255, 255, 255))
-        seq = [(0, 0, 32), (32, 0, 32), (32, 32, 32),
-            (16, 48, 16), (0, 48, 16), (0, 32, 16),
-            (16, 32, 8), (24, 32, 8), (24, 40, 8),
-            (16, 40, 8)]
+        im = Image.new('RGBA', (128, 128), (255, 255, 255))
+        seq = [(0, 0, 64), (64, 0, 64), (64, 64, 64),
+            (32, 96, 32), (0, 96, 32), (0, 64, 32),
+            (32, 64, 16), (48, 64, 16), (48, 80, 16),
+            (32, 80, 16)]
         for (x, y, wh), name in zip(seq, self.names):
             dst_box = x, y, x + wh, y + wh
             src_box = self.map.get_box(name)

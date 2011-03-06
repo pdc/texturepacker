@@ -9,3 +9,18 @@ mix:
     files:
       - "*.png"
       - news.txt
+      -
+        file: pack.png
+        source: terrain.png
+        pack_icon:
+          cells:
+            - dirt_grass
+            - stone
+            - planks
+            - sand
+            - log_top
+            - cactus_top
+            - coal_ore
+            - wooden_door_top
+            - wooden_door_bottom
+            - redstone_torch_lit

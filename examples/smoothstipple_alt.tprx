@@ -22,3 +22,18 @@ mix:
           -
             cells:
               track_corner: track_corner1
+      -
+        file: pack.png
+        source: terrain.png
+        pack_icon:
+          cells:
+            - dirt_grass
+            - stone
+            - planks
+            - sand
+            - log_side
+            - track_corner1
+            - coal_ore
+            - wooden_door_top
+            - wooden_door_bottom
+            - redstone_torch_lit
