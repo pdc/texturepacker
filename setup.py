@@ -9,7 +9,7 @@ setup(
     name='texturepacker',
     version='0.3.1',
     description='Assemble texture packs for Minecraft',
-    long_description=long_description,
+    #long_description=long_description,
     author='Damian Cugley',
     author_email='pdc@alleged.org.uk',
     url = 'http://pdc.github.com/texturepacker/',

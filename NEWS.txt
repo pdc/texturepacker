@@ -5,7 +5,13 @@ This file outlines changes to the package, in reverse chronological order.
 
 Forthcoming
 
-- Support ../ and ./ when resolving partial references with custom URLs
+- Add `get_last_modified` and `is_modified_since` methods to resources and
+  packs.
+
+- Hence make the `maketexture` script avoid rebuilding packs if their
+  ingredients are unmodified.
+
+- Support `../` and `./` when resolving partial references with custom URLs
   as base URL per <http://tools.ietf.org/html/rfc3986>.
 
 0.3
@@ -13,8 +19,8 @@ Forthcoming
 
 27 February 2011
 
-- Loader has add_scheme method so you can hook in to internal recipe
-  database
+- Loader has `add_scheme` method so you can hook in to internal recipe
+  database by defining custom URL schemes.
 
 0.2
 ===
