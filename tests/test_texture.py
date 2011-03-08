@@ -50,8 +50,10 @@ class TestCase(unittest.TestCase):
                 zip.writestr(file_name, self.get_data(res_name))
             zip.writestr('pack.txt', '{0}\n{1}'.format(name, desc).encode('UTF-8'))
 
-    def assertRepresentIdenticalImages(self, bytes1, bytes2, msg=None):
+    def assert_PNGs_match(self, bytes1, bytes2, msg=None):
         im1 = Image.open(StringIO(bytes1))
+        if isinstance(bytes2, ResourceBase):
+            bytes2 = bytes2.get_bytes()
         im2 = Image.open(StringIO(bytes2))
         self.assertEqual(im1.size, im2.size)
         w, h = im1.size
@@ -291,7 +293,7 @@ class CompositeResourceTests(TestCase):
 
         # Check it matches the manually created image.
         bytes = res.get_bytes()
-        self.assertRepresentIdenticalImages(self.get_data('a_b_replace.png'), bytes)
+        self.assert_PNGs_match(self.get_data('a_b_replace.png'), bytes)
 
 
 class ExternalResourceTests(TestCase):
@@ -474,7 +476,7 @@ class MixerTests(TestCase):
                 self.assertEqual(pack1.get_resource(n).get_content(),
                     pack2.get_resource(n).get_content())
             else:
-                self.assertRepresentIdenticalImages(
+                self.assert_PNGs_match(
                         pack1.get_resource(n).get_bytes(),
                         pack2.get_resource(n).get_bytes())
 
@@ -1257,7 +1259,7 @@ class MixerTests(TestCase):
         strm.seek(0)
         with ZipFile(strm, 'r') as zip:
             for file_name, resource_name in expected_contents.items():
-                self.assertRepresentIdenticalImages(
+                self.assert_PNGs_match(
                         self.get_data(resource_name),
                         zip.read(file_name),
                         'Expected contents of {actual} to match {expected}'.format(
@@ -1407,7 +1409,7 @@ class PackPngTests(TestCase):
             # Was DEADBEEF13DECAFBAD69 but I got the coordinates reversed in the test image.
         with open(os.path.join(self.test_dir, 'pack10.png'), 'wb') as strm:
             strm.write(res.get_bytes())
-        self.assertRepresentIdenticalImages(self.get_data('gingham10.png'), res.get_bytes())
+        self.assert_PNGs_match(self.get_data('gingham10.png'), res.get_bytes())
 
     def test_recipe_10(self):
         m = Mixer()
@@ -1431,8 +1433,55 @@ class PackPngTests(TestCase):
         print pack.get_resource_names()
         with open(os.path.join(self.test_dir, 'recipe_10.zip'), 'wb') as strm:
             pack.write_to(strm)
-        self.assertRepresentIdenticalImages(self.get_data('gingham10.png'),
+        self.assert_PNGs_match(self.get_data('gingham10.png'),
             pack.get_resource('pack.png').get_bytes())
+
+
+class GuessPackTests(TestCase):
+    def test_from_zip(self):
+        zip_path = os.path.join(self.test_dir, 'brukken.zip')
+        with ZipFile(zip_path, 'w') as zip:
+            zip.writestr('terrain.png', self.get_data('gingham.png'))
+            zip.writestr('sign.png', self.get_data('sign.png'))
+            zip.writestr('irrelevant.png', self.get_data('a.png'))
+
+        atlas = Atlas({
+            'terrain.png': GridMap((256, 256), (16, 16), ['{0:02X}'.format(x) for x in range(256)]),
+            'item/sign.png': None,
+        })
+        pack = Mixer().make({
+            'label': 'unjumbled',
+            'desc': 'untwisted',
+            'mix': {
+                'pack': {
+                    'href': url_from_file_path(zip_path),
+                    'unjumble': {
+                        'terrain.png': {
+                            'source_rect': {'width': 256, 'height': 256},
+                            'cell_rect': {'width': 16, 'height': 16},
+                            'names': ['{0:02X}'.format(x) for x in range(256)],
+                        },
+                        'item/sign.png': None,
+                    },
+                },
+                'files': [
+                    '*.png',
+                    {
+                        'source': 'terrain.png',
+                        'pack_icon': {
+                            'cells': ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'],
+                        }
+                    }
+                ]
+            }
+        })
+        with open(os.path.join(self.test_dir, 'unjumbled.zip'), 'w') as strm:
+            pack.write_to(strm)
+        self.assert_PNGs_match(self.get_data('gingham.png'), pack.get_resource('terrain.png'))
+        self.assert_PNGs_match(self.get_data('sign.png'), pack.get_resource('item/sign.png'))
+        self.assert_PNGs_match(self.get_data('gingham10.png'), pack.get_resource('pack.png'))
+        self.assertEqual('unjumbled', pack.label)
+        self.assertEqual('untwisted', pack.desc)
 
 
 if __name__ == '__main__':

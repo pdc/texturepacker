@@ -408,8 +408,8 @@ class PackBase(object):
 class RecipePack(PackBase):
     """A texture pack assembled from other resources."""
 
-    def __init__(self, label, desc):
-        super(RecipePack, self).__init__(Atlas())
+    def __init__(self, label, desc, atlas=None):
+        super(RecipePack, self).__init__(atlas or Atlas())
         self.label = label
         self.desc = desc
 
@@ -746,6 +746,8 @@ class Atlas(object):
         # It had better be a list of maps if we get this far.
         return CompositeMap(self.get_map(x, base) for x in spec)
 
+    def get_map_names(self):
+        return self.maps.keys()
 
 def pil_box(left=None, top=None, right=None, bottom=None, x=None, y=None, width=None, height=None):
     """Return a bounding box of form (LEFT, TOP, RIGHT, BOTTOM) used by PIL.
@@ -1046,6 +1048,10 @@ class Mixer(object):
                     data -- value must be a ZIP archive;
                     base64 -- value must be a ZIP archive,
                         converted to ASCII with the base64 codec.
+                    unjumble -- assume the files in the pack
+                        have the right names byt the wrong folders
+                        and use the atlass to determine which files
+                        to pull out of the ZIP
             fallback_pack (optional) --
                 If the pack_spec is the empty string or None,
                 then use this value instead.
@@ -1069,9 +1075,20 @@ class Mixer(object):
                 raise UnknownPack(pack_spec)
             return result
 
-        atlas = self.get_atlas(hasattr(pack_spec, 'get') and pack_spec.get('maps'), base)
+        atlas_spec = hasattr(pack_spec, 'get') and pack_spec.get('maps', pack_spec.get('unjumble'))
+        atlas = self.get_atlas(atlas_spec, base)
 
-        # Varfious ways of decoding the pack spec.
+        pack = self._load_raw_pack(atlas, pack_spec, base)
+        if hasattr(pack_spec, 'get'):
+            unjumble_spec = pack_spec.get('unjumble')
+            if unjumble_spec:
+                unjumble_atlas = atlas if 'maps' not in pack_spec else self.get_atlas(unjumble_spec, base)
+                pack = self.make_unjumbled_pack(pack, unjumble_atlas)
+        return pack
+
+    def _load_raw_pack(self, atlas, pack_spec, base):
+
+        # Various ways of decoding the pack spec.
         url = self.loader.get_url(pack_spec, base)
         if url and url.startswith('http://'):
             return LazyPack(self.loader, url, atlas)
@@ -1092,6 +1109,27 @@ class Mixer(object):
 
         return SourcePack(strm, atlas)
 
+    def make_unjumbled_pack(self, pack, atlas):
+        """Make an unjumbled copy of this pack using this atlas.
+
+        Given a pack with correct file names but possibly wrong folder names
+        create a new pack that rearranges the files to conform
+        to texturepack conventions.
+        """
+        pack_names = list(pack.get_resource_names())
+        new_pack = RecipePack('unjumbled', 'unjumbled', atlas=atlas)
+        for desired_name in atlas.get_map_names():
+            nick = desired_name.split('/')[-1]
+            slash_nick = '/' + nick
+            for i, available_name in enumerate(pack_names):
+                if available_name == nick or available_name.endswith(slash_nick):
+                    res = pack.get_resource(available_name)
+                    if desired_name != available_name:
+                        res = RenamedResource(desired_name, res)
+                    new_pack.add_resource(res)
+                    del pack_names[i]
+                    break
+        return new_pack
 
     def get_map(self, atlas, spec, base):
         """Get a map from the pack if possible, otherwise try the global atlas."""
@@ -1128,7 +1166,7 @@ class Mixer(object):
                 atlas_spec = self.loader.maybe_get_spec(atlas_spec, base, 'tpmaps')
             if hasattr(atlas_spec, 'items'):
                 for name, map_spec in atlas_spec.items():
-                    atlas.add_map(name, self.get_map(atlas, map_spec, atlas_base))
+                    atlas.add_map(name, map_spec and self.get_map(atlas, map_spec, atlas_base))
             else:
                 # Atlas is a list of atlasses to be merged.
                 for spec in atlas_spec:
