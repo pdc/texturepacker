@@ -1,5 +1,14 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.4.1
+=====
+
+9 March 2011
+
+Bug fixes
+
+- LazyPack returned wrong value for last-modified. Missing test :-(
+
 0.4
 ===
 
