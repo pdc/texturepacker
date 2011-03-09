@@ -578,7 +578,7 @@ class LazyPack(PackBase):
         the same files archived twice will have the same
         last-modified time.
         """
-        return self.get_pack().desc
+        return self.get_pack().get_last_modified()
 
 
 class SourceResource(ResourceBase):
@@ -622,8 +622,11 @@ class MapBase(object):
         pass
 
 class NotInMap(Exception):
-    def __init__(self, name):
-        super(NotInMap, self).__init__('{0!r} not found in map'.format(name))
+    def __init__(self, name, map):
+        super(NotInMap, self).__init__('{0!r} not found in map (must be one of {1})'.format(
+            name, ', '.join(map.names)))
+        self.name = name
+        self.maop = map
 
 class GridMap(MapBase):
     def __init__(self, source_box, cell_box, names):
@@ -654,10 +657,11 @@ class GridMap(MapBase):
         try:
             i = self.names.index(name)
         except ValueError:
-            raise NotInMap(name)
+            raise NotInMap(name, self)
         u, v = i % self.nx, i // self.nx
-        return (self.im_left + self.cell_wd * u, self.im_top + self.cell_ht * v,
+        result = (self.im_left + self.cell_wd * u, self.im_top + self.cell_ht * v,
             self.im_left + self.cell_wd * (u + 1), self.im_top + self.cell_ht * (v + 1))
+        return result
 
 class CompositeMap(MapBase):
     """A map that combines several other maps.
@@ -673,7 +677,7 @@ class CompositeMap(MapBase):
                 return m.get_box(name)
             except NotInMap:
                 pass
-        raise NotInMap(name)
+        raise NotInMap(name, self)
 
     @property
     def names(self):

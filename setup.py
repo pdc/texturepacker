@@ -3,13 +3,12 @@
 from setuptools import setup
 
 long_description = ''.join(list(open('README.txt'))[3:])
-print long_description
 
 setup(
     name='texturepacker',
-    version='0.4',
+    version='0.4.2',
     description='Assemble texture packs for Minecraft',
-    #long_description=long_description,
+    long_description=long_description,
     author='Damian Cugley',
     author_email='pdc@alleged.org.uk',
     url = 'http://pdc.github.com/texturepacker/',
