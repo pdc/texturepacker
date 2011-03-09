@@ -1,0 +1,6 @@
+label: Beta 1.3 Missing Cells
+desc: Contains graphics for upgrading Beta-1.2 packs to support Bets 1.3
+mix:
+  pack: beta-13-missing
+  files:
+    - "*.png"

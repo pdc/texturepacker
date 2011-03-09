@@ -5,6 +5,17 @@
     -
       terrain.png
     -
+      source_rect:
+        x: 96
+        y: 32
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - oozing_obsidian
+    -
       source_rect: {x: 48, y: 128, width: 96, height: 48}
       cell_rect: {width: 16, height: 16}
       names:
