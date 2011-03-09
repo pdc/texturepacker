@@ -4,10 +4,26 @@ parameters:
 label: "{{ beta12.label }} + Beta 1.3"
 desc: "{{ beta12.desc }}"
 maps:
-  href: maps/beta-1.3.tpmaps
+  href: maps/beta-13
 mix:
   pack: "$beta12"
   files:
+    -
+      # Default pack icon. Will be overridden if source has pack.png
+      file: pack.png
+      source: terrain.png
+      pack_icon:
+        cells:
+          - dirt_grass
+          - stone
+          - planks
+          - sand
+          - log_top
+          - cactus_top
+          - coal_ore
+          - wooden_door_top
+          - wooden_door_bottom
+          - redstone_torch_lit
     - "*.png"
     -
       file: terrain.png
@@ -16,7 +32,7 @@ mix:
           pack:
             href: minecraft:bin/minecraft.jar
             maps:
-              href: maps/beta-1.3.tpmaps
+              href: maps/beta-13
           cells:
             - "26"
             - repeater
@@ -36,7 +52,7 @@ mix:
           pack:
             href: minecraft:bin/minecraft.jar
             maps:
-              href: maps/beta-1.3.tpmaps
+              href: maps/beta-13
           cells:
             - repeater
             - bed

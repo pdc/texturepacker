@@ -7,7 +7,7 @@ print long_description
 
 setup(
     name='texturepacker',
-    version='0.3.1',
+    version='0.4',
     description='Assemble texture packs for Minecraft',
     #long_description=long_description,
     author='Damian Cugley',

@@ -1,9 +1,11 @@
 This file outlines changes to the package, in reverse chronological order.
 
-0.3.next
+0.4
 ===
 
-Forthcoming
+9 March 2011
+
+- New recipe keyword: `pack_icon`: create a `pack.png` from the terrain file.
 
 - Add `get_last_modified` and `is_modified_since` methods to resources and
   packs.

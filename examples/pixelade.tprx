@@ -4,7 +4,7 @@ mix:
   pack:
     href: "http://dl.dropbox.com/u/3890564/pixelade.zip"
     maps:
-      href: maps/beta-1.3.tpmaps
+      href: maps/beta-13
   files:
     - "*.png"
     -
@@ -21,7 +21,7 @@ mix:
           pack:
             href: minecraft:bin/minecraft.jar
             maps:
-              href: maps/beta-1.3.tpmaps
+              href: maps/beta-13
           cells:
             - "26"
             - repeater
