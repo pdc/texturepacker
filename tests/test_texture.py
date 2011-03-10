@@ -1484,10 +1484,6 @@ class GuessPackTests(TestCase):
         self.assertEqual('untwisted', pack.desc)
 
     def test_from_zip_parametized(self):
-        atlas = Atlas({
-            'terrain.png': GridMap((256, 256), (16, 16), ['{0:02X}'.format(x) for x in range(256)]),
-            'item/sign.png': None,
-        })
         mixer = Mixer();
         mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
         pack = mixer.make({
@@ -1522,6 +1518,52 @@ class GuessPackTests(TestCase):
             }
         })
         self.check_fantasitic_pack(pack)
+
+    def test_relax_when_missing(self):
+        mixer = Mixer();
+        mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
+        recipe = {
+            'label': 'unjumbled',
+            'desc': 'untwisted',
+            'parameters': {
+                'packs': [
+                    {
+                        'name': 'mary',
+                        'unjumble': {
+                            'terrain.png': {
+                                'source_rect': {'width': 256, 'height': 256},
+                                'cell_rect': {'width': 16, 'height': 16},
+                                'names': ['{0:02X}'.format(x) for x in range(256)],
+                            },
+                            'item/sign.png': None,
+                        },
+                    }
+                ]
+            },
+            'mix': {
+                'pack': "$mary",
+                'files': [
+                    '*.png',
+                    {
+                        'source': 'terrain.png',
+                        'pack_icon': {
+                            'cells': ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'],
+                        }
+                    },
+                    {
+                        'file': 'gui/items.png',
+                    }
+                ]
+            }
+        }
+        with self.assertRaises(NotInPack):
+            pack = mixer.make(recipe)
+
+        recipe['mix']['files'][-1]['if_missing'] = 'relax'
+        pack = mixer.make(recipe)
+        self.check_fantasitic_pack(pack)
+        self.assertTrue('gui/items.png' not in pack.get_resource_names())
+
 
 if __name__ == '__main__':
 	unittest.main()

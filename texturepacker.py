@@ -345,6 +345,12 @@ class TextResource(ResourceBase):
         return self.last_modified
 
 
+class NotInPack(Exception):
+    def __init__(self, name, pack):
+        self.name = name
+        self.pack = pack
+        super(NotInPack, self).__init__('{name}: not in pack {pack}'.format(name=name, pack=pack))
+
 class PackBase(object):
     """Base class for a texture pack.
 
@@ -404,6 +410,9 @@ class PackBase(object):
         return any(self.get_resource(n).is_modified_since(then)
                 for n in self.get_resource_names())
 
+    def __str__(self):
+        return self.__unicode__().encode('UTF-8')
+
 
 class RecipePack(PackBase):
     """A texture pack assembled from other resources."""
@@ -420,7 +429,10 @@ class RecipePack(PackBase):
         self.resources[resource.name] = resource
 
     def get_resource(self, name):
-        return self.resources[name]
+        try:
+            return self.resources[name]
+        except KeyError:
+            raise NotInPack(name, self)
 
     def get_resource_names(self):
         return self.resources.keys()
@@ -430,6 +442,9 @@ class RecipePack(PackBase):
             if n != 'pack.txt' and self.get_resource(n).is_modified_since(then):
                 return True
         return False
+
+    def __unicode__(self):
+        return '<RecipePack {0!r}>'.format(self.label)
 
 
 class SourcePack(PackBase):
@@ -1017,7 +1032,13 @@ class Mixer(object):
                     res_name = file_spec.get('file', 'pack.png')
                 else:
                     res_name = file_spec['file']
-                src_res = src_pack.get_resource(file_spec.get('source', res_name))
+                try:
+                    src_res = src_pack.get_resource(file_spec.get('source', res_name))
+                except NotInPack:
+                    if file_spec.get('if_missing') == 'relax':
+                        continue
+                    else:
+                        raise
                 if 'replace' in file_spec:
                     src_map = self.get_map(src_pack.atlas, file_spec.get('map', src_res.name), base)
                     res = CompositeResource(res_name, src_res, src_map)

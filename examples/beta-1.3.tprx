@@ -75,6 +75,7 @@ mix:
             - redstone_line_mask
     -
       file: gui/items.png
+      if_missing: relax
       replace:
         -
           pack: $missing

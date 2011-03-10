@@ -3,7 +3,7 @@ This file outlines changes to the package, in reverse chronological order.
 0.5
 ====
 
-- New recipe keyword `unjumble` to work with ZIPs containing files with
+- New recipe keywords `unjumble` and `if_missing` to work with ZIPs containing files with
   the correct names but in the wrong folders.
 
 0.4.1
