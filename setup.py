@@ -6,7 +6,7 @@ long_description = ''.join(list(open('README.txt'))[3:])
 
 setup(
     name='texturepacker',
-    version='0.5',
+    version='0.5.1',
     description='Assemble texture packs for Minecraft',
     long_description=long_description,
     author='Damian Cugley',

@@ -31,14 +31,15 @@ def set_http_cache(cache):
             in, or an httplib2 cache object
     """
     global _cache
-    _cache = cache
-    _http = None
+    if _cache != cache:
+        _cache = cache
+        _http = None
 
 def _get_http():
     """Helper function to get the HTTP object."""
     global _http
     if _http is None:
-        _http = httplib2.Http()
+        _http = httplib2.Http(_cache)
     return _http
 
 

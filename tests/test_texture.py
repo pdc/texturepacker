@@ -26,8 +26,14 @@ class TestCase(unittest.TestCase):
     data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_data'))
     test_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),  'test_working'))
 
-    if not os.path.exists(test_dir):
-        os.mkdir(test_dir)
+    def setUp(self):
+        if not os.path.exists(self.test_dir):
+            os.mkdir(self.test_dir)
+
+        cache_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_cache'))
+        if not os.path.exists(cache_dir):
+            os.mkdir(cache_dir)
+        set_http_cache(cache_dir)
 
     def get_data(self, file_name):
         with open(os.path.join(self.data_dir, file_name), 'rb') as strm:

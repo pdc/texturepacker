@@ -1,7 +1,16 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.5.1
+=====
+
+10 March 2011
+
+- Bug fix: Setting a cache directory with `set_http_cache` should now work!
+
 0.5
 ====
+
+10 March 2011
 
 - New recipe keywords `unjumble` and `if_missing` to work with ZIPs containing files with
   the correct names but in the wrong folders.
@@ -11,9 +20,7 @@ This file outlines changes to the package, in reverse chronological order.
 
 9 March 2011
 
-Bug fixes
-
-- LazyPack returned wrong value for last-modified. Missing test :-(
+- Bug fix: LazyPack returned wrong value for last-modified. Missing test :-(
 
 0.4
 ===

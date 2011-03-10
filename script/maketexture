@@ -16,7 +16,7 @@ import getopt
 import json
 import yaml
 from datetime import datetime
-from texturepacker import Mixer, SourcePack, Atlas, minecraft_texture_pack_dir_path
+from texturepacker import Mixer, SourcePack, Atlas, minecraft_texture_pack_dir_path, set_http_cache
 
 VERSION = '0.3.1 2011-03-05'
 
@@ -42,6 +42,8 @@ OPTIONS
     --force
         Force creation of texure packs,
         even if they seem to already be up to date.
+    --cache=DIR
+        Use this directory to cache HTTP downloads.
     NAME=URL
         Supply other packs as inputs to the recipe.
 '''
@@ -57,7 +59,8 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:vV", ["help", "output=", 'version', 'install', 'force'])
+            opts, args = getopt.getopt(argv[1:], "ho:vV", ["help", "output=", 'version', 'install',
+                    'force', 'cache='])
         except getopt.error, msg:
             raise Usage(msg)
 
@@ -82,6 +85,8 @@ def main(argv=None):
                 out_arg = minecraft_texture_pack_dir_path()
             elif opt == '--force':
                 is_forced = True
+            elif opt == '--cache':
+                set_http_cache(arg)
             else:
                 raise Usage('Unexpected option {0!r}'.format(opt))
 
