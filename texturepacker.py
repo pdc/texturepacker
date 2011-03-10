@@ -942,14 +942,25 @@ class Mixer(object):
             A new pack object (subclass of PackBase).
         """
 
+        # Check we have been supplied with the parameters we have declared.
+        # Also unjumble any parameters marked for this odd treatment.
+        # XXX this will affect uses of the same param in later calls. Bad?
         param_specss = recipe.get('parameters')
         if param_specss:
             pack_specs = param_specss.get('packs')
             if pack_specs:
                 for param_spec in pack_specs:
-                    if param_spec not in self.packs:
+                    if isinstance(param_spec, basestring):
+                        if param_spec not in self.packs:
+                            raise MissingParameter(param_spec)
+                        continue
+                    param_name = param_spec['name']
+                    if param_name not in self.packs:
                         raise MissingParameter(param_spec)
-
+                    if 'unjumble' in param_spec:
+                        unjumbled_atlas = self.get_atlas(param_spec['unjumble'], base=base)
+                        unjumbled_pack = self.make_unjumbled_pack(self.packs[param_name], unjumbled_atlas)
+                        self.packs[param_name] = unjumbled_pack
 
         if 'maps' in recipe:
             self.get_atlas(recipe['maps'], base, self.atlas)
@@ -986,7 +997,6 @@ class Mixer(object):
 
     def iter_resources(self, src_pack, resources_spec, base):
         """Given a files spec, yield a sequence of resources.
-
 
         """
         for file_spec in resources_spec:

@@ -1438,23 +1438,20 @@ class PackPngTests(TestCase):
 
 
 class GuessPackTests(TestCase):
-    def test_from_zip(self):
-        zip_path = os.path.join(self.test_dir, 'brukken.zip')
-        with ZipFile(zip_path, 'w') as zip:
+    def setUp(self):
+        self.zip_path = os.path.join(self.test_dir, 'brukken.zip')
+        with ZipFile(self.zip_path, 'w') as zip:
             zip.writestr('terrain.png', self.get_data('gingham.png'))
             zip.writestr('sign.png', self.get_data('sign.png'))
             zip.writestr('irrelevant.png', self.get_data('a.png'))
 
-        atlas = Atlas({
-            'terrain.png': GridMap((256, 256), (16, 16), ['{0:02X}'.format(x) for x in range(256)]),
-            'item/sign.png': None,
-        })
+    def test_from_zip(self):
         pack = Mixer().make({
             'label': 'unjumbled',
             'desc': 'untwisted',
             'mix': {
                 'pack': {
-                    'href': url_from_file_path(zip_path),
+                    'href': url_from_file_path(self.zip_path),
                     'unjumble': {
                         'terrain.png': {
                             'source_rect': {'width': 256, 'height': 256},
@@ -1475,6 +1472,9 @@ class GuessPackTests(TestCase):
                 ]
             }
         })
+        self.check_fantasitic_pack(pack)
+
+    def check_fantasitic_pack(self, pack):
         with open(os.path.join(self.test_dir, 'unjumbled.zip'), 'w') as strm:
             pack.write_to(strm)
         self.assert_PNGs_match(self.get_data('gingham.png'), pack.get_resource('terrain.png'))
@@ -1483,6 +1483,45 @@ class GuessPackTests(TestCase):
         self.assertEqual('unjumbled', pack.label)
         self.assertEqual('untwisted', pack.desc)
 
+    def test_from_zip_parametized(self):
+        atlas = Atlas({
+            'terrain.png': GridMap((256, 256), (16, 16), ['{0:02X}'.format(x) for x in range(256)]),
+            'item/sign.png': None,
+        })
+        mixer = Mixer();
+        mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
+        pack = mixer.make({
+            'label': 'unjumbled',
+            'desc': 'untwisted',
+            'parameters': {
+                'packs': [
+                    {
+                        'name': 'mary',
+                        'unjumble': {
+                            'terrain.png': {
+                                'source_rect': {'width': 256, 'height': 256},
+                                'cell_rect': {'width': 16, 'height': 16},
+                                'names': ['{0:02X}'.format(x) for x in range(256)],
+                            },
+                            'item/sign.png': None,
+                        },
+                    }
+                ]
+            },
+            'mix': {
+                'pack': "$mary",
+                'files': [
+                    '*.png',
+                    {
+                        'source': 'terrain.png',
+                        'pack_icon': {
+                            'cells': ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'],
+                        }
+                    }
+                ]
+            }
+        })
+        self.check_fantasitic_pack(pack)
 
 if __name__ == '__main__':
 	unittest.main()
