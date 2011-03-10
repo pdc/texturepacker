@@ -1,7 +1,12 @@
 parameters:
   packs:
-    - beta12
-    - missing
+    -
+      name: beta12
+      unjumble:
+        href: maps/beta-13
+packs:
+  missing:
+    file: beta-13-missing
 label: "{{ beta12.label }} + Beta 1.3"
 desc: "{{ beta12.desc }}"
 maps:
