@@ -1,0 +1,1361 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module texturepacker</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>texturepacker</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/pdc/virtualenvs/texturejam/lib/python2.7/site-packages/texturepacker.py">/Users/pdc/virtualenvs/texturejam/lib/python2.7/site-packages/texturepacker.py</a></font></td></tr></table>
+    <p><tt>texture.py<br>
+&nbsp;<br>
+Created&nbsp;by&nbsp;Damian&nbsp;Cugley&nbsp;on&nbsp;2011-01-12.<br>
+Copyright&nbsp;(c)&nbsp;2011&nbsp;Damian&nbsp;Cugley.&nbsp;All&nbsp;rights&nbsp;reserved.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="Image.html">Image</a><br>
+<a href="fnmatch.html">fnmatch</a><br>
+<a href="httplib2.html">httplib2</a><br>
+</td><td width="25%" valign=top><a href="json.html">json</a><br>
+<a href="os.html">os</a><br>
+<a href="re.html">re</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="weakref.html">weakref</a><br>
+<a href="yaml.html">yaml</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="__builtin__.html#object">__builtin__.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#Atlas">Atlas</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#Loader">Loader</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#MapBase">MapBase</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#CompositeMap">CompositeMap</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#GridMap">GridMap</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#Mixer">Mixer</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#PackBase">PackBase</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#LazyPack">LazyPack</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#RecipePack">RecipePack</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#SourcePack">SourcePack</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#ResourceBase">ResourceBase</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#CompositeResource">CompositeResource</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#PackIconResource">PackIconResource</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#RenamedResource">RenamedResource</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#SourceResource">SourceResource</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#TextResource">TextResource</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="exceptions.html#Exception">exceptions.Exception</a>(<a href="exceptions.html#BaseException">exceptions.BaseException</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="texturepacker.html#CouldNotLoad">CouldNotLoad</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#DudeItsADirectory">DudeItsADirectory</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#MissingParameter">MissingParameter</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#NotInAtlas">NotInAtlas</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#NotInMap">NotInMap</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#NotInPack">NotInPack</a>
+</font></dt><dt><font face="helvetica, arial"><a href="texturepacker.html#UnknownPack">UnknownPack</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Atlas">class <strong>Atlas</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Creates&nbsp;and&nbsp;stores&nbsp;maps.<br>
+&nbsp;<br>
+Maps&nbsp;can&nbsp;be&nbsp;retrieved&nbsp;by&nbsp;name,&nbsp;or&nbsp;you&nbsp;can&nbsp;just&nbsp;supply&nbsp;a&nbsp;spec<br>
+that&nbsp;defines&nbsp;the&nbsp;map&nbsp;inline,&nbsp;as&nbsp;it&nbsp;were.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Atlas-__init__"><strong>__init__</strong></a>(self, maps<font color="#909090">={}</font>)</dt><dd><tt>#__slots__&nbsp;=&nbsp;['maps']</tt></dd></dl>
+
+<dl><dt><a name="Atlas-add_map"><strong>add_map</strong></a>(self, name, map)</dt><dd><tt>Add&nbsp;a&nbsp;map&nbsp;to&nbsp;the&nbsp;collection<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;--&nbsp;will&nbsp;be&nbsp;used&nbsp;to&nbsp;retrieve&nbsp;this&nbsp;map&nbsp;with&nbsp;get_map<br>
+&nbsp;&nbsp;&nbsp;&nbsp;map&nbsp;--&nbsp;the&nbsp;map,&nbsp;a&nbsp;subclass&nbsp;of&nbsp;<a href="#MapBase">MapBase</a></tt></dd></dl>
+
+<dl><dt><a name="Atlas-get_map"><strong>get_map</strong></a>(self, spec, base)</dt><dd><tt>Get&nbsp;the&nbsp;specified&nbsp;map.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;spec&nbsp;(string,&nbsp;list,&nbsp;or&nbsp;dict)&nbsp;--&nbsp;specifies&nbsp;a&nbsp;map<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base&nbsp;--&nbsp;how&nbsp;to&nbsp;interpret&nbsp;file&nbsp;names<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;map<br>
+&nbsp;<br>
+Raises&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#NotInAtlas">NotInAtlas</a>&nbsp;the&nbsp;named&nbsp;map&nbsp;canot&nbsp;be&nbsp;found<br>
+&nbsp;<br>
+If&nbsp;spec&nbsp;is&nbsp;a&nbsp;string,&nbsp;it&nbsp;names&nbsp;a&nbsp;map&nbsp;added&nbsp;with&nbsp;add_map.<br>
+&nbsp;<br>
+If&nbsp;it&nbsp;is&nbsp;a&nbsp;dictionary&nbsp;it&nbsp;specifies&nbsp;a&nbsp;new&nbsp;map.<br>
+At&nbsp;present&nbsp;this&nbsp;is&nbsp;alwaus&nbsp;a&nbsp;<a href="#GridMap">GridMap</a>.&nbsp;It&nbsp;must&nbsp;define<br>
+cell_rect,&nbsp;source_rect,&nbsp;and&nbsp;names&nbsp;(a&nbsp;list).<br>
+&nbsp;<br>
+If&nbsp;it&nbsp;is&nbsp;a&nbsp;lisst,&nbsp;its&nbsp;elements&nbsp;must&nbsp;recursively<br>
+be&nbsp;map&nbsp;specs&nbsp;and&nbsp;the&nbsp;result&nbsp;is&nbsp;the&nbsp;composition&nbsp;of&nbsp;all&nbsp;the&nbsp;maps.<br>
+(Order&nbsp;is&nbsp;important&nbsp;if&nbsp;more&nbsp;than&nbsp;one&nbsp;map&nbsp;defines&nbsp;the&nbsp;same<br>
+name:&nbsp;the&nbsp;earliest-listed&nbsp;map&nbsp;will&nbsp;be&nbsp;used.)</tt></dd></dl>
+
+<dl><dt><a name="Atlas-get_map_names"><strong>get_map_names</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CompositeMap">class <strong>CompositeMap</strong></a>(<a href="texturepacker.html#MapBase">MapBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;map&nbsp;that&nbsp;combines&nbsp;several&nbsp;other&nbsp;maps.<br>
+&nbsp;<br>
+Each&nbsp;submap&nbsp;is&nbsp;searched&nbsp;in&nbsp;turn&nbsp;for&nbsp;the&nbsp;desired&nbsp;item.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#CompositeMap">CompositeMap</a></dd>
+<dd><a href="texturepacker.html#MapBase">MapBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="CompositeMap-__init__"><strong>__init__</strong></a>(self, maps)</dt></dl>
+
+<dl><dt><a name="CompositeMap-get_box"><strong>get_box</strong></a>(self, name)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>names</strong></dt>
+</dl>
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#MapBase">MapBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CompositeResource">class <strong>CompositeResource</strong></a>(<a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>An&nbsp;image&nbsp;made&nbsp;by&nbsp;replacing&nbsp;some&nbsp;cells&nbsp;in&nbsp;an&nbsp;image&nbsp;with&nbsp;parts&nbsp;of&nbsp;another<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#CompositeResource">CompositeResource</a></dd>
+<dd><a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a></dd>
+<dd><a href="texturepacker.html#ResourceBase">ResourceBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="CompositeResource-__init__"><strong>__init__</strong></a>(self, name, base_res, base_map)</dt><dd><tt>Create&nbsp;a&nbsp;composite&nbsp;resouce&nbsp;(with&nbsp;no&nbsp;substitutions)<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;--&nbsp;what&nbsp;this&nbsp;resource&nbsp;will&nbsp;be&nbsp;named<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(usually&nbsp;a&nbsp;file&nbsp;name&nbsp;like&nbsp;terrain.png)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base_res&nbsp;--&nbsp;a&nbsp;resource&nbsp;to&nbsp;copy&nbsp;as&nbsp;the&nbsp;basis&nbsp;of&nbsp;the&nbsp;new&nbsp;one<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base_map&nbsp;--&nbsp;the&nbsp;map&nbsp;describing&nbsp;cells&nbsp;in&nbsp;the&nbsp;new&nbsp;resource<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(this&nbsp;may&nbsp;include&nbsp;cells&nbsp;not&nbsp;in&nbsp;the&nbsp;base&nbsp;resource<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assuming&nbsp;these&nbsp;cells&nbsp;will&nbsp;be&nbsp;filled&nbsp;in&nbsp;later)</tt></dd></dl>
+
+<dl><dt><a name="CompositeResource-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="CompositeResource-replace"><strong>replace</strong></a>(self, source_res, source_map, cells)</dt><dd><tt>Replacing&nbsp;cell(s)&nbsp;in&nbsp;the&nbsp;image&nbsp;with&nbsp;cells&nbsp;from&nbsp;another<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res&nbsp;(image&nbsp;resource)&nbsp;--&nbsp;copy&nbsp;image&nbsp;data&nbsp;out&nbsp;of&nbsp;this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;map&nbsp;--&nbsp;gives&nbsp;names&nbsp;to&nbsp;cells&nbsp;within&nbsp;res<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cells&nbsp;(dict&nbsp;or&nbsp;list)--&nbsp;specifies&nbsp;cells&nbsp;to&nbsp;modify<br>
+&nbsp;<br>
+If&nbsp;cells&nbsp;is&nbsp;a&nbsp;dict,&nbsp;keys&nbsp;are&nbsp;cell&nbsp;names&nbsp;within&nbsp;this&nbsp;resouce,<br>
+and&nbsp;values&nbsp;are&nbsp;the&nbsp;cell&nbsp;to&nbsp;get&nbsp;image&nbsp;data&nbsp;from&nbsp;in&nbsp;res.<br>
+If&nbsp;cells&nbsp;is&nbsp;a&nbsp;list,&nbsp;the&nbsp;named&nbsp;cells&nbsp;are&nbsp;replaced&nbsp;with<br>
+the&nbsp;same-named&nbsp;cells&nbsp;in&nbsp;the&nbsp;source.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a>:<br>
+<dl><dt><a name="CompositeResource-get_bytes"><strong>get_bytes</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;bytes&nbsp;representing&nbsp;the&nbsp;composite&nbsp;image&nbsp;in&nbsp;PNG&nbsp;format.</tt></dd></dl>
+
+<dl><dt><a name="CompositeResource-get_image"><strong>get_image</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;composite&nbsp;image.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><a name="CompositeResource-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CouldNotLoad">class <strong>CouldNotLoad</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#CouldNotLoad">CouldNotLoad</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><a name="CouldNotLoad-__init__"><strong>__init__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__init__">__init__</a>(...)&nbsp;initializes&nbsp;x;&nbsp;see&nbsp;help(type(x))&nbsp;for&nbsp;signature</tt></dd></dl>
+
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#CouldNotLoad-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="CouldNotLoad-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="CouldNotLoad-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="CouldNotLoad-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#CouldNotLoad-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="CouldNotLoad-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DudeItsADirectory">class <strong>DudeItsADirectory</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#DudeItsADirectory">DudeItsADirectory</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DudeItsADirectory-__init__"><strong>__init__</strong></a>(self, path)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#DudeItsADirectory-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="DudeItsADirectory-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="DudeItsADirectory-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="DudeItsADirectory-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#DudeItsADirectory-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="DudeItsADirectory-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="GridMap">class <strong>GridMap</strong></a>(<a href="texturepacker.html#MapBase">MapBase</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#GridMap">GridMap</a></dd>
+<dd><a href="texturepacker.html#MapBase">MapBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="GridMap-__init__"><strong>__init__</strong></a>(self, source_box, cell_box, names)</dt><dd><tt>Create&nbsp;a&nbsp;grid&nbsp;map&nbsp;with&nbsp;this&nbsp;size&nbsp;and&nbsp;names.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source_box&nbsp;--&nbsp;pair&nbsp;(WIDTH,&nbsp;HEIGHT)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;tuple&nbsp;(LEFT,&nbsp;TOP,&nbsp;RIGHT,&nbsp;BOTTOM)&nbsp;--&nbsp;size&nbsp;of&nbsp;the&nbsp;overall&nbsp;image<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cell_box&nbsp;--&nbsp;pair&nbsp;(WIDTH,&nbsp;HEIGHT)&nbsp;--&nbsp;size&nbsp;of&nbsp;cells&nbsp;within&nbsp;the&nbsp;image<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;image&nbsp;width&nbsp;should&nbsp;be&nbsp;a&nbsp;multiple&nbsp;of&nbsp;the&nbsp;cell&nbsp;width<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;similarly&nbsp;for&nbsp;the&nbsp;heights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;names&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;of&nbsp;names,&nbsp;in&nbsp;order&nbsp;left&nbsp;to&nbsp;right,&nbsp;top&nbsp;to&nbsp;bottom.</tt></dd></dl>
+
+<dl><dt><a name="GridMap-get_box"><strong>get_box</strong></a>(self, name)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#MapBase">MapBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ImagingResourceBase">class <strong>ImagingResourceBase</strong></a>(<a href="texturepacker.html#ResourceBase">ResourceBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Base&nbsp;class&nbsp;for&nbsp;images&nbsp;that&nbsp;are&nbsp;lazily&nbsp;constructed&nbsp;using&nbsp;the&nbsp;Imaging&nbsp;library.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a></dd>
+<dd><a href="texturepacker.html#ResourceBase">ResourceBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ImagingResourceBase-__init__"><strong>__init__</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="ImagingResourceBase-get_bytes"><strong>get_bytes</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;bytes&nbsp;representing&nbsp;the&nbsp;composite&nbsp;image&nbsp;in&nbsp;PNG&nbsp;format.</tt></dd></dl>
+
+<dl><dt><a name="ImagingResourceBase-get_image"><strong>get_image</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;composite&nbsp;image.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><a name="ImagingResourceBase-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt><dd><tt>When&nbsp;was&nbsp;the&nbsp;laast&nbsp;time&nbsp;this&nbsp;resource&nbsp;was&nbsp;changed?</tt></dd></dl>
+
+<dl><dt><a name="ImagingResourceBase-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="LazyPack">class <strong>LazyPack</strong></a>(<a href="texturepacker.html#PackBase">PackBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;pack&nbsp;specified&nbsp;by&nbsp;a&nbsp;URL&nbsp;that&nbsp;will&nbsp;be&nbsp;loaded&nbsp;when&nbsp;required.<br>
+&nbsp;<br>
+Actually&nbsp;performing&nbsp;the&nbsp;network&nbsp;operation&nbsp;will&nbsp;be&nbsp;deferred<br>
+until&nbsp;it&nbsp;can&nbsp;no&nbsp;longer&nbsp;be&nbsp;avoided.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#LazyPack">LazyPack</a></dd>
+<dd><a href="texturepacker.html#PackBase">PackBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="LazyPack-__init__"><strong>__init__</strong></a>(self, loader, url, atlas)</dt></dl>
+
+<dl><dt><a name="LazyPack-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt><dd><tt>Get&nbsp;a&nbsp;timestamp&nbsp;for&nbsp;the&nbsp;last&nbsp;time&nbsp;the&nbsp;content&nbsp;of&nbsp;the&nbsp;pack&nbsp;was&nbsp;changed.<br>
+&nbsp;<br>
+Note&nbsp;that&nbsp;the&nbsp;contents&nbsp;timestamps&nbsp;are&nbsp;what&nbsp;matter;<br>
+the&nbsp;same&nbsp;files&nbsp;archived&nbsp;twice&nbsp;will&nbsp;have&nbsp;the&nbsp;same<br>
+last-modified&nbsp;time.</tt></dd></dl>
+
+<dl><dt><a name="LazyPack-get_pack"><strong>get_pack</strong></a>(self)</dt><dd><tt>If&nbsp;we&nbsp;have&nbsp;not&nbsp;done&nbsp;so&nbsp;already,&nbsp;download&nbsp;the&nbsp;pack.</tt></dd></dl>
+
+<dl><dt><a name="LazyPack-get_resource"><strong>get_resource</strong></a>(self, name)</dt><dd><tt>Get&nbsp;the&nbsp;named&nbsp;resource<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;--&nbsp;specifies&nbsp;the&nbsp;resource&nbsp;to&nbsp;return<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;resource&nbsp;(subclass&nbsp;of&nbsp;<a href="#ResourceBase">ResourceBase</a>)</tt></dd></dl>
+
+<dl><dt><a name="LazyPack-get_resource_names"><strong>get_resource_names</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>desc</strong></dt>
+</dl>
+<dl><dt><strong>label</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="texturepacker.html#PackBase">PackBase</a>:<br>
+<dl><dt><a name="LazyPack-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="LazyPack-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Return&nbsp;true&nbsp;iff&nbsp;this&nbsp;pack&nbsp;has&nbsp;had&nbsp;a&nbsp;respource&nbsp;changed&nbsp;since&nbsp;the&nbsp;given&nbsp;date.<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;precision&nbsp;of&nbsp;timestamps&nbsp;varies&nbsp;according<br>
+to&nbsp;the&nbsp;format&nbsp;the&nbsp;pack&nbsp;is&nbsp;stored&nbsp;in,&nbsp;near&nbsp;misses<br>
+will&nbsp;be&nbsp;unreliable&nbsp;except&nbsp;when&nbsp;the&nbsp;given&nbsp;date<br>
+is&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;result&nbsp;of&nbsp;an&nbsp;earlier&nbsp;call&nbsp;to&nbsp;get_last_modified.</tt></dd></dl>
+
+<dl><dt><a name="LazyPack-write_to"><strong>write_to</strong></a>(self, strm)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#PackBase">PackBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Loader">class <strong>Loader</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Loader-__init__"><strong>__init__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Loader-add_scheme"><strong>add_scheme</strong></a>(self, prefix, func)</dt></dl>
+
+<dl><dt><a name="Loader-get_bytes"><strong>get_bytes</strong></a>(self, spec, base<font color="#909090">=None</font>)</dt><dd><tt>Given&nbsp;a&nbsp;spec,&nbsp;return&nbsp;the&nbsp;data&nbsp;at&nbsp;the&nbsp;location&nbsp;specified.<br>
+&nbsp;<br>
+The&nbsp;spec&nbsp;can&nbsp;have&nbsp;a&nbsp;'file'&nbsp;member&nbsp;specifying&nbsp;a&nbsp;file&nbsp;path.</tt></dd></dl>
+
+<dl><dt><a name="Loader-get_stream"><strong>get_stream</strong></a>(self, spec, base<font color="#909090">=None</font>)</dt><dd><tt>Given&nbsp;a&nbsp;spec,&nbsp;return&nbsp;input&nbsp;stream&nbsp;it&nbsp;specifies.<br>
+&nbsp;<br>
+The&nbsp;spec&nbsp;can&nbsp;have&nbsp;a&nbsp;'file'&nbsp;member&nbsp;specifying&nbsp;a&nbsp;file&nbsp;path,<br>
+an&nbsp;'href'&nbsp;member&nbsp;specifying&nbsp;a&nbsp;URL,&nbsp;'data'&nbsp;or&nbsp;'base64'<br>
+member&nbsp;specifyting&nbsp;immediate&nbsp;data,&nbsp;or&nbsp;be&nbsp;a&nbsp;string,<br>
+which&nbsp;is&nbsp;treated&nbsp;as&nbsp;a&nbsp;URL.</tt></dd></dl>
+
+<dl><dt><a name="Loader-get_url"><strong>get_url</strong></a>(self, spec, base<font color="#909090">=None</font>)</dt><dd><tt>Given&nbsp;a&nbsp;spec,&nbsp;return&nbsp;URL&nbsp;for&nbsp;the&nbsp;resource&nbsp;it&nbsp;specifes.<br>
+&nbsp;<br>
+The&nbsp;spec&nbsp;can&nbsp;have&nbsp;a&nbsp;'file'&nbsp;member&nbsp;specifying&nbsp;a&nbsp;file&nbsp;path.</tt></dd></dl>
+
+<dl><dt><a name="Loader-get_url_stream"><strong>get_url_stream</strong></a>(self, url, ext<font color="#909090">='tpmaps'</font>)</dt><dd><tt>Given&nbsp;a&nbsp;URL,&nbsp;return&nbsp;input&nbsp;stream&nbsp;it&nbsp;specifies.<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;meta,&nbsp;strm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;meta&nbsp;is&nbsp;a&nbsp;dict&nbsp;containing&nbsp;'content-type'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;strm&nbsp;is&nbsp;a&nbsp;file-like&nbsp;<a href="__builtin__.html#object">object</a></tt></dd></dl>
+
+<dl><dt><a name="Loader-maybe_get_spec"><strong>maybe_get_spec</strong></a>(self, spec, base<font color="#909090">=None</font>, ext<font color="#909090">='tprx'</font>)</dt><dd><tt>Given&nbsp;a&nbsp;spec,&nbsp;return&nbsp;spec&nbsp;it&nbsp;refers&nbsp;to&nbsp;or&nbsp;the&nbsp;spec.<br>
+&nbsp;<br>
+The&nbsp;spec&nbsp;can&nbsp;have&nbsp;a&nbsp;'file'&nbsp;member&nbsp;specifying&nbsp;a&nbsp;file&nbsp;path.<br>
+&nbsp;<br>
+If&nbsp;there&nbsp;is&nbsp;no&nbsp;reference&nbsp;to&nbsp;external&nbsp;spec,&nbsp;then<br>
+return&nbsp;this&nbsp;spec.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="MapBase">class <strong>MapBase</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="MissingParameter">class <strong>MissingParameter</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Raised&nbsp;if&nbsp;you&nbsp;ask&nbsp;a&nbsp;mixer&nbsp;to&nbsp;make&nbsp;a&nbsp;recipe&nbsp;without&nbsp;supplying&nbsp;the&nbsp;needed&nbsp;parameters.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#MissingParameter">MissingParameter</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="MissingParameter-__init__"><strong>__init__</strong></a>(self, param_spec, exc<font color="#909090">=None</font>)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#MissingParameter-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="MissingParameter-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="MissingParameter-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="MissingParameter-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#MissingParameter-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="MissingParameter-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Mixer">class <strong>Mixer</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Create&nbsp;texture&nbsp;packs&nbsp;by&nbsp;mixing&nbsp;together&nbsp;existing&nbsp;ones.<br>
+&nbsp;<br>
+As&nbsp;well&nbsp;as&nbsp;interpreting&nbsp;the&nbsp;recipes,&nbsp;the&nbsp;mixer&nbsp;keeps<br>
+track&nbsp;of&nbsp;the&nbsp;packs&nbsp;and&nbsp;loads&nbsp;them&nbsp;as&nbsp;needed.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Mixer-__init__"><strong>__init__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Mixer-add_pack"><strong>add_pack</strong></a>(self, name, pack)</dt><dd><tt>Add&nbsp;this&nbsp;pack&nbsp;to&nbsp;the&nbsp;repertoire&nbsp;of&nbsp;this&nbsp;mixer.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;--&nbsp;the&nbsp;name&nbsp;for&nbsp;the&nbsp;pack<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pack&nbsp;--&nbsp;a&nbsp;texture&nbsp;pack&nbsp;<a href="__builtin__.html#object">object</a><br>
+&nbsp;<br>
+Afterwards&nbsp;this&nbsp;pack&nbsp;can&nbsp;be&nbsp;referred&nbsp;to&nbsp;in&nbsp;recipes&nbsp;using&nbsp;this&nbsp;name.</tt></dd></dl>
+
+<dl><dt><a name="Mixer-expand_template"><strong>expand_template</strong></a>(self, tpl)</dt></dl>
+
+<dl><dt><a name="Mixer-expand_template_sub"><strong>expand_template_sub</strong></a>(self, m)</dt></dl>
+
+<dl><dt><a name="Mixer-get_atlas"><strong>get_atlas</strong></a>(self, atlas_spec, base, atlas<font color="#909090">=None</font>)</dt><dd><tt>Get&nbsp;an&nbsp;atlas&nbsp;from&nbsp;this&nbsp;spec.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;atlas_spec&nbsp;--&nbsp;dict&nbsp;or&nbsp;list&nbsp;specifying&nbsp;atlas<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base&nbsp;--&nbsp;used&nbsp;when&nbsp;licating&nbsp;external&nbsp;references&nbsp;(if&nbsp;any)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;atlas&nbsp;--&nbsp;merge&nbsp;new&nbsp;atlas&nbsp;data&nbsp;in&nbsp;to&nbsp;this&nbsp;atlas.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default&nbsp;is&nbsp;to&nbsp;create&nbsp;a&nbsp;new&nbsp;atlas.<br>
+&nbsp;<br>
+The&nbsp;spec&nbsp;is&nbsp;either&nbsp;a&nbsp;dictionary&nbsp;mapping<br>
+resource&nbsp;names&nbsp;to&nbsp;map&nbsp;specs,<br>
+or&nbsp;is&nbsp;a&nbsp;dictionary&nbsp;with&nbsp;a&nbsp;single&nbsp;member<br>
+'file'&nbsp;specifying&nbsp;a&nbsp;file&nbsp;to&nbsp;read&nbsp;the&nbsp;atlas&nbsp;from.</tt></dd></dl>
+
+<dl><dt><a name="Mixer-get_map"><strong>get_map</strong></a>(self, atlas, spec, base)</dt><dd><tt>Get&nbsp;a&nbsp;map&nbsp;from&nbsp;the&nbsp;pack&nbsp;if&nbsp;possible,&nbsp;otherwise&nbsp;try&nbsp;the&nbsp;global&nbsp;atlas.</tt></dd></dl>
+
+<dl><dt><a name="Mixer-get_pack"><strong>get_pack</strong></a>(self, pack_spec, fallback_pack<font color="#909090">=None</font>, base<font color="#909090">=None</font>)</dt><dd><tt>Get&nbsp;a&nbsp;pack&nbsp;specified,&nbsp;or&nbsp;return&nbsp;the&nbsp;fallback&nbsp;pack.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pack_spec&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies&nbsp;a&nbsp;pack.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;it&nbsp;is&nbsp;a&nbsp;string&nbsp;and&nbsp;starts&nbsp;with&nbsp;a&nbsp;$,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;it&nbsp;names&nbsp;one&nbsp;of&nbsp;the&nbsp;packs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;added&nbsp;with&nbsp;add_pack.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;string&nbsp;without&nbsp;a&nbsp;$&nbsp;is&nbsp;treated&nbsp;as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;URL&nbsp;(same&nbsp;as&nbsp;{href:&nbsp;URL}).<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;it&nbsp;is&nbsp;a&nbsp;dictionary,&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;meaning&nbsp;depends&nbsp;on&nbsp;its&nbsp;attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file&nbsp;--&nbsp;names&nbsp;a&nbsp;file&nbsp;containing&nbsp;a&nbsp;ZIP&nbsp;archive;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;href&nbsp;--&nbsp;secifies&nbsp;a&nbsp;URI&nbsp;from&nbsp;which&nbsp;data&nbsp;may<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;downloaded&nbsp;(HTTP,&nbsp;file,&nbsp;and&nbsp;data&nbsp;URIs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;supported&nbsp;so&nbsp;far);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;--&nbsp;value&nbsp;must&nbsp;be&nbsp;a&nbsp;ZIP&nbsp;archive;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;base64&nbsp;--&nbsp;value&nbsp;must&nbsp;be&nbsp;a&nbsp;ZIP&nbsp;archive,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;converted&nbsp;to&nbsp;ASCII&nbsp;with&nbsp;the&nbsp;base64&nbsp;codec.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unjumble&nbsp;--&nbsp;assume&nbsp;the&nbsp;files&nbsp;in&nbsp;the&nbsp;pack<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;have&nbsp;the&nbsp;right&nbsp;names&nbsp;byt&nbsp;the&nbsp;wrong&nbsp;folders<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;use&nbsp;the&nbsp;atlass&nbsp;to&nbsp;determine&nbsp;which&nbsp;files<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;pull&nbsp;out&nbsp;of&nbsp;the&nbsp;ZIP<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fallback_pack&nbsp;(optional)&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;the&nbsp;pack_spec&nbsp;is&nbsp;the&nbsp;empty&nbsp;string&nbsp;or&nbsp;None,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;use&nbsp;this&nbsp;value&nbsp;instead.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base&nbsp;(optional&nbsp;URI)&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;the&nbsp;pack&nbsp;uses&nbsp;relative&nbsp;URL&nbsp;or&nbsp;file&nbsp;name,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;it&nbsp;is&nbsp;interpreted&nbsp;relative&nbsp;to&nbsp;this.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Must&nbsp;be&nbsp;a&nbsp;file&nbsp;or&nbsp;http&nbsp;URL.<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;pack&nbsp;<a href="__builtin__.html#object">object</a><br>
+&nbsp;<br>
+Raises&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#UnknownPack">UnknownPack</a>&nbsp;--&nbsp;when&nbsp;the&nbsp;specified&nbsp;pack&nbsp;does&nbsp;not&nbsp;exist.</tt></dd></dl>
+
+<dl><dt><a name="Mixer-iter_resources"><strong>iter_resources</strong></a>(self, src_pack, resources_spec, base)</dt><dd><tt>Given&nbsp;a&nbsp;files&nbsp;spec,&nbsp;yield&nbsp;a&nbsp;sequence&nbsp;of&nbsp;resources.</tt></dd></dl>
+
+<dl><dt><a name="Mixer-make"><strong>make</strong></a>(self, recipe, base<font color="#909090">=None</font>)</dt><dd><tt>Create&nbsp;a&nbsp;new&nbsp;pack&nbsp;by&nbsp;following&nbsp;this&nbsp;this&nbsp;recipe.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;recipe&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;with&nbsp;specific&nbsp;contents<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;describes&nbsp;how&nbsp;to&nbsp;assemble&nbsp;the&nbsp;new&nbsp;pack<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;other&nbsp;packs.<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;new&nbsp;pack&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;(subclass&nbsp;of&nbsp;<a href="#PackBase">PackBase</a>).</tt></dd></dl>
+
+<dl><dt><a name="Mixer-make_unjumbled_pack"><strong>make_unjumbled_pack</strong></a>(self, pack, atlas)</dt><dd><tt>Make&nbsp;an&nbsp;unjumbled&nbsp;copy&nbsp;of&nbsp;this&nbsp;pack&nbsp;using&nbsp;this&nbsp;atlas.<br>
+&nbsp;<br>
+Given&nbsp;a&nbsp;pack&nbsp;with&nbsp;correct&nbsp;file&nbsp;names&nbsp;but&nbsp;possibly&nbsp;wrong&nbsp;folder&nbsp;names<br>
+create&nbsp;a&nbsp;new&nbsp;pack&nbsp;that&nbsp;rearranges&nbsp;the&nbsp;files&nbsp;to&nbsp;conform<br>
+to&nbsp;texturepack&nbsp;conventions.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="NotInAtlas">class <strong>NotInAtlas</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#NotInAtlas">NotInAtlas</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="NotInAtlas-__init__"><strong>__init__</strong></a>(self, spec)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#NotInAtlas-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="NotInAtlas-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NotInAtlas-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NotInAtlas-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInAtlas-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="NotInAtlas-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="NotInMap">class <strong>NotInMap</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#NotInMap">NotInMap</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="NotInMap-__init__"><strong>__init__</strong></a>(self, name, map)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#NotInMap-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="NotInMap-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NotInMap-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NotInMap-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInMap-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="NotInMap-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="NotInPack">class <strong>NotInPack</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#NotInPack">NotInPack</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="NotInPack-__init__"><strong>__init__</strong></a>(self, name, pack)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#NotInPack-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="NotInPack-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NotInPack-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NotInPack-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#NotInPack-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="NotInPack-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PackBase">class <strong>PackBase</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Base&nbsp;class&nbsp;for&nbsp;a&nbsp;texture&nbsp;pack.<br>
+&nbsp;<br>
+Supplies&nbsp;two&nbsp;main&nbsp;features:&nbsp;resources&nbsp;(files)&nbsp;and&nbsp;maps<br>
+(which&nbsp;say&nbsp;how&nbsp;textures&nbsp;are&nbsp;arranged&nbsp;within&nbsp;resources).<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="PackBase-__init__"><strong>__init__</strong></a>(self, atlas)</dt></dl>
+
+<dl><dt><a name="PackBase-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="PackBase-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;datetime&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;giving&nbsp;the&nbsp;last&nbsp;time&nbsp;a&nbsp;resource&nbsp;was&nbsp;modified.<br>
+&nbsp;<br>
+Note&nbsp;that&nbsp;what&nbsp;matters&nbsp;is&nbsp;the&nbsp;modification&nbsp;times&nbsp;of<br>
+the&nbsp;resources&nbsp;in&nbsp;the&nbsp;pack.&nbsp;For&nbsp;example,&nbsp;two&nbsp;zips<br>
+created&nbsp;at&nbsp;different&nbsp;times&nbsp;but&nbsp;with&nbsp;the&nbsp;same&nbsp;timestamps<br>
+recorded&nbsp;for&nbsp;their&nbsp;contents&nbsp;will&nbsp;have&nbsp;the&nbsp;same&nbsp;last-modified&nbsp;time.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;returned&nbsp;as&nbsp;an&nbsp;instance&nbsp;of&nbsp;datetime.<br>
+The&nbsp;precision&nbsp;will&nbsp;depend&nbsp;on&nbsp;the&nbsp;type&nbsp;of&nbsp;pack;&nbsp;for&nbsp;fiels<br>
+stored&nbsp;in&nbsp;a&nbsp;ZIP&nbsp;this&nbsp;is&nbsp;only&nbsp;to&nbsp;the&nbsp;nearest&nbsp;2&nbsp;seconds<br>
+(because&nbsp;of&nbsp;limitations&nbsp;in&nbsp;the&nbsp;ZIP&nbsp;format).</tt></dd></dl>
+
+<dl><dt><a name="PackBase-get_resource"><strong>get_resource</strong></a>(self, name)</dt><dd><tt>Retrieve&nbsp;a&nbsp;resource&nbsp;<a href="__builtin__.html#object">object</a>.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;--&nbsp;names&nbsp;the&nbsp;resourece<br>
+&nbsp;<br>
+Names&nbsp;use&nbsp;thenames&nbsp;of&nbsp;file&nbsp;within&nbsp;the&nbsp;archive,&nbsp;such&nbsp;as<br>
+'texture.png'&nbsp;or&nbsp;'item/sign.png'.<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ResoureBase&nbsp;subclass&nbsp;instance</tt></dd></dl>
+
+<dl><dt><a name="PackBase-get_resource_names"><strong>get_resource_names</strong></a>(self)</dt><dd><tt>A&nbsp;list&nbsp;of&nbsp;all&nbsp;resources&nbsp;in&nbsp;the&nbsp;pack.</tt></dd></dl>
+
+<dl><dt><a name="PackBase-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Return&nbsp;true&nbsp;iff&nbsp;this&nbsp;pack&nbsp;has&nbsp;had&nbsp;a&nbsp;respource&nbsp;changed&nbsp;since&nbsp;the&nbsp;given&nbsp;date.<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;precision&nbsp;of&nbsp;timestamps&nbsp;varies&nbsp;according<br>
+to&nbsp;the&nbsp;format&nbsp;the&nbsp;pack&nbsp;is&nbsp;stored&nbsp;in,&nbsp;near&nbsp;misses<br>
+will&nbsp;be&nbsp;unreliable&nbsp;except&nbsp;when&nbsp;the&nbsp;given&nbsp;date<br>
+is&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;result&nbsp;of&nbsp;an&nbsp;earlier&nbsp;call&nbsp;to&nbsp;get_last_modified.</tt></dd></dl>
+
+<dl><dt><a name="PackBase-write_to"><strong>write_to</strong></a>(self, strm)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PackIconResource">class <strong>PackIconResource</strong></a>(<a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#PackIconResource">PackIconResource</a></dd>
+<dd><a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a></dd>
+<dd><a href="texturepacker.html#ResourceBase">ResourceBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="PackIconResource-__init__"><strong>__init__</strong></a>(self, res, map, names)</dt></dl>
+
+<dl><dt><a name="PackIconResource-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ImagingResourceBase">ImagingResourceBase</a>:<br>
+<dl><dt><a name="PackIconResource-get_bytes"><strong>get_bytes</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;bytes&nbsp;representing&nbsp;the&nbsp;composite&nbsp;image&nbsp;in&nbsp;PNG&nbsp;format.</tt></dd></dl>
+
+<dl><dt><a name="PackIconResource-get_image"><strong>get_image</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;composite&nbsp;image.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><a name="PackIconResource-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RecipePack">class <strong>RecipePack</strong></a>(<a href="texturepacker.html#PackBase">PackBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;texture&nbsp;pack&nbsp;assembled&nbsp;from&nbsp;other&nbsp;resources.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#RecipePack">RecipePack</a></dd>
+<dd><a href="texturepacker.html#PackBase">PackBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="RecipePack-__init__"><strong>__init__</strong></a>(self, label, desc, atlas<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="RecipePack-__unicode__"><strong>__unicode__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RecipePack-add_resource"><strong>add_resource</strong></a>(self, resource)</dt></dl>
+
+<dl><dt><a name="RecipePack-get_resource"><strong>get_resource</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="RecipePack-get_resource_names"><strong>get_resource_names</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RecipePack-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#PackBase">PackBase</a>:<br>
+<dl><dt><a name="RecipePack-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RecipePack-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;datetime&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;giving&nbsp;the&nbsp;last&nbsp;time&nbsp;a&nbsp;resource&nbsp;was&nbsp;modified.<br>
+&nbsp;<br>
+Note&nbsp;that&nbsp;what&nbsp;matters&nbsp;is&nbsp;the&nbsp;modification&nbsp;times&nbsp;of<br>
+the&nbsp;resources&nbsp;in&nbsp;the&nbsp;pack.&nbsp;For&nbsp;example,&nbsp;two&nbsp;zips<br>
+created&nbsp;at&nbsp;different&nbsp;times&nbsp;but&nbsp;with&nbsp;the&nbsp;same&nbsp;timestamps<br>
+recorded&nbsp;for&nbsp;their&nbsp;contents&nbsp;will&nbsp;have&nbsp;the&nbsp;same&nbsp;last-modified&nbsp;time.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;returned&nbsp;as&nbsp;an&nbsp;instance&nbsp;of&nbsp;datetime.<br>
+The&nbsp;precision&nbsp;will&nbsp;depend&nbsp;on&nbsp;the&nbsp;type&nbsp;of&nbsp;pack;&nbsp;for&nbsp;fiels<br>
+stored&nbsp;in&nbsp;a&nbsp;ZIP&nbsp;this&nbsp;is&nbsp;only&nbsp;to&nbsp;the&nbsp;nearest&nbsp;2&nbsp;seconds<br>
+(because&nbsp;of&nbsp;limitations&nbsp;in&nbsp;the&nbsp;ZIP&nbsp;format).</tt></dd></dl>
+
+<dl><dt><a name="RecipePack-write_to"><strong>write_to</strong></a>(self, strm)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#PackBase">PackBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RenamedResource">class <strong>RenamedResource</strong></a>(<a href="texturepacker.html#ResourceBase">ResourceBase</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#RenamedResource">RenamedResource</a></dd>
+<dd><a href="texturepacker.html#ResourceBase">ResourceBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="RenamedResource-__init__"><strong>__init__</strong></a>(self, name, res)</dt></dl>
+
+<dl><dt><a name="RenamedResource-get_bytes"><strong>get_bytes</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RenamedResource-get_image"><strong>get_image</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RenamedResource-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><a name="RenamedResource-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ResourceBase">class <strong>ResourceBase</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ResourceBase-__init__"><strong>__init__</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="ResourceBase-get_bytes"><strong>get_bytes</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ResourceBase-get_image"><strong>get_image</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="ResourceBase-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt><dd><tt>When&nbsp;was&nbsp;the&nbsp;laast&nbsp;time&nbsp;this&nbsp;resource&nbsp;was&nbsp;changed?</tt></dd></dl>
+
+<dl><dt><a name="ResourceBase-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="SourcePack">class <strong>SourcePack</strong></a>(<a href="texturepacker.html#PackBase">PackBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;texture&nbsp;pack&nbsp;that&nbsp;gets&nbsp;resources&nbsp;from&nbsp;a&nbsp;ZIP&nbsp;file&nbsp;or&nbsp;directory.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#SourcePack">SourcePack</a></dd>
+<dd><a href="texturepacker.html#PackBase">PackBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="SourcePack-__del__"><strong>__del__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SourcePack-__init__"><strong>__init__</strong></a>(self, zip_data, atlas)</dt></dl>
+
+<dl><dt><a name="SourcePack-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt><dd><tt>Get&nbsp;a&nbsp;timestamp&nbsp;for&nbsp;the&nbsp;last&nbsp;time&nbsp;the&nbsp;content&nbsp;of&nbsp;the&nbsp;pack&nbsp;was&nbsp;changed.<br>
+&nbsp;<br>
+Note&nbsp;that&nbsp;the&nbsp;contents&nbsp;timestamps&nbsp;are&nbsp;what&nbsp;matter;<br>
+the&nbsp;same&nbsp;files&nbsp;archived&nbsp;twice&nbsp;will&nbsp;have&nbsp;the&nbsp;same<br>
+last-modified&nbsp;time.</tt></dd></dl>
+
+<dl><dt><a name="SourcePack-get_resource"><strong>get_resource</strong></a>(self, name)</dt><dd><tt>Get&nbsp;the&nbsp;named&nbsp;resource<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;--&nbsp;specifies&nbsp;the&nbsp;resource&nbsp;to&nbsp;return<br>
+&nbsp;<br>
+Returns&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;resource&nbsp;(subclass&nbsp;of&nbsp;<a href="#ResourceBase">ResourceBase</a>)</tt></dd></dl>
+
+<dl><dt><a name="SourcePack-get_resource_bytes"><strong>get_resource_bytes</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="SourcePack-get_resource_last_modified"><strong>get_resource_last_modified</strong></a>(self, name)</dt><dd><tt>Helper&nbsp;function&nbsp;to&nbsp;get&nbsp;last-modified&nbsp;of&nbsp;a&nbsp;resource.<br>
+&nbsp;<br>
+Used&nbsp;by&nbsp;the&nbsp;resource’s&nbsp;get_last_modified&nbsp;method.</tt></dd></dl>
+
+<dl><dt><a name="SourcePack-get_resource_names"><strong>get_resource_names</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>desc</strong></dt>
+</dl>
+<dl><dt><strong>label</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="texturepacker.html#PackBase">PackBase</a>:<br>
+<dl><dt><a name="SourcePack-__str__"><strong>__str__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SourcePack-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Return&nbsp;true&nbsp;iff&nbsp;this&nbsp;pack&nbsp;has&nbsp;had&nbsp;a&nbsp;respource&nbsp;changed&nbsp;since&nbsp;the&nbsp;given&nbsp;date.<br>
+&nbsp;<br>
+Because&nbsp;the&nbsp;precision&nbsp;of&nbsp;timestamps&nbsp;varies&nbsp;according<br>
+to&nbsp;the&nbsp;format&nbsp;the&nbsp;pack&nbsp;is&nbsp;stored&nbsp;in,&nbsp;near&nbsp;misses<br>
+will&nbsp;be&nbsp;unreliable&nbsp;except&nbsp;when&nbsp;the&nbsp;given&nbsp;date<br>
+is&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;result&nbsp;of&nbsp;an&nbsp;earlier&nbsp;call&nbsp;to&nbsp;get_last_modified.</tt></dd></dl>
+
+<dl><dt><a name="SourcePack-write_to"><strong>write_to</strong></a>(self, strm)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#PackBase">PackBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="SourceResource">class <strong>SourceResource</strong></a>(<a href="texturepacker.html#ResourceBase">ResourceBase</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#SourceResource">SourceResource</a></dd>
+<dd><a href="texturepacker.html#ResourceBase">ResourceBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="SourceResource-__init__"><strong>__init__</strong></a>(self, source, name)</dt></dl>
+
+<dl><dt><a name="SourceResource-get_bytes"><strong>get_bytes</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SourceResource-get_image"><strong>get_image</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SourceResource-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><a name="SourceResource-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TextResource">class <strong>TextResource</strong></a>(<a href="texturepacker.html#ResourceBase">ResourceBase</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;document&nbsp;whose&nbsp;content&nbsp;is&nbsp;a&nbsp;literal&nbsp;string.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#TextResource">TextResource</a></dd>
+<dd><a href="texturepacker.html#ResourceBase">ResourceBase</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="TextResource-__init__"><strong>__init__</strong></a>(self, name, content, last_modified<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="TextResource-get_bytes"><strong>get_bytes</strong></a>(self)</dt><dd><tt>Get&nbsp;the&nbsp;byte&nbsp;sequence&nbsp;that&nbsp;will&nbsp;go&nbsp;in&nbsp;the&nbsp;ZIP&nbsp;archive</tt></dd></dl>
+
+<dl><dt><a name="TextResource-get_content"><strong>get_content</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TextResource-get_last_modified"><strong>get_last_modified</strong></a>(self)</dt></dl>
+
+<hr>
+Methods inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><a name="TextResource-get_image"><strong>get_image</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TextResource-is_modified_since"><strong>is_modified_since</strong></a>(self, then)</dt><dd><tt>Has&nbsp;this&nbsp;resource&nbsp;been&nbsp;modified&nbsp;since&nbsp;this&nbsp;date?</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="texturepacker.html#ResourceBase">ResourceBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="UnknownPack">class <strong>UnknownPack</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Raised&nbsp;if&nbsp;you&nbsp;ask&nbsp;a&nbsp;mixer&nbsp;to&nbsp;use&nbsp;a&nbsp;pack&nbsp;it&nbsp;does&nbsp;not&nbsp;know&nbsp;about.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="texturepacker.html#UnknownPack">UnknownPack</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="UnknownPack-__init__"><strong>__init__</strong></a>(self, pack_spec, exc<font color="#909090">=None</font>)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#UnknownPack-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;<a href="__builtin__.html#object">object</a>&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="UnknownPack-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="UnknownPack-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="UnknownPack-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#UnknownPack-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="UnknownPack-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-minecraft_dir_path"><strong>minecraft_dir_path</strong></a>()</dt><dd><tt>Return&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;directory&nbsp;containing&nbsp;directories&nbsp;for&nbsp;Minecraft&nbsp;customization.</tt></dd></dl>
+ <dl><dt><a name="-minecraft_texture_pack_dir_path"><strong>minecraft_texture_pack_dir_path</strong></a>()</dt><dd><tt>Return&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;directory&nbsp;for&nbsp;installing&nbsp;texture&nbsp;packs.</tt></dd></dl>
+ <dl><dt><a name="-pil_box"><strong>pil_box</strong></a>(left<font color="#909090">=None</font>, top<font color="#909090">=None</font>, right<font color="#909090">=None</font>, bottom<font color="#909090">=None</font>, x<font color="#909090">=None</font>, y<font color="#909090">=None</font>, width<font color="#909090">=None</font>, height<font color="#909090">=None</font>)</dt><dd><tt>Return&nbsp;a&nbsp;bounding&nbsp;box&nbsp;of&nbsp;form&nbsp;(LEFT,&nbsp;TOP,&nbsp;RIGHT,&nbsp;BOTTOM)&nbsp;used&nbsp;by&nbsp;PIL.<br>
+&nbsp;<br>
+You&nbsp;can&nbsp;supply&nbsp;a&nbsp;subset&nbsp;of&nbsp;the&nbsp;parameters,&nbsp;but&nbsp;hte&nbsp;usual&nbsp;ones<br>
+will&nbsp;be<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x,&nbsp;y,&nbsp;width,&nbsp;height&nbsp;--&nbsp;coordinates&nbsp;of&nbsp;top-left&nbsp;corner&nbsp;and&nbsp;size&nbsp;of&nbsp;box<br>
+&nbsp;&nbsp;&nbsp;&nbsp;left,&nbsp;top,&nbsp;right,&nbsp;bottom&nbsp;--&nbsp;coordinates&nbsp;of&nbsp;top-left&nbsp;and&nbsp;bottom-right&nbsp;corners<br>
+&nbsp;<br>
+Coordinates&nbsp;are&nbsp;assumed&nbsp;to&nbsp;come&nbsp;between&nbsp;pixels&nbsp;(that&nbsp;is,&nbsp;the<br>
+top&nbsp;left&nbsp;corner&nbsp;pixel&nbsp;has&nbsp;bbox&nbsp;(0,&nbsp;0,&nbsp;1,&nbsp;1),&nbsp;and&nbsp;the&nbsp;bottom-right<br>
+pixel&nbsp;of&nbsp;a&nbsp;16x16&nbsp;image&nbsp;is&nbsp;at&nbsp;(15,&nbsp;15,&nbsp;16,&nbsp;16))<br>
+&nbsp;<br>
+If&nbsp;x,&nbsp;y,&nbsp;left,&nbsp;and&nbsp;right&nbsp;are&nbsp;omitted,&nbsp;then&nbsp;the&nbsp;top&nbsp;left&nbsp;corner&nbsp;is&nbsp;at&nbsp;(0,&nbsp;0)</tt></dd></dl>
+ <dl><dt><a name="-resolve_file_path"><strong>resolve_file_path</strong></a>(file_path, base)</dt><dd><tt>Given&nbsp;a&nbsp;file&nbsp;path&nbsp;and&nbsp;a&nbsp;base&nbsp;URL,&nbsp;return&nbsp;a&nbsp;file&nbsp;path.</tt></dd></dl>
+ <dl><dt><a name="-resolve_generic_url"><strong>resolve_generic_url</strong></a>(base_url, url_ref)</dt><dd><tt>Resolve&nbsp;a&nbsp;relative&nbsp;reference&nbsp;per&nbsp;<a href="http://www.rfc-editor.org/rfc/rfc3986.txt">RFC&nbsp;3986</a><br>
+&nbsp;<br>
+Used&nbsp;for&nbsp;the&nbsp;custom&nbsp;URI&nbsp;schemes&nbsp;supplied&nbsp;by<br>
+clients&nbsp;of&nbsp;the&nbsp;<a href="#Mixer">Mixer</a>:&nbsp;HTTP&nbsp;URIs&nbsp;are&nbsp;processed<br>
+using&nbsp;the&nbsp;Python&nbsp;library’s&nbsp;urlparse&nbsp;module.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base_url&nbsp;--&nbsp;absolute&nbsp;URL&nbsp;that&nbsp;is&nbsp;used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;interpret&nbsp;url_ref<br>
+&nbsp;&nbsp;&nbsp;&nbsp;url_ref&nbsp;--&nbsp;may&nbsp;be&nbsp;an&nbsp;absolute&nbsp;URL<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(which&nbsp;will&nbsp;be&nbsp;returned&nbsp;unchanged)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;a&nbsp;relative&nbsp;reference&nbsp;to&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;resolved&nbsp;relative&nbsp;to&nbsp;base_url.<br>
+&nbsp;<br>
+&lt;<a href="http://tools.ietf.org/html/rfc3986">http://tools.ietf.org/html/rfc3986</a>&gt;</tt></dd></dl>
+ <dl><dt><a name="-set_http_cache"><strong>set_http_cache</strong></a>(cache)</dt><dd><tt>Future&nbsp;HTTP&nbsp;requests&nbsp;will&nbsp;use&nbsp;this&nbsp;cache.<br>
+&nbsp;<br>
+Arguments&nbsp;--<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cache&nbsp;--&nbsp;either&nbsp;the&nbsp;name&nbsp;of&nbsp;a&nbsp;directory&nbsp;to&nbsp;store&nbsp;files<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in,&nbsp;or&nbsp;an&nbsp;httplib2&nbsp;cache&nbsp;<a href="__builtin__.html#object">object</a></tt></dd></dl>
+ <dl><dt><a name="-url_from_file_path"><strong>url_from_file_path</strong></a>(file_path)</dt><dd><tt>Given&nbsp;a&nbsp;file&nbsp;path,&nbsp;return&nbsp;a&nbsp;file&nbsp;URL.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>GENERIC_RE</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>MINECRAFT_DIR_PATH_FUNCS</strong> = {'darwin': &lt;function &lt;lambda&gt;&gt;, 'default': &lt;function &lt;lambda&gt;&gt;, 'windows': &lt;function &lt;lambda&gt;&gt;}<br>
+<strong>TEMPLATE_RE</strong> = &lt;_sre.SRE_Pattern object&gt;<br>
+<strong>ZIP_DEFLATED</strong> = 8</td></tr></table>
+</body></html>
