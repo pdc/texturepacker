@@ -1,19 +1,19 @@
 parameters:
   packs:
     -
-      name: beta12
+      name: base
       unjumble:
         href: maps/beta-13
 packs:
-  missing:
-    file: beta-13-missing
-label: "{{ beta12.label }} + Beta 1.3"
-desc: "{{ beta12.desc }}"
+  patch:
+    file: beta-13-patch
+label: "{{ base.label }} + Beta 1.3"
+desc: "{{ base.desc }}"
 maps:
   - href: maps/beta-13
-  - href: maps/beta-13-missing
+  - href: maps/beta-13-patch
 mix:
-  pack: "$beta12"
+  pack: "$base"
   files:
     -
       # Default pack icon. Will be overridden if source has pack.png
@@ -36,8 +36,8 @@ mix:
       file: terrain.png
       replace:
         -
-          pack: $missing
-          source: beta-13-missing.png
+          pack: $patch
+          source: beta-13-patch.png
           cells:
             - oozing_obsidian
             - bed_top_foot
@@ -55,8 +55,8 @@ mix:
       if_missing: relax
       replace:
         -
-          pack: $missing
-          source: beta-13-missing.png
+          pack: $patch
+          source: beta-13-patch.png
           cells:
             repeater: repeater_item
             bed: bed_item

@@ -1,6 +1,6 @@
 # What there is to find in the beta 1.3 patch pack
 
-beta-13-missing.png:
+beta-13-patch.png:
   source_rect:
     width: 112
     height: 32
@@ -22,7 +22,7 @@ beta-13-missing.png:
     - repeater_lit
     - redstone_line_mask
     - bed_item
-beta-12-missing.png:
+beta-12-patch.png:
   source_rect:
     width: 32
     height: 256
