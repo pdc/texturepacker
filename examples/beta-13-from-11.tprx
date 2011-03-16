@@ -1,19 +1,19 @@
 parameters:
   packs:
     -
-      name: beta12
+      name: base
       unjumble:
         href: maps/beta-13
 packs:
   missing:
     file: beta-13-missing
-label: "{{ beta12.label }} + Beta 1.3"
-desc: "{{ beta12.desc }}"
+label: "{{ base.label }} + Beta 1.2 + Beta 1.3"
+desc: "{{ base.desc }}"
 maps:
   - href: maps/beta-13
   - href: maps/beta-13-missing
 mix:
-  pack: "$beta12"
+  pack: "$base"
   files:
     -
       # Default pack icon. Will be overridden if source has pack.png
@@ -50,6 +50,41 @@ mix:
             - repeater_lit
             - redstone_mask
             - redstone_line_mask
+        -
+          pack: $missing
+          source: beta-12-missing.png
+          cells:
+            - black_wool
+            - gray_wool
+            - red_wool
+            - pink_wool
+            - green_wool
+            - lime_wool
+            - brown_wool
+            - yellow_wool
+            - blue_wool
+            - light_blue_wool
+            - purple_wool
+            - magenta_wool
+            - cyan_wool
+            - orange_wool
+            - light_gray_wool
+            - lapis_lazuli
+            - dispenser
+            - lapis_lazuli_ore
+            - furnace_top
+            - sandstone_top
+            - cake_top
+            - sandstone_side
+            - cake_bottom
+            - sandstone_bottom
+            - cake_icon
+            - cake_side
+            - cake_slice
+            - pine_log
+            - birch_log
+            - leaves1
+            - leaves_unfancy1
     -
       file: gui/items.png
       if_missing: relax
