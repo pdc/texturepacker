@@ -1571,5 +1571,19 @@ class GuessPackTests(TestCase):
         self.assertTrue('gui/items.png' not in pack.get_resource_names())
 
 
+class TestAltGuessings(TestCase):
+    def test_simple_case(self):
+        map = GridMap((0, 0, 32, 32), (16, 16), ['cat', 'dog', 'cat_1', 'dog_1'])
+        alts = map.get_alts_list()
+        self.assertEqual([('cat', [['cat', 'cat_1']]), ('dog', [['dog', 'dog_1']])], alts)
+
+
+    def test_shapely_box(self):
+        map = GridMap((0, 0, 64, 32), (16, 16), ['cat_top', 'potato', 'cat_top_1', 'grapefruit',
+            'cat_side', 'cat_front', 'cat_side_1', 'cat_front_1'])
+        alts = map.get_alts_list()
+        self.assertEqual([('cat', [['cat_front', 'cat_front_1'], ['cat_side', 'cat_side_1'], ['cat_top', 'cat_top_1']])], alts)
+
+
 if __name__ == '__main__':
 	unittest.main()

@@ -1,5 +1,12 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.6
+===
+
+2 April 2011
+
+- Feature: new map method `Map.get_alt_list`
+
 0.5.1
 =====
 

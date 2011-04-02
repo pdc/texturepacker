@@ -635,7 +635,29 @@ class RenamedResource(ResourceBase):
 
 
 class MapBase(object):
-        pass
+    def get_alts_list(self):
+        alt_re = re.compile('_[0-9]$')
+        side_re = re.compile('_(front|back|side|left|right|top|bottom|head|foot)$')
+
+        groups = {}
+        # First pass: Find alt versions of cells.
+        for name in self.names:
+            m = alt_re.search(name)
+            if m:
+                cell_name = name[:m.start(0)]
+                m = side_re.search(cell_name)
+                group_name = cell_name[:m.start(0)] if m else cell_name
+                groups.setdefault(group_name, {}).setdefault(cell_name, []).append(name)
+
+        # Second pass: Add cells for which alt versions exist.
+        for cell_name in self.names:
+            m = side_re.search(cell_name)
+            group_name = cell_name[:m.start(0)] if m else cell_name
+            names = groups.get(group_name, {}).get(cell_name)
+            if names:
+                names.insert(0, cell_name)
+        return sorted((cn, sorted(ns.values())) for (cn, ns) in groups.items())
+
 
 class NotInMap(Exception):
     def __init__(self, name, map):
