@@ -1,0 +1,52 @@
+label: Jolicraft (Alternates)
+desc: Changed some of the textures for alts
+parameters:
+  packs:
+    - base
+packs:
+  patches:
+    href: http://static.texturejam.org.uk/texturepacks/patches.zip
+maps:
+  - href: maps/jolicraft
+  - href: maps/patches
+mix:
+  pack: $base
+  files:
+    - "*.png"
+    -
+      file: terrain.png
+      replace:
+        cells:
+          dirt_grass: dirt_grass_2
+          tnt_side: tnt_side_1
+          tnt_top: tnt_top_1
+          tnt_bottom: tnt_bottom_1
+          cobble: cobble_1
+          iron: iron_1
+          gold: gold_1
+          diamond: diamond_1
+          workbench_top: workbench_top_1
+          workbench_side: workbench_side_1
+          workbench_front: workbench_front_1
+          glass: glass_1
+          iron_door_top: iron_door_top_1
+          iron_door_bottom: iron_door_bottom_1
+          pumpkin_top: pumpkin_top_1
+          pumpkin_side: pumpkin_side_1
+          pumpkin_front: pumpkin_front_1
+          pumpkin_front_lit: pumpkin_front_lit_1
+          birch_log: birch_log_1
+          glowstone: glowstone_1
+          lapis_lazuli: lapis_lazuli_1
+          sandstone_top: sandstone_top_1
+          sandstone_side: sandstone_side_1
+          sandstone_bottom: sandstone_bottom_1
+    -
+      file: gui/items.png
+      if_missing: relax
+      replace:
+        -
+          pack: $patches
+          source: beta-14-patch.png
+          cells:
+            cookie: cookie_item
