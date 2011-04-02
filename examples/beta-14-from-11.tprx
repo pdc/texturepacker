@@ -3,15 +3,15 @@ parameters:
     -
       name: base
       unjumble:
-        href: maps/beta-13
+        href: maps/beta-14
 packs:
-  patch:
-    file: beta-13-patch
-label: "{{ base.label }} + Beta 1.2 + Beta 1.3"
+  patches:
+    file: patches
+label: "{{ base.label }} + Beta 1.4"
 desc: "{{ base.desc }}"
 maps:
-  - href: maps/beta-13
-  - href: maps/beta-13-patch
+  - href: maps/beta-14
+  - href: maps/patches
 mix:
   pack: "$base"
   files:
@@ -36,7 +36,7 @@ mix:
       file: terrain.png
       replace:
         -
-          pack: $patch
+          pack: $patches
           source: beta-13-patch.png
           cells:
             - oozing_obsidian
@@ -51,7 +51,7 @@ mix:
             - redstone_mask
             - redstone_line_mask
         -
-          pack: $patch
+          pack: $patches
           source: beta-12-patch.png
           cells:
             - black_wool
@@ -90,7 +90,12 @@ mix:
     #  if_missing: relax
     #  replace:
     #    -
-    #      pack: $patch
+    #      pack: $patches
+    #      source: beta-14-patch.png
+    #      cells:
+    #        - cookie_item
+    #    -
+    #      pack: $patches
     #      source: beta-13-patch.png
     #      cells:
     #        repeater: repeater_item

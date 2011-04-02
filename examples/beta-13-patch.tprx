@@ -1,6 +1,0 @@
-label: Beta 1.3 Patch Pack
-desc: Contains graphics for upgrading packs to support Beta 1.3
-mix:
-  pack: beta-13-patch
-  files:
-    - "*.png"

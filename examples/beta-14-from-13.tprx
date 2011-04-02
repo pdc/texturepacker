@@ -1,0 +1,43 @@
+parameters:
+  packs:
+    -
+      name: base
+      unjumble:
+        href: maps/beta-14
+packs:
+  patches:
+    file: patches
+label: "{{ base.label }} + Beta 1.4"
+desc: "{{ base.desc }}"
+maps:
+  - href: maps/beta-14
+  - href: maps/patches
+mix:
+  pack: "$base"
+  files:
+    -
+      # Default pack icon. Will be overridden if source has pack.png
+      file: pack.png
+      source: terrain.png
+      pack_icon:
+        cells:
+          - dirt_grass
+          - stone
+          - planks
+          - sand
+          - log_top
+          - cactus_top
+          - coal_ore
+          - wooden_door_top
+          - wooden_door_bottom
+          - redstone_torch_lit
+    - "*.png"
+    -
+      file: gui/items.png
+      if_missing: relax
+      replace:
+        -
+          pack: $patches
+          source: beta-14-patch.png
+          cells:
+            cookie: cookie_item

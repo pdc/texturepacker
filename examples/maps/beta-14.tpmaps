@@ -1,0 +1,17 @@
+-
+  href: beta-13
+-
+  gui/items.png:
+    -
+      gui/items.png
+    -
+      source_rect:
+        x: 192
+        y: 80
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - cookie
