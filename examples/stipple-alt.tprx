@@ -1,21 +1,22 @@
-label: SmoothStipple R10
-desc: A high-visibility, unrealistic look
+parameters:
+  packs:
+    -
+      name: base
+label: "{{ base.label }} (Alt)"
+desc: "{{ base.desc }}"
+maps: maps/stipple
 mix:
   -
-    pack:
-      href: GroovyStipple/
-      maps:
-        href: maps/stipple
+    pack: $base
     files:
       - "*.png"
       - news.txt
-  -
-    pack:
-      href: SmoothStipple
-      maps:
-        href: maps/stipple
-    files:
-      - terrain.png
+      -
+        file: terrain.png
+        replace:
+          -
+            cells:
+              track_corner: track_corner1
       -
         file: pack.png
         source: terrain.png
@@ -25,8 +26,8 @@ mix:
             - stone
             - planks
             - sand
-            - log_top
-            - cactus_top
+            - log_side
+            - track_corner1
             - coal_ore
             - wooden_door_top
             - wooden_door_bottom
