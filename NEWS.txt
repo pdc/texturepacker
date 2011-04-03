@@ -1,11 +1,27 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.6.2
+=====
+
+3 April 2011
+
+- `Map.get_alt_list` allows `stone1` as well as `stone_1`
+
+0.6.1 (Head cold special)
+=========================
+
+3 April 2011
+
+- Bug fix: using a string to fetch an atlas resulted in an infinite
+  loop! Now the string is instead treated as a URL
+
 0.6
 ===
 
 2 April 2011
 
-- Feature: new map method `Map.get_alt_list`
+- Feature: map method `Map.get_alt_list` gets a list of candiates for
+  making an alternative-textures remix of a pack.
 
 0.5.1
 =====

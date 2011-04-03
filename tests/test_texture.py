@@ -1577,12 +1577,32 @@ class TestAltGuessings(TestCase):
         alts = map.get_alts_list()
         self.assertEqual([('cat', [['cat', 'cat_1']]), ('dog', [['dog', 'dog_1']])], alts)
 
+    def test_simple_case_sans_underscore(self):
+        map = GridMap((0, 0, 32, 32), (16, 16), ['cat', 'dog', 'cat1', 'dog1'])
+        alts = map.get_alts_list()
+        self.assertEqual([('cat', [['cat', 'cat1']]), ('dog', [['dog', 'dog1']])], alts)
 
     def test_shapely_box(self):
         map = GridMap((0, 0, 64, 32), (16, 16), ['cat_top', 'potato', 'cat_top_1', 'grapefruit',
             'cat_side', 'cat_front', 'cat_side_1', 'cat_front_1'])
         alts = map.get_alts_list()
         self.assertEqual([('cat', [['cat_front', 'cat_front_1'], ['cat_side', 'cat_side_1'], ['cat_top', 'cat_top_1']])], alts)
+
+
+class TestMixerGetAtlas(TestCase):
+    @patch('httplib2.Http.request')
+    def test_named_href(self, mock_request):
+        data = '{"terrain.png": null}'
+        mock_request.return_value = ({
+            'status': '200',
+            'content-type': 'application/json',
+            'content-length': str(len(data)),
+        }, data)
+
+        mixer = Mixer()
+        atlas = mixer.get_atlas('http://example.com/mapmap/mapittymap.tpmaps', 'http://example.com/zuer/')
+        self.assertEqual('http://example.com/mapmap/mapittymap.tpmaps', mock_request.call_args[0][0])
+
 
 
 if __name__ == '__main__':

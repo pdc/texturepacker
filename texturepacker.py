@@ -636,7 +636,7 @@ class RenamedResource(ResourceBase):
 
 class MapBase(object):
     def get_alts_list(self):
-        alt_re = re.compile('_[0-9]$')
+        alt_re = re.compile('_?[0-9]$')
         side_re = re.compile('_(front|back|side|left|right|top|bottom|head|foot)$')
 
         groups = {}
@@ -1215,6 +1215,8 @@ class Mixer(object):
         if not atlas:
             atlas = Atlas()
         if atlas_spec:
+            if isinstance(atlas_spec, basestring):
+                atlas_spec = {'href': atlas_spec}
             atlas_base = (base
                 if not hasattr(atlas_spec, 'items')
                 else {'file': resolve_file_path(atlas_spec['file'], base)}
