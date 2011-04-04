@@ -1,0 +1,34 @@
+desc: 'Palest cobbles, plus fiery furnace'
+label: 'Lucid Alts'
+maps:
+  file: maps/lucidpack
+mix:
+    files:
+    - '*.png'
+    -   file: terrain.png
+        replace:
+            cells:
+                cobble: 'cobble_1'
+                diamond: 'diamond_2'
+                dirt_grass: 'dirt_grass_1'
+                furnace_front: 'furnace_front_1'
+                furnace_lit_front: 'furnace_lit_front_1'
+                furnace_side: 'furnace_side_1'
+                gold: 'gold_2'
+                grass: 'grass_1'
+                gravel: 'gravel_1'
+                iron: 'iron_2'
+                mossy_cobble: 'mossy_cobble_1'
+                planks: 'planks_1'
+                sand: 'sand_1'
+                tnt_bottom: 'tnt_bottom_2'
+                tnt_side: 'tnt_side_2'
+                tnt_top: 'tnt_top_2'
+                pumpkin_front: pumpkin_front_1
+                pumpkin_side: pumpkin_side_1
+                pumpkin_lit_front: pumpkin_lit_front_1
+                pumpkin_top: pumpkin_top_1
+    pack: $base
+parameters:
+    packs:
+    - base

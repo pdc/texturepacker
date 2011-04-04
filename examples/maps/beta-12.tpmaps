@@ -21,7 +21,7 @@ terrain.png:
         lever, wooden_door_bottom, iron_door_bottom, redstone_torch_lit, redstone_lit, redstone_line_lit, pumpkin_top, netherrack,
           soulsand, glowstone, "6A", "6B", "6C", "6D", "6E", "6F",
         track_corner, black_wool, gray_wool, redstone_torch, pine_log, birch_log, pumpkin_side, pumpkin_front,
-          pumpkin_front_lit, cake_top, cake_side, cake_slice, cake_bottom, "7D", "7E", "7F"]
+          pumpkin_lit_front, cake_top, cake_side, cake_slice, cake_bottom, "7D", "7E", "7F"]
   - source_rect: {"x": 0, "y": 128, width: 48, height: 112}
     cell_rect: {width: 16, height: 16}
     names: [
@@ -34,7 +34,7 @@ terrain.png:
         "E0", light_gray_wool, "E2"]
   - source_rect: {"x": 64, "y": 128, width: 32, height: 16}
     cell_rect: {width: 16, height: 16}
-    names: [leaves1, leaves_unfancy1]
+    names: [pine_leaves, pine_leaves_unfancy]
   - source_rect: {"x": 192, "y": 128, width: 16, height: 16}
     cell_rect: {width: 16, height: 16}
     names: [cake_icon]

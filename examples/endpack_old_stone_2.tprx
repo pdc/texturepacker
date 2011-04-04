@@ -1,0 +1,21 @@
+desc: !!python/unicode 'Yurg'
+label: !!python/unicode 'Eldpack Old Stone 2'
+maps: http://texturejam.org.uk/rx/maps/eldpack
+mix:
+  pack: "$base"
+  files:
+  - '*.png'
+  -   file: terrain.png
+      replace:
+          cells:
+              cobble: !!python/unicode 'cobble1'
+              dirt: !!python/unicode 'dirt1'
+              dirt_grass: !!python/unicode 'dirt_grass1'
+              stone: !!python/unicode 'stone1'
+              cobble1: !!python/unicode 'cobble'
+              dirt1: !!python/unicode 'dirt'
+              dirt_grass1: !!python/unicode 'dirt_grass'
+              stone1: !!python/unicode 'stone'
+parameters:
+    packs:
+    - base

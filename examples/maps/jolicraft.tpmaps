@@ -97,8 +97,8 @@
         height: 16
       names:
         - workbench_top_1
-        - blank_1
-        - blank_4
+        - x1
+        - x4
         - workbench_front_1
         - workbench_side_1
         - glowstone_1
@@ -113,8 +113,8 @@
         height: 16
       names:
         - pumpkin_top_1
-        - blank_2
-        - blank_3
+        - x3
+        - x2
         - pumpkin_side_1
         - pumpkin_front_1
-        - pumpkin_front_lit_1
+        - pumpkin_lit_front_1

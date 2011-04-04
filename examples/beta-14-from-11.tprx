@@ -83,8 +83,8 @@ mix:
             - cake_slice
             - pine_log
             - birch_log
-            - leaves1
-            - leaves_unfancy1
+            - pine_leaves
+            - pine_leaves_unfancy
     #-
     #  file: gui/items.png
     #  if_missing: relax

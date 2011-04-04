@@ -1,0 +1,89 @@
+-
+  href: beta-14
+-
+  terrain.png:
+    - terrain.png
+    -
+      source_rect:
+        x: 80
+        y: 176
+        width: 48
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - iron_1
+        - gold_1
+        - diamond_1
+        - iron_2
+        - gold_2
+        - diamond_2
+    -
+      source_rect:
+        x: 128
+        y: 176
+        width: 48
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - pumpkin_top_1
+        - "B9"
+        - "BA"
+        - pumpkin_side_1
+        - pumpkin_front_1
+        - pumpkin_lit_front_1
+    -
+      source_rect:
+        x: 48
+        y: 192
+        width: 32
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - mossy_cobble_1
+        - planks_1
+        - mossy_cobble_2
+        - mossy_cobble_3
+    -
+      source_rect:
+        x: 32
+        y: 224
+        width: 48
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - cobble_1
+        - cobble_2
+        - cobble_3
+    -
+      source_rect:
+        x: 80
+        y: 208
+        width: 112
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - grass_1
+        - furnace_front_1
+        - furnace_side_1
+        - tnt_side_1
+        - tnt_top_1
+        - tnt_bottom_1
+        - sand_1
+
+        - dirt_grass_1
+        - "E6"
+        - furnace_lit_front_1
+        - tnt_side_2
+        - tnt_top_2
+        - tnt_bottom_2
+        - gravel_1

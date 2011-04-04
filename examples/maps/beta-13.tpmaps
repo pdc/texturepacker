@@ -20,8 +20,8 @@
       cell_rect: {width: 16, height: 16}
       names:
         - repeater
-        - leaves1
-        - leaves1_unfancy
+        - pine_leaves
+        - pine_leaves_unfancy
         - bed_top_foot
         - bed_top_head
         - "88"

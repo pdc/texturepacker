@@ -34,7 +34,7 @@ mix:
           pumpkin_top: pumpkin_top_1
           pumpkin_side: pumpkin_side_1
           pumpkin_front: pumpkin_front_1
-          pumpkin_front_lit: pumpkin_front_lit_1
+          pumpkin_lit_front: pumpkin_lit_front_1
           birch_log: birch_log_1
           glowstone: glowstone_1
           lapis_lazuli: lapis_lazuli_1
