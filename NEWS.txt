@@ -1,16 +1,30 @@
 This file outlines changes to the package, in reverse chronological order.
 
-0.6.2
-=====
+0.8
+===
+
+8 April 2011
+
+- `MapBase.get_css` expresses a tile from a texture as CSS styles.
+
+0.7
+===
+
+4 April 2011
+
+- `Loader.add_local_knowledge` allows you to use a local copy of HTTP
+  resources (should be useful on the web site that happens to implement
+  those resources)
+
+0.6.3 (Head cold special)
+========================
 
 3 April 2011
 
-- `Map.get_alt_list` allows `stone1` as well as `stone_1`
 
-0.6.1 (Head cold special)
-=========================
-
-3 April 2011
+- `Map.get_alt_list` allows `stone1` as well as `stone_1`, but knows
+  that `crop0`, ..., `crop7` are not alternative versions of a
+  nonexistent texture `crop`.
 
 - Bug fix: using a string to fetch an atlas resulted in an infinite
   loop! Now the string is instead treated as a URL

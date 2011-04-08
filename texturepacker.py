@@ -162,9 +162,13 @@ class Loader(object):
         self._specs = {}
         self._things = {}
         self._schemes = {}
+        self._locals = []
 
     def add_scheme(self, prefix, func):
         self._schemes[prefix] = func
+
+    def add_local_knowledge(self, prefix, dir_path):
+        self._locals.append((prefix, dir_path))
 
     def get_url(self, spec, base=None):
         """Given a spec, return URL for the resource it specifes.
@@ -242,6 +246,13 @@ class Loader(object):
                 meta is a dict containing 'content-type'
                 strm is a file-like object
         """
+        # Knowledge that some HTTP URLs are available locally:
+        for prefix, dir_path in self._locals:
+            if url.startswith(prefix):
+                file_path = os.path.join(dir_path, url[len(prefix):])
+                url = url_from_file_path(file_path)
+                break
+
         if url.startswith('file://'):
             file_path = url[7:]
 
@@ -650,13 +661,43 @@ class MapBase(object):
                 groups.setdefault(group_name, {}).setdefault(cell_name, []).append(name)
 
         # Second pass: Add cells for which alt versions exist.
+        # Discard any which do not have an non-alt cell as false positives.
+        ngroups = {}
         for cell_name in self.names:
             m = side_re.search(cell_name)
             group_name = cell_name[:m.start(0)] if m else cell_name
             names = groups.get(group_name, {}).get(cell_name)
             if names:
-                names.insert(0, cell_name)
+                ngroups.setdefault(group_name, {})[cell_name] = [cell_name] + names
+        groups = ngroups
+
         return sorted((cn, sorted(ns.values())) for (cn, ns) in groups.items())
+
+    def get_css(self, name, desired_width=None):
+        """Returns a CSS style directive to display this cell.
+
+        Arguments --
+            name -- names a cell in the map
+            desired_width (optional) -- how wide the tile should be
+                (requires CSS3)
+
+        Gives settings for width, height, and background-positions.
+        If desired_width is specified and differs from the natural width
+        of the cell, then background-size is also specified.
+
+        Assumes something else supplies background-image
+        and background-repeat: no-repeat;
+        """
+        left, top, right, bottom = self.get_box(name)
+        scale = float(desired_width) / (right - left) if desired_width else 1
+        if scale == 1:
+            dimens = ['{0}px'.format(x) if x else '0' for x in [right - left, bottom - top, -left, -top]]
+            return 'width: {0}; height: {1}; background-position: {2} {3};'.format(*dimens)
+
+        width, height = self.get_css_background_dimens()
+
+        dimens = ['{0}px'.format(x * scale).replace('.0', '') if x else '0' for x in [width, height, right - left, bottom - top, -left, -top]]
+        return 'background-size: {0} {1}; width: {2}; height: {3}; background-position: {4} {5};'.format(*dimens)
 
 
 class NotInMap(Exception):
@@ -664,7 +705,7 @@ class NotInMap(Exception):
         super(NotInMap, self).__init__('{0!r} not found in map (must be one of {1})'.format(
             name, ', '.join(map.names)))
         self.name = name
-        self.maop = map
+        self.map = map
 
 class GridMap(MapBase):
     def __init__(self, source_box, cell_box, names):
@@ -690,6 +731,9 @@ class GridMap(MapBase):
         self.nx, self.ny = im_wd // self.cell_wd, im_ht // self.cell_ht
 
         self.names = names
+
+    def get_css_background_dimens(self):
+        return self.nx * self.cell_wd, self.ny * self.cell_ht
 
     def get_box(self, name):
         try:

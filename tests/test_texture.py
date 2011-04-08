@@ -217,6 +217,24 @@ class GridMapTests(TestCase):
         map3 = GridMap((32, 32), (8, 8), names)
         self.assertEqual(names, map3.names)
 
+    def test_css(self):
+        map2 = GridMap((0, 96, 32, 128), (16, 16), ['whiskey', 'x-ray', 'yankee', 'zulu'])
+        self.assertEqual("width: 16px; height: 16px; background-position: 0 -96px;", map2.get_css('whiskey'))
+        self.assertEqual("width: 16px; height: 16px; background-position: -16px -96px;", map2.get_css('x-ray'))
+        self.assertEqual("width: 16px; height: 16px; background-position: 0 -112px;", map2.get_css('yankee'))
+        self.assertEqual("width: 16px; height: 16px; background-position: -16px -112px;", map2.get_css('zulu'))
+
+    def test_css_scaled(self):
+        map2 = GridMap((0, 96, 32, 128), (16, 16), ['whiskey', 'x-ray', 'yankee', 'zulu'])
+        self.assertEqual("width: 16px; height: 16px; background-position: 0 -96px;", map2.get_css('whiskey', 16))
+        self.assertEqual("width: 16px; height: 16px; background-position: -16px -96px;", map2.get_css('x-ray', 16))
+        self.assertEqual("width: 16px; height: 16px; background-position: 0 -112px;", map2.get_css('yankee', 16))
+        self.assertEqual("width: 16px; height: 16px; background-position: -16px -112px;", map2.get_css('zulu', 16))
+        self.assertEqual("background-size: 64px 64px; width: 32px; height: 32px; background-position: 0 -192px;", map2.get_css('whiskey', 32))
+        self.assertEqual("background-size: 64px 64px; width: 32px; height: 32px; background-position: -32px -192px;", map2.get_css('x-ray', 32))
+        self.assertEqual("background-size: 64px 64px; width: 32px; height: 32px; background-position: 0 -224px;", map2.get_css('yankee', 32))
+        self.assertEqual("background-size: 64px 64px; width: 32px; height: 32px; background-position: -32px -224px;", map2.get_css('zulu', 32))
+
 class CompositeMapTests(TestCase):
     def test_two_grids(self):
         names1 = [
@@ -390,6 +408,18 @@ class ExternalResourceTests(TestCase):
         self.loader.add_scheme('bim', mock_func)
         self.assertEqual('hello', self.loader.get_bytes('bambi', 'bim:///gooshy/gooshy/gander'))
         self.assertEqual('///gooshy/gooshy/bambi', mock_func.call_args[0][0])
+
+    @patch('__builtin__.open')
+    def test_trivial_catalogue(self, mock_open):
+        mock_open.return_value = StringIO('fish')
+
+        self.loader.add_local_knowledge('http://example.org/bam/', '/banjo/ukelele')
+        spec = self.loader.maybe_get_spec('http://example.org/bam/gosh/wow.tprx')
+        self.assertEqual('fish', spec)
+        self.assertTrue(mock_open.called)
+        self.assertEqual('/banjo/ukelele/gosh/wow.tprx', mock_open.call_args[0][0])
+        self.assertTrue(mock_open.call_args[0][1].startswith('r'))
+
 
 
 class ResolveUrlTests(unittest.TestCase):
@@ -1576,6 +1606,12 @@ class TestAltGuessings(TestCase):
         map = GridMap((0, 0, 32, 32), (16, 16), ['cat', 'dog', 'cat_1', 'dog_1'])
         alts = map.get_alts_list()
         self.assertEqual([('cat', [['cat', 'cat_1']]), ('dog', [['dog', 'dog_1']])], alts)
+
+    def test_no_crackles(self):
+        # If there is no foo then foo1 is not an alternative texture
+        map = GridMap((0, 0, 32, 32), (16, 16), ['cat1', 'cat2', 'cat3', 'dog1'])
+        alts = map.get_alts_list()
+        self.assertEqual([], alts)
 
     def test_simple_case_sans_underscore(self):
         map = GridMap((0, 0, 32, 32), (16, 16), ['cat', 'dog', 'cat1', 'dog1'])
