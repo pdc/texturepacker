@@ -1,5 +1,15 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.8.1
+=====
+
+12 April 2011
+
+- Bug fix: composite images using palletized source images had ugly
+  results because the replaced times would be force-mapped on to the
+  base image’s colour pallet. Images are now uplifted to RGBA format to
+  prevent this.
+
 0.8
 ===
 

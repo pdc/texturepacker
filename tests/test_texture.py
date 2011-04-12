@@ -1639,7 +1639,44 @@ class TestMixerGetAtlas(TestCase):
         atlas = mixer.get_atlas('http://example.com/mapmap/mapittymap.tpmaps', 'http://example.com/zuer/')
         self.assertEqual('http://example.com/mapmap/mapittymap.tpmaps', mock_request.call_args[0][0])
 
+class TestDepaletizationOfPaletizedImages(TestCase):
+    def test_red_green(self):
+        rb_map = GridMap((32, 32), (16, 16), ['black', 'grey', 'red', 'pink'])
+        gy_map = GridMap((32, 32), (16, 16), ['green', 'lime', 'brown', 'yellow'])
+        source = self.make_source_pack('Dyes', 'Dyes', {
+            'redblack.png': ('redblack.png', rb_map),
+            'greenyellow.png': ('greenyellow.png', gy_map)})
+        mixer = Mixer()
+        mixer.add_pack('base', source)
+        remix = mixer.make({
+            'label': 'RG',
+            'desc': 'R G',
+            'parameters': {
+                'packs': [
+                    'base',
+                ],
+            },
+            'mix': {
+                'pack': '$base',
+                'files': [
+                    {
+                        'file': 'redgreen.png',
+                        'source': 'redblack.png',
+                        'replace': {
+                            'source': 'greenyellow.png',
+                            'cells': {
+                                'black': 'green',
+                                'grey': 'lime',
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+        with open(os.path.join(self.test_dir, 'redgreen-out.png'), 'wb') as strm:
+            strm.write(remix.get_resource('redgreen.png').get_bytes())
 
+        self.assert_PNGs_match(self.get_data('redgreen.png'), remix.get_resource('redgreen.png'))
 
 if __name__ == '__main__':
 	unittest.main()

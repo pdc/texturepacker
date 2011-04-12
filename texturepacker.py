@@ -627,6 +627,7 @@ class SourceResource(ResourceBase):
         if self.image is None:
             strm = StringIO(self.get_bytes())
             self.image = Image.open(strm)
+            self.image = self.image.convert('RGBA') # Upgrades to a format without palett
         return self.image
 
 
