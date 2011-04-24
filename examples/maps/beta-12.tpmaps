@@ -7,9 +7,9 @@ terrain.png:
     cell_rect: {width: 16, height: 16}
     names: [
         grass, stone, dirt, dirt_grass, planks, step_side, step_top, brick,
-            tnt_side, tnt_top, tnt_bottom, web, rose, dendelion, water, sapling,
+            tnt_side, tnt_top, tnt_bottom, web, rose, dendelion, water0, sapling,
         cobble, bedrock, sand, gravel, log_side, log_top, iron, gold,
-            diamond, chest_top, chest_side, chest_front, red_mushroom, gray_mushroom, "1E", fire,
+            diamond, chest_top, chest_side, chest_front, red_mushroom, gray_mushroom, "1E", fire0,
         gold_ore, iron_ore, coal_ore, bookcase, mossy_cobble, obsidian, "26", "27",
           "28", large_chest_front_right, large_chest_front_left, workbench_top, furnace_front, furnace_side, dispenser, fire1,
         sponge, glass, diamond_ore, redstone_ore, leaves, leaves_unfancy, "36", "37",
@@ -43,10 +43,10 @@ terrain.png:
     names: [crack0, crack1, crack2, crack3, crack4, crack5, crack6, crack7, crack8, crack9]
   - source_rect: {"x": 208, "y": 192, width: 48, height: 32}
     cell_rect: {width: 16, height: 16}
-    names: [water0, water1, water2, "DD", water3, water4]
+    names: [water1, water2, water3, "DD", water4, water5]
   - source_rect: {"x": 208, "y": 224, width: 48, height: 32}
     cell_rect: {width: 16, height: 16}
-    names: [lava0, lava1, lava2, "FD", lava3, lava4]
+    names: [lava1, lava2, lava3, "FD", lava4, lava5]
 art/kz.png:
   - source_rect: {width: 128, height: 16}
     cell_rect: {width: 16, height: 16}

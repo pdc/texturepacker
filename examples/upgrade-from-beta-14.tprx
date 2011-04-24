@@ -1,0 +1,50 @@
+parameters:
+  packs:
+    -
+      name: base
+      unjumble:
+        href: maps/beta-15
+packs:
+  patches:
+    #file: patches
+    href: http://static.texturejam.org.uk/texturepacks/patches.zip
+label: "{{ base.label }} + Patches"
+desc: "{{ base.desc }}"
+maps:
+  - href: maps/beta-15
+  - href: maps/patches
+mix:
+  pack: "$base"
+  files:
+    -
+      # Default pack icon. Will be overridden if source has pack.png
+      file: pack.png
+      source: terrain.png
+      pack_icon:
+        cells:
+          - dirt_grass
+          - stone
+          - planks
+          - sand
+          - log_top
+          - cactus_top
+          - coal_ore
+          - wooden_door_top
+          - wooden_door_bottom
+          - redstone_torch_lit
+    - "*.png"
+    -
+      file: terrain.png
+      replace:
+        -
+          pack: $patches
+          source: beta-15-patch.png
+          cells:
+            - spruce_sapling
+            - birch_sapling
+            - grass_edge
+            - power_rail
+            - power_rail_lit
+            - detector_rail
+            - redstone_a
+            - redstone_b

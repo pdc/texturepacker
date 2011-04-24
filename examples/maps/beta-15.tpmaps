@@ -1,0 +1,54 @@
+-
+  href: beta-14
+-
+  terrain.png:
+    -
+      terrain.png
+    -
+      source_rect:
+        x: 64
+        y: 176
+        width: 32
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - redstone_a
+        - redstone_b
+    -
+      source_rect:
+        x: 96
+        y: 32
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - grass_edge
+    -
+      source_rect:
+        x: 240
+        y: 48
+        width: 16
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - spruce_sapling
+        - birch_sapling
+    -
+      source_rect:
+        x: 48
+        y: 160
+        width: 16
+        height: 48
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - power_rail
+        - power_rail_lit
+        - detector_rail

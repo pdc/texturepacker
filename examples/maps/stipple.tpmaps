@@ -8,4 +8,4 @@
       source_rect: {x: 48, y: 208, width: 16, height: 16}
       cell_rect: {width: 16, height: 16}
       names:
-        - track_corner1
+        - track_corner_1
