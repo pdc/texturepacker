@@ -529,13 +529,19 @@ class SourcePack(PackBase):
 
     @property
     def label(self):
-        res = self.get_resource('pack.txt')
-        return res.get_content().split('\n', 1)[0]
+        try:
+            res = self.get_resource('pack.txt')
+            return res.get_content().split('\n', 1)[0]
+        except KeyError:
+            return ''
 
     @property
     def desc(self):
-        res = self.get_resource('pack.txt')
-        return res.get_content().split('\n', 1)[1].rstrip()
+        try:
+            res = self.get_resource('pack.txt')
+            return res.get_content().split('\n', 1)[1].rstrip()
+        except KeyError:
+            return ''
 
     def get_last_modified(self):
         """Get a timestamp for the last time the content of the pack was changed.
@@ -988,7 +994,12 @@ class MissingParameter(Exception):
         self.param = param_spec
 
 
-TEMPLATE_RE = re.compile(u'\{\{([^{}]+)\}\}')
+TEMPLATE_RE = re.compile(ur"""
+    \{\{
+    ([^{}]+)
+    \}\}
+""", re.VERBOSE)
+
 
 class Mixer(object):
     """Create texture packs by mixing together existing ones.
@@ -1220,7 +1231,9 @@ class Mixer(object):
         to texturepack conventions.
         """
         pack_names = list(pack.get_resource_names())
-        new_pack = RecipePack('unjumbled', 'unjumbled', atlas=atlas)
+        new_label = pack.label
+        new_desc = pack.desc
+        new_pack = RecipePack(new_label, new_desc, atlas=atlas)
         for desired_name in atlas.get_map_names():
             nick = desired_name.split('/')[-1]
             slash_nick = '/' + nick

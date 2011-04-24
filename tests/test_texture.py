@@ -1480,6 +1480,7 @@ class GuessPackTests(TestCase):
             zip.writestr('terrain.png', self.get_data('gingham.png'))
             zip.writestr('sign.png', self.get_data('sign.png'))
             zip.writestr('irrelevant.png', self.get_data('a.png'))
+            zip.writestr('pack.txt', 'Frogspawn\nForever')
 
     def test_from_zip(self):
         pack = Mixer().make({
@@ -1508,23 +1509,23 @@ class GuessPackTests(TestCase):
                 ]
             }
         })
-        self.check_fantasitic_pack(pack)
+        self.check_fantasitic_pack(pack, 'unjumbled', 'untwisted')
 
-    def check_fantasitic_pack(self, pack):
+    def check_fantasitic_pack(self, pack, expected_label, expected_desc):
         with open(os.path.join(self.test_dir, 'unjumbled.zip'), 'w') as strm:
             pack.write_to(strm)
         self.assert_PNGs_match(self.get_data('gingham.png'), pack.get_resource('terrain.png'))
         self.assert_PNGs_match(self.get_data('sign.png'), pack.get_resource('item/sign.png'))
         self.assert_PNGs_match(self.get_data('gingham10.png'), pack.get_resource('pack.png'))
-        self.assertEqual('unjumbled', pack.label)
-        self.assertEqual('untwisted', pack.desc)
+        self.assertEqual(expected_label, pack.label)
+        self.assertEqual(expected_desc, pack.desc)
 
     def test_from_zip_parametized(self):
         mixer = Mixer();
         mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
         pack = mixer.make({
-            'label': 'unjumbled',
-            'desc': 'untwisted',
+            'label': '{{ mary.label }}',
+            'desc': '{{ mary.desc }}',
             'parameters': {
                 'packs': [
                     {
@@ -1553,14 +1554,56 @@ class GuessPackTests(TestCase):
                 ]
             }
         })
-        self.check_fantasitic_pack(pack)
+        self.check_fantasitic_pack(pack, 'Frogspawn', 'Forever')
+        
+    def test_from_parametized_sans_pack_txt(self):
+        # Create a version of the source file lacking pack.txt
+        with ZipFile(self.zip_path, 'w') as zip:
+            zip.writestr('terrain.png', self.get_data('gingham.png'))
+            zip.writestr('sign.png', self.get_data('sign.png'))
+
+        # Now it should be the same as before except with blank label and desc.
+        mixer = Mixer();
+        mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
+        pack = mixer.make({
+            'label': '{{ mary.label }}',
+            'desc': '{{ mary.desc }}',
+            'parameters': {
+                'packs': [
+                    {
+                        'name': 'mary',
+                        'unjumble': {
+                            'terrain.png': {
+                                'source_rect': {'width': 256, 'height': 256},
+                                'cell_rect': {'width': 16, 'height': 16},
+                                'names': ['{0:02X}'.format(x) for x in range(256)],
+                            },
+                            'item/sign.png': None,
+                        },
+                    }
+                ]
+            },
+            'mix': {
+                'pack': "$mary",
+                'files': [
+                    '*.png',
+                    {
+                        'source': 'terrain.png',
+                        'pack_icon': {
+                            'cells': ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'],
+                        }
+                    }
+                ]
+            }
+        })
+        self.check_fantasitic_pack(pack, '', '')
 
     def test_relax_when_missing(self):
         mixer = Mixer();
         mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
         recipe = {
-            'label': 'unjumbled',
-            'desc': 'untwisted',
+            'label': '{{ mary.label }} (unfoo)',
+            'desc': '{{ mary.desc }}',
             'parameters': {
                 'packs': [
                     {
@@ -1597,7 +1640,7 @@ class GuessPackTests(TestCase):
 
         recipe['mix']['files'][-1]['if_missing'] = 'relax'
         pack = mixer.make(recipe)
-        self.check_fantasitic_pack(pack)
+        self.check_fantasitic_pack(pack, 'Frogspawn (unfoo)', 'Forever')
         self.assertTrue('gui/items.png' not in pack.get_resource_names())
 
 
