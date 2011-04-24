@@ -1,5 +1,12 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.8.3
+=====
+
+24 April 2011
+
+- Bug fix: Don’t throw exception when source pack has single-line `pack.txt`.
+
 0.8.2
 =====
 

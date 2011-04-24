@@ -1521,6 +1521,10 @@ class GuessPackTests(TestCase):
         self.assertEqual(expected_desc, pack.desc)
 
     def test_from_zip_parametized(self):
+        pack = self.mix_parametizedly()
+        self.check_fantasitic_pack(pack, 'Frogspawn', 'Forever')
+
+    def mix_parametizedly(self):
         mixer = Mixer();
         mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
         pack = mixer.make({
@@ -1554,8 +1558,8 @@ class GuessPackTests(TestCase):
                 ]
             }
         })
-        self.check_fantasitic_pack(pack, 'Frogspawn', 'Forever')
-        
+        return pack
+
     def test_from_parametized_sans_pack_txt(self):
         # Create a version of the source file lacking pack.txt
         with ZipFile(self.zip_path, 'w') as zip:
@@ -1563,40 +1567,20 @@ class GuessPackTests(TestCase):
             zip.writestr('sign.png', self.get_data('sign.png'))
 
         # Now it should be the same as before except with blank label and desc.
-        mixer = Mixer();
-        mixer.add_pack('mary', mixer.get_pack(url_from_file_path(self.zip_path)))
-        pack = mixer.make({
-            'label': '{{ mary.label }}',
-            'desc': '{{ mary.desc }}',
-            'parameters': {
-                'packs': [
-                    {
-                        'name': 'mary',
-                        'unjumble': {
-                            'terrain.png': {
-                                'source_rect': {'width': 256, 'height': 256},
-                                'cell_rect': {'width': 16, 'height': 16},
-                                'names': ['{0:02X}'.format(x) for x in range(256)],
-                            },
-                            'item/sign.png': None,
-                        },
-                    }
-                ]
-            },
-            'mix': {
-                'pack': "$mary",
-                'files': [
-                    '*.png',
-                    {
-                        'source': 'terrain.png',
-                        'pack_icon': {
-                            'cells': ['ED', 'DA', 'EB', 'FE', '31', 'ED', 'AC', 'BF', 'DA', '96'],
-                        }
-                    }
-                ]
-            }
-        })
+
+        pack = self.mix_parametizedly()
         self.check_fantasitic_pack(pack, '', '')
+
+    def test_from_parametized_sans_pack_txt(self):
+        # Create a version of the source file lacking pack.txt
+        with ZipFile(self.zip_path, 'w') as zip:
+            zip.writestr('terrain.png', self.get_data('gingham.png'))
+            zip.writestr('sign.png', self.get_data('sign.png'))
+            zip.writestr('pack.txt', 'Just one line')
+
+        # Now it should be the same as before except with a label and blank desc.
+        pack = self.mix_parametizedly()
+        self.check_fantasitic_pack(pack, 'Just one line', '')
 
     def test_relax_when_missing(self):
         mixer = Mixer();

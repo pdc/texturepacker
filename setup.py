@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 # encoding: UTF-8
 
 from setuptools import setup
@@ -8,7 +7,7 @@ long_description = ''.join(list(open('README.txt'))[3:])
 
 setup(
     name='texturepacker',
-    version='0.8.2',
+    version='0.8.3',
     description='Assemble texture packs for Minecraft',
     long_description=long_description,
     author='Damian Cugley',

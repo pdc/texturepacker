@@ -540,7 +540,7 @@ class SourcePack(PackBase):
         try:
             res = self.get_resource('pack.txt')
             return res.get_content().split('\n', 1)[1].rstrip()
-        except KeyError:
+        except (KeyError, IndexError):
             return ''
 
     def get_last_modified(self):
