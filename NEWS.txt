@@ -1,5 +1,13 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.8.2
+=====
+
+24 April 2011
+
+- Bug fix: when unjumbling a texture pack, don’t change its label and
+  description to ‘unjumbled’.
+
 0.8.1
 =====
 
