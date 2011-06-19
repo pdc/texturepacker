@@ -7,7 +7,7 @@ terrain.png:
     cell_rect: {width: 16, height: 16}
     names: [
         grass, stone, dirt, dirt_grass, planks, step_side, step_top, brick,
-            tnt_side, tnt_top, tnt_bottom, web, rose, dendelion, water0, sapling,
+            tnt_side, tnt_top, tnt_bottom, web, rose, dandelion, water0, sapling,
         cobble, bedrock, sand, gravel, log_side, log_top, iron, gold,
             diamond, chest_top, chest_side, chest_front, red_mushroom, gray_mushroom, "1E", fire0,
         gold_ore, iron_ore, coal_ore, bookcase, mossy_cobble, obsidian, "26", "27",
