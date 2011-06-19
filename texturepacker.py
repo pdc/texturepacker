@@ -1007,11 +1007,11 @@ class Mixer(object):
     As well as interpreting the recipes, the mixer keeps
     track of the packs and loads them as needed.
     """
-    def __init__(self):
+    def __init__(self, loader=None):
         self.packs = {}
         self.atlas = Atlas()
         self._atlas_cache = weakref.WeakValueDictionary()
-        self.loader = Loader()
+        self.loader = loader or Loader()
 
     def add_pack(self, name, pack):
         """Add this pack to the repertoire of this mixer.
