@@ -1,0 +1,37 @@
+-
+  href: beta-16
+-
+  terrain.png:
+    - terrain.png
+    -
+      # These cells oroginally added for wildgrass mod,
+      # but I am cheekily repurposing them for Minecraft 1.6
+      source_rect: {x: 160, y: 96, width:96, height: 15}
+      cell_rect: {width: 16, height: 16}
+      names: [tall_grass_1, tall_grass_2, tall_grass_3, tall_grass_4, tall_grass_5, tall_grass_6, tall_grass_7]
+    -
+      source_rect: {x: 128, y: 128, width: 48, height: 32}
+      cell_rect: {width: 16, height: 16}
+      names: [_, bed_top_foot_1, bed_top_head_1,
+        bed_foot_1, bed_side_foot_1, bed_side_head_1]
+    -
+      source_rect: {x: }
+    -
+      source_rect: {x: 128, y: 160, width: 64, height: 32}
+      cell_rect: {width: 16, height: 16}
+      names: [lapis_lazuli_1, iron_1, gold_1, diamond_1,
+        lapis_lazuli_2, iron_2, gold_2, diamond_2]
+    -
+      source_rect: {x: 80, y: 192, width: 112, height: 48}
+      cell_rect: {width: 16, height: 16}
+      names: [iron_door_top_1, planks_1, glowstone_1, workbench_top_1, cobble_1, mossy_cobble_1, sandstone_top_1,
+        iron_door_bottom_1, dirt_grass_1, dirt_grass_2, workbench_side_1, workbench_front_1, glowstone_2, sandstone_side_1,
+        cobble_2, tnt_side_1, tnt_top_1, tnt_bottom_1, birch_log_1, pumpkin_top_1, sandstone_bottom_1]
+    -
+      source_rect: {x: 32, y: 224, width: 48, height: 15}
+      cell_rect: {width: 16, height: 16}
+      names: [glass_1, glass_2, glass_3]
+    -
+      source_rect: {x: 160, y: 240, width: 48, height: 15}
+      cell_rect: {width: 16, height: 16}
+      names: [pumpkin_side_1, pumpkin_front_1, pumpkin_lit_front_1]

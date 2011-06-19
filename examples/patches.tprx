@@ -1,6 +1,0 @@
-label: Patches
-desc: Contains graphics for upgrading packs
-mix:
-  pack: patches
-  files:
-    - "*.png"

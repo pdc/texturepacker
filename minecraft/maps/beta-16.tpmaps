@@ -1,0 +1,51 @@
+# Map for Minecraft Beta 1.6 based on tweets from jeb_
+-
+  href: beta-15
+-
+  terrain.png:
+    -
+      terrain.png
+    -
+      # jeb_: To texture makers: @notch's tall grass sprite is grayscale and will get the same color as the grass block texture
+      # jeb_: The sprite is located to the right of the grass edge texture (below the gold block)
+      source_rect:
+        x: 112
+        y: 32
+        width: 32
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - tall_grass
+        - tall_grass_under
+        - dead_shrub
+        - fern
+    -
+      # jeb_: The trapdoor block is located to the right of the ladder in the texture
+      source_rect:
+        x: 64
+        y: 80
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - trapdoor
+-
+  gui/items.png:
+    -
+      gui/items.png
+    -
+      # jeb_: And the map item is next to the book in items.png
+      source_rect:
+        x: 192
+        y: 48
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - map_item
