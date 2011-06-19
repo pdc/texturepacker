@@ -1,5 +1,12 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.8.4
+=====
+
+19 June 2011
+
+- Allow override of the default loader when creating a `Mixer` instance.
+
 0.8.3
 =====
 
