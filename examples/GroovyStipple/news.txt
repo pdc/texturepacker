@@ -1,3 +1,7 @@
+R13. Beta 1.6 grass, shrub & fern. Sun and moon. Experimental clouds. Diamond ore matches diamond icon.
+
+R12. Added powered rail, birch and spruce saplings, and new-style grassy edge.
+
 R11. Added partially updated items.png.
 
 R10. Some more art.
