@@ -1,21 +1,20 @@
+# Last checked against Jolicraft 3.3 in June 2011
 -
   href: beta-16
 -
   terrain.png:
     - terrain.png
     -
-      # These cells oroginally added for wildgrass mod,
-      # but I am cheekily repurposing them for Minecraft 1.6
-      source_rect: {x: 160, y: 96, width:96, height: 15}
-      cell_rect: {width: 16, height: 16}
-      names: [tall_grass_1, tall_grass_2, tall_grass_3, tall_grass_4, tall_grass_5, tall_grass_6, tall_grass_7]
-    -
       source_rect: {x: 128, y: 128, width: 48, height: 32}
       cell_rect: {width: 16, height: 16}
       names: [_, bed_top_foot_1, bed_top_head_1,
         bed_foot_1, bed_side_foot_1, bed_side_head_1]
     -
-      source_rect: {x: }
+      source_rect: {x: 208, y: 128, width: 48, height: 48}
+      cell_rect: {width: 16, height: 16}
+      names: [dead_shrub_1, dead_shrub_2, tall_grass_1,
+        rose_1, dandelion_1, sugarcane_1,
+        rose_2]
     -
       source_rect: {x: 128, y: 160, width: 64, height: 32}
       cell_rect: {width: 16, height: 16}

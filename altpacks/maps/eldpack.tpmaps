@@ -1,5 +1,6 @@
 # Eldpack has alternative stone and dirt textures.
-- href: beta-13
+# Last checked against Eldpack 3.5 on 2011-06-23
+- href: beta-16
 - terrain.png:
     - terrain.png
     - source_rect: {x: 160, y: 224, width: 32, height: 32}

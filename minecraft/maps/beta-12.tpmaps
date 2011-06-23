@@ -15,7 +15,7 @@ terrain.png:
         sponge, glass, diamond_ore, redstone_ore, leaves, leaves_unfancy, "36", "37",
           "38", large_chest_back_left, large_chest_back_right, workbench_front, workbench_side, furnace_lit_front, furnace_top, "3F",
         wool, spawner, snow, ice, dirt_snow, cactus_top, cactus_side, cactus_slice,
-          clay, cane, speaker, record_player, "4C", "4D", "4E", "4F",
+          clay, sugarcane, speaker, record_player, "4C", "4D", "4E", "4F",
         torch, wooden_door_top, iron_door_top, ladder, redstone, redstone_line, tilled_soil_irrigated, tilled_soil,
           crop0, crop1, crop2, crop3, crop4, crop5, crop6, crop7,
         lever, wooden_door_bottom, iron_door_bottom, redstone_torch_lit, redstone_lit, redstone_line_lit, pumpkin_top, netherrack,
