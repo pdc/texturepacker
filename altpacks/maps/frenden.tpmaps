@@ -1,0 +1,40 @@
+# Frenden’s pack 9.14 is beta 1.6 with some alternate textures added.
+- href: beta-16
+- terrain.png:
+    - terrain.png
+    - source_rect: {x: 112, y: 160, width: 96, height: 64}
+      cell_rect: {width: 16, height: 16}
+      names:
+        - chest_top_1
+        - chest_side_1
+        - chest_front_1
+        - _
+        - _
+        - _
+
+        - large_chest_front_right_1
+        - large_chest_front_left_1
+        - workbench_top_1
+        - furnace_front_1
+        - furnace_side_1
+        - dispenser_1
+
+        - large_chest_back_left_1
+        - large_chest_back_right_1
+        - workbench_front_1
+        - workbench_side_1
+        - furnace_lit_front_1
+        - furnace_top_1
+
+        - _
+        - speaker_ 1
+        - record_player
+        - _
+        - _
+        - _
+    - source_rect: {x: 240, y: 144, width: 16, height: 48}
+      cell_rect: {width: 16, height: 16}
+      names:
+        - glass_1
+        - wooden_door_top_1
+        - wooden_door_bottom_1

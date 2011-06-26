@@ -1,9 +1,0 @@
-# Frenden’s pack 6.2 is beta 1.2 with some alternate textures added.
-# This is out of date as of June 2011 but Minecraftforums is down
-# so I can't update it just yet.
-- href: beta-12
-- terrain.png:
-    - terrain.png
-    - source_rect: {x: 64, y: 160, width: 256, height: 32}
-      cell_rect: {width: 16, height: 16}
-      names: [cobble1, planks1, planks2, dispenser1]
