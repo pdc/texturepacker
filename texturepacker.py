@@ -654,6 +654,14 @@ class RenamedResource(ResourceBase):
 
 class MapBase(object):
     def get_alts_list(self):
+        """Which tiles in this map are alteratives for others?
+
+        The convention is that alternatives for a tile FOO
+        are named FOO1, FOO2, ... or FOO_1, FOO_2, ...
+
+        Returns a 2-level hierarchy: a list of (GROUP_NAME, [CELLS, CELLS, ...])
+        where each CELLS is itself a list [FOO, FOO_1, FOO_2]
+        """
         alt_re = re.compile('_?[0-9]$')
         side_re = re.compile('_(front|back|side|left|right|top|bottom|head|foot)$')
 
