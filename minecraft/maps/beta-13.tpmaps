@@ -16,27 +16,36 @@
       names:
         - oozing_obsidian
     -
-      source_rect: {x: 48, y: 128, width: 96, height: 48}
+      source_rect: {x: 48, y: 128, width: 16, height: 32}
       cell_rect: {width: 16, height: 16}
       names:
         - repeater
+        - repeater_lit
+    -
+      source_rect: {x: 64, y: 128, width: 64, height: 16}
+      cell_rect: {width: 16, height: 16}
+      names:
         - pine_leaves
         - pine_leaves_unfancy
         - bed_top_foot
         - bed_top_head
-        - "88"
-        - repeater_lit
-        - "94"
+    -
+      # In Betas 1.6 up to 1.6, bed textures were in the
+      # top 9 rows of the cell.
+      # this changes in Beta 1.7
+      source_rect: {x: 80, y: 144, width: 96, height: 16}
+      cell_rect: {width: 16, height: 16}
+      names:
         - bed_foot
         - bed_side_foot
         - bed_side_head
         - bed_head
-        - "A3"
+    -
+      source_rect: {x: 64, y: 160, width: 32, height: 16}
+      cell_rect: {width: 16, height: 16}
+      names:
         - redstone_mask
         - redstone_line_mask
-        - "A6"
-        - "A7"
-        - "A8"
   gui/items.png:
     -
       gui/items.png
