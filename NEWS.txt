@@ -1,8 +1,9 @@
 This file outlines changes to the package, in reverse chronological order.
 
-0.9
-===
+0.9.1
+=====
 
+- Added map updates for Minecraft Beta 1.7.
 - Split some of the maps files out of the examples directory to create `minecraft` and `altpacks`
 
 0.8.4

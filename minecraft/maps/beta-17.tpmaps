@@ -1,0 +1,37 @@
+# Map for Minecraft Beta 1.6 based on tweets from jeb_
+-
+  href: beta-16
+-
+  terrain.png:
+    -
+      terrain.png
+    -
+      source_rect:
+        x: 160
+        y: 96
+        width: 80
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - sticky_piston_face
+        - piston_face
+        - piston_box_side
+        - piston_box_bottom
+        - piston_box_top
+-
+  gui/items.png:
+    -
+      gui/items.png
+    -
+      source_rect:
+        x: 208
+        y: 80
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - shears
