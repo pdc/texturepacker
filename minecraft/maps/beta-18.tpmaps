@@ -1,0 +1,170 @@
+# Map for Minecraft Beta 1.8 based on tweets from jeb_
+-
+  href: beta-17
+-
+  terrain.png:
+    -
+      terrain.png
+    -
+      source_rect:
+        x: 96
+        y: 48
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - stone_brick
+    -
+      source_rect:
+        x: 80
+        y: 80
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - iron_bars
+    -
+      source_rect:
+        x: 64
+        y: 96
+        width: 32
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - mossy_stone_brick
+        - cracked_stone_brick
+    -
+      source_rect:
+        x: 64
+        y: 144
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - glass_pane_top
+    -
+      source_rect:
+        x: 128
+        y: 128
+        width: 32
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - melon_side
+        - melon_top
+    -
+      source_rect:
+        x: 208
+        y: 112
+        width: 32
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - red_mushroom_top
+        - brown_mushroom_top
+        - mushroom_stalk_side
+        - mushroom_stalk_top
+    -
+      source_rect:
+        x: 240
+        y: 96
+        width: 16
+        height: 48
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - stalk
+        - stalk_corner
+        - vines
+    -
+      source_rect:
+        x: 160
+        y: 240
+        width: 64
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names: # These names are speculative
+        - footsteps
+        - border
+        - border_corner
+        - sparkle
+-
+  gui/items.png:
+    -
+      gui/items.png
+    -
+      source_rect:
+        x: 80
+        y: 96
+        width: 16
+        height: 48
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - bow_pull
+        - bow_pull_more
+        - bow_pull_most
+    -
+      source_rect:
+        x: 208
+        y: 96
+        width: 16
+        height: 48
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - melon
+    -
+      source_rect:
+        x: 144
+        y: 96
+        width: 32
+        height: 32
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - raw_beef
+        - cooked_beef
+        - raw_chicken
+        - cooked_chicken
+    -
+      source_rect:
+        x: 208
+        y: 48
+        width: 32
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - pumpkin_seeds
+        - melon_seeds
+    -
+      source_rect:
+        x: 176
+        y: 80
+        width: 16
+        height: 16
+      cell_rect:
+        width: 16
+        height: 16
+      names:
+        - rotten_flesh
