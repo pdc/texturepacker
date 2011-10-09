@@ -1,0 +1,16 @@
+{
+    "status": "200", 
+    "content-length": "15383", 
+    "content-location": "http://adf.ly/380075/forestdepths", 
+    "set-cookie": "PHPSESSID=af9ca4037ae77f544750a9fde6d6e5ae; path=/, adf1=25f104a5b5ff4cb2fbd2544f89936e4a; expires=Fri, 30-Sep-2011 06:42:09 GMT; path=/, adf2=58bbbeee3f798953d84d96b0570a75b0; expires=Fri, 30-Sep-2011 06:42:09 GMT; path=/", 
+    "expires": "Sat, 26 Jul 1997 05:00:00 GMT", 
+    "vary": "Accept-Encoding", 
+    "server": "LiteSpeed", 
+    "connection": "close", 
+    "-content-encoding": "gzip", 
+    "pragma": "no-cache", 
+    "cache-control": "no-cache, must-revalidate", 
+    "date": "Thu, 29 Sep 2011 06:42:09 GMT", 
+    "x-powered-by": "PHP/5.3.8", 
+    "content-type": "text/html"
+}
