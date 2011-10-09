@@ -135,7 +135,7 @@
       source_rect:
         x: 144
         y: 96
-        width: 32
+        width: 48
         height: 32
       cell_rect:
         width: 16
@@ -143,8 +143,10 @@
       names:
         - raw_beef
         - cooked_beef
+        - ender_pearl
         - raw_chicken
         - cooked_chicken
+        - _
     -
       source_rect:
         x: 208
