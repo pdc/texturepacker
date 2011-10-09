@@ -1,9 +1,9 @@
 # -*-coding: UTF-8-*-
 """
-texture.py
+texturepacker.py
 
 Created by Damian Cugley on 2011-01-12.
-Copyright (c) 2011 Damian Cugley. All rights reserved.
+Copyright © 2011 Damian Cugley. All rights reserved.
 """
 
 import sys

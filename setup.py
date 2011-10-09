@@ -7,7 +7,7 @@ long_description = ''.join(list(open('README.txt'))[3:])
 
 setup(
     name='texturepacker',
-    version='0.9.1',
+    version='0.9.2',
     description='Assemble texture packs for Minecraft',
     long_description=long_description,
     author='Damian Cugley',
@@ -34,7 +34,8 @@ setup(
         'Topic :: Games/Entertainment',
         'Topic :: Utilities',
     ],
-    py_modules=['texturepacker'],
+    package_dir = {'':'src'},
+    packages = ['texturepacker'],
     scripts=['script/maketexture'],
     # The sample images & recipes are not included in a binary distribution.
 )

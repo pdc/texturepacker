@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-texture.py
+test_texture.py
 
 Created by Damian Cugley on 2011-01-12.
-Copyright (c) 2011 Damian Cugley. All rights reserved.
+Copyright © 2011 Damian Cugley. All rights reserved.
 """
 
 import sys
@@ -13,6 +13,7 @@ import unittest
 from mock import Mock, patch
 
 from texturepacker import *
+
 from datetime import datetime, timedelta
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from StringIO import StringIO
