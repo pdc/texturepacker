@@ -6,3 +6,4 @@ dist
 texturepacker.egg-info
 foo
 tmp.zip
+*~
