@@ -1,6 +1,6 @@
 # Stipple textures have one alternate tile, the angular track corner.
 -
-  href: beta-16
+  href: beta-18
 -
   terrain.png:
     - terrain.png
