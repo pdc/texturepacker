@@ -903,6 +903,22 @@ class ImagingResourceBase(ResourceBase):
         return self._bytes
 
 
+class BlankResource(ImagingResourceBase):
+    """An image of a given size and blank background."""
+    def __init__(self, name='blank', width=256, height=256, background='transparent'):
+        super(BlankResource, self).__init__(name)
+        self.width = width
+        self.height = height
+        self.background = background
+
+    def _calc(self):
+        im = Image.new('RGBA', (self.width, self.height), (255, 255, 255, 0))
+        return im
+
+    def get_last_modified(self):
+        return datetime(2011, 11, 20, 11, 54)
+
+
 class CompositeResource(ImagingResourceBase):
     """An image made by replacing some cells in an image with parts of another"""
     def __init__(self, name, base_res, base_map):
@@ -1120,7 +1136,11 @@ class Mixer(object):
                 else:
                     res_name = file_spec['file']
                 try:
-                    src_res = src_pack.get_resource(file_spec.get('source', res_name))
+                    src_spec = file_spec.get('source', res_name)
+                    if not isinstance(src_spec, basestring) and 'background' in src_spec:
+                        src_res = BlankResource(res_name, **src_spec)
+                    else:
+                        src_res = src_pack.get_resource(src_spec)
                 except NotInPack:
                     if file_spec.get('if_missing') == 'relax':
                         continue

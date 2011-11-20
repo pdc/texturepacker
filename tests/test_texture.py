@@ -787,7 +787,6 @@ class MixerTests(TestCase):
             ]
         }, {'a.png': 'a_b_replace.png'}, ['b.png'])
 
-
     def test_a_b_replace_single_mix(self):
         # The difference here is that the mix can be 1 dict instead of a lst
         self.check_recipe({
@@ -1262,6 +1261,28 @@ class MixerTests(TestCase):
         pack = self.make_mixer_with_packs().make(recipe)
         self.assertEqual('AB', pack.label)
         self.assertEqual('Has A! Has B!!', pack.desc)
+
+    def test_blank_source(self):
+        # The difference here is that the mix can be 1 dict instead of a lst
+        self.check_recipe({
+            'mix': {
+                'pack': '$alpha_bravo',
+                'files': [
+                    {
+                        'file': 'a.png',
+                        'source':  {
+                            'background': 'transparent',
+                            'width': 64,
+                            'height': 64,
+                        },
+                        'replace': {
+                            'source': 'a.png',
+                            'cells':  ['a', 'b', 'c', 'd']
+                        }
+                    }
+                ]
+            }
+        }, {'a.png': 'a_64x64.png'}, ['b.png'])
 
     def check_recipe(self, recipe, expected_resources, unexpected_resources):
         recipe.update({
