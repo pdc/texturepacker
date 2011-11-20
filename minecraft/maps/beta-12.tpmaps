@@ -101,7 +101,7 @@ gui/icons.png:
   - source_rect: {width: 16, height: 16}
     cell_rect: {width: 16, height: 16}
     names: [crosshair]
-  - source_rect: {x: 16, y: 0, width: 64}
+  - source_rect: {x: 16, y: 0, width: 64, height: 8}
     cell_rect: {width: 8, height: 8}
     names:
       - heart_slot_1
@@ -112,14 +112,14 @@ gui/icons.png:
       - half_heart
       - heart_faded
       - half_heart_faded
-  - source_rect: {x: 16, y: 8, width: 32}
+  - source_rect: {x: 16, y: 8, width: 32, height: 8}
     cell_rect: {width: 8, height: 8}
     names:
       - armour_empty
       - armour_half
-      - armout_full
+      - armour_full
       - armour
-  - source_rect: {x: 16, y: 16, width: 16}
+  - source_rect: {x: 16, y: 16, width: 16, height: 8}
     cell_rect: {width: 8, height: 8}
     names:
       - bubble
@@ -209,8 +209,8 @@ gui/items.png:
       - clay
       - paper
       - book
-      - "3C"
-      - "3D"
+      - _
+      - _
       - clock
       - bowl
       - mushroom_stew

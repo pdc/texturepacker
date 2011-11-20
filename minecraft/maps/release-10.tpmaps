@@ -57,7 +57,7 @@
                 - end_portal_frame_top
                 - end_portal_frame_side
                 - end_portal_eye_of_ender
-                - end_portal_fram_bottom
+                - end_portal_frame_bottom
         -
             source_rect:
                 x: 96
@@ -75,7 +75,7 @@
         -
             source_rect:
                 x: 0
-                y: 240
+                y: 224
                 width: 16
                 height: 16
             cell_rect:
@@ -86,13 +86,95 @@
         -
             source_rect:
                 x: 32
-                y: 240
-                width: 16
-                height: 16
-            cell_rect:
+                y: 224
                 width: 48
                 height: 16
+            cell_rect:
+                width: 16
+                height: 16
             names:
-                - netherstalk_small
-                - netherstalk_medium
-                - netherstalk_large
+                - nether_wart_small
+                - nether_wart_medium
+                - nether_wart_large
+    gui/items.png:
+    -
+        gui/items.png
+    -
+        source_rect:
+            x: 224
+            y: 32
+            width: 16
+            height: 16
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - black_and_red_sphere
+    -
+        source_rect:
+            x: 192
+            y: 96
+            width: 16
+            height: 16
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - blaze_rod
+    -
+        source_rect:
+            x: 176
+            y: 112
+            width: 48
+            height: 16
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - ghast_tear
+        - gold_nugget
+        - nether_wart
+    -
+        source_rect:
+            x: 144
+            y: 128
+            width: 80
+            height: 48
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - glistering_melon
+        - fermented_spider_eye
+        - spider_eye
+        - glass_bottle
+        - squiggle
+        - _
+        - splash_bottle
+        - eye_of_ender
+        - cauldron
+        - blaze_dust
+        - _
+        - _
+        - _
+        - brewing_stand
+        - magma_cream
+    -
+        source_rect:
+            x: 32
+            y: 240
+            width: 224
+            height: 16
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - music_disc_blocks
+        - music_disc_chirp
+        - music_disc_far
+        - music_disc_mall
+        - music_disc_mellohi
+        - music_disc_stal
+        - music_disc_strad
+        - music_disc_ward
+        - music_disc_11

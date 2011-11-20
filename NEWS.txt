@@ -1,5 +1,11 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.10
+====
+
+- Added map updates for Minecraft 1.0
+- Recipes can create textures starting with a blanbk image instead of an existing source.
+
 0.9.1
 =====
 

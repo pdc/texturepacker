@@ -722,6 +722,13 @@ class NotInMap(Exception):
         self.name = name
         self.map = map
 
+class BadMap(Exception):
+    """When a map has nonsensical specificaion."""
+    def __init__(self, msg, orig_args, orig_kwargs={}):
+        super(BadMap, self).__init__(msg + '\n' + repr(orig_args))
+        self.orig_args = orig_args
+        self.orig_kwargs = orig_kwargs
+
 class GridMap(MapBase):
     def __init__(self, source_box, cell_box, names):
         """Create a grid map with this size and names.
@@ -744,8 +751,11 @@ class GridMap(MapBase):
             im_wd = right - self.im_left
             im_ht = bottom - self.im_top
         self.nx, self.ny = im_wd // self.cell_wd, im_ht // self.cell_ht
-
         self.names = names
+
+        if im_wd < self.cell_wd or  im_ht < self.cell_ht:
+            raise BadMap('Image must be at least as wide and tall as one cell ({0}×{1} image, {2}×{3} cell)'.format(im_wd, im_ht, self.cell_wd, self.cell_ht),
+            (source_box, cell_box, names))
 
     def get_css_background_dimens(self):
         return self.nx * self.cell_wd, self.ny * self.cell_ht
