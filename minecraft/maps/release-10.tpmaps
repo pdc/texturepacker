@@ -1,0 +1,98 @@
+# Map for Minecraft 1.0 based on squinting at the image files
+-
+    href: beta-18
+-
+    terrain.png:
+        -
+            terrain.png
+        -
+            source_rect:
+                x: 192
+                y: 64
+                width: 48
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - lily_pad
+                - mycel_side
+                - mycel_top
+        -
+            source_rect:
+                x: 160
+                y: 128
+                width: 32
+                height: 32
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - cauldron_top
+                - couldron_inside
+                - cauldron_side
+                - cauldron_bottom
+        -
+            source_rect:
+                x: 192
+                y: 144
+                width: 32
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - brewing_stand_base
+                - brewing_stand
+        -
+            source_rect:
+                x: 224
+                y: 144
+                width: 32
+                height: 32
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - end_portal_frame_top
+                - end_portal_frame_side
+                - end_portal_eye_of_ender
+                - end_portal_fram_bottom
+        -
+            source_rect:
+                x: 96
+                y: 160
+                width: 32
+                height: 32
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - enchantment_table_top
+                - enchantment_table_inside
+                - enchantment_table_side
+                - enchantment_table_bottom
+        -
+            source_rect:
+                x: 0
+                y: 240
+                width: 16
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - netherbrick
+        -
+            source_rect:
+                x: 32
+                y: 240
+                width: 16
+                height: 16
+            cell_rect:
+                width: 48
+                height: 16
+            names:
+                - netherstalk_small
+                - netherstalk_medium
+                - netherstalk_large
