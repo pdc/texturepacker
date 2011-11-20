@@ -7,3 +7,4 @@ texturepacker.egg-info
 foo
 tmp.zip
 *~
+.noseids
