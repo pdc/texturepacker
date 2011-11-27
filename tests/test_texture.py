@@ -75,14 +75,14 @@ class TestCase(unittest.TestCase):
 
 
 class TextResourceTests(TestCase):
-	def setUp(self):
-		pass
+    def setUp(self):
+    	pass
 
-	def test_pack_txt(self):
-	    doc = TextResource('pack.txt', u'Test pack\nBy Fréd the Deäd')
-	    self.assertEqual('pack.txt', doc.name)
-	    self.assertEqual('Test pack\nBy Fréd the Deäd', doc.get_bytes())
-	    # This test relies on the encoding of the source file being UTF-8!!
+    def test_pack_txt(self):
+        doc = TextResource('pack.txt', u'Test pack\nBy Fréd the Deäd')
+        self.assertEqual('pack.txt', doc.name)
+        self.assertEqual('Test pack\nBy Fréd the Deäd', doc.get_bytes())
+        # This test relies on the encoding of the source file being UTF-8!!
 
 
 class SourcePackTests(TestCase):
@@ -115,7 +115,6 @@ class SourcePackTests(TestCase):
         # Open it as a SourceTexturePack
         pack = SourcePack(file_path, Atlas())
         self.check_pack_is_sign_pack(pack)
-
 
     def test_pack_from_directory(self):
         pack = self.create_sign_directory()
@@ -236,6 +235,7 @@ class GridMapTests(TestCase):
         self.assertEqual("background-size: 64px 64px; width: 32px; height: 32px; background-position: 0 -224px;", map2.get_css('yankee', 32))
         self.assertEqual("background-size: 64px 64px; width: 32px; height: 32px; background-position: -32px -224px;", map2.get_css('zulu', 32))
 
+
 class CompositeMapTests(TestCase):
     def test_two_grids(self):
         names1 = [
@@ -297,7 +297,6 @@ class AtlasTests(TestCase):
         ], None)
         self.assertEqual((0, 0, 16, 16), m.get_box('yellow'))
         self.assertEqual((48, 16, 64, 32), m.get_box('s'))
-
 
 
 class CompositeResourceTests(TestCase):
@@ -420,7 +419,6 @@ class ExternalResourceTests(TestCase):
         self.assertTrue(mock_open.called)
         self.assertEqual('/banjo/ukelele/gosh/wow.tprx', mock_open.call_args[0][0])
         self.assertTrue(mock_open.call_args[0][1].startswith('r'))
-
 
 
 class ResolveUrlTests(unittest.TestCase):
@@ -1188,7 +1186,6 @@ class MixerTests(TestCase):
         self.assertEqual('ababababk', pack.desc)
         self.check_pack(pack, {'ab.png': 'a_b_replace.png'}, ['b.png'])
 
-
     def test_copy_star_png_from_dir_within_dir(self):
         # Test added to find a bug.
         dir_path = os.path.join(self.test_dir, 'flippy')
@@ -1688,6 +1685,7 @@ class TestMixerGetAtlas(TestCase):
         atlas = mixer.get_atlas('http://example.com/mapmap/mapittymap.tpmaps', 'http://example.com/zuer/')
         self.assertEqual('http://example.com/mapmap/mapittymap.tpmaps', mock_request.call_args[0][0])
 
+
 class TestDepaletizationOfPaletizedImages(TestCase):
     def test_red_green(self):
         rb_map = GridMap((32, 32), (16, 16), ['black', 'grey', 'red', 'pink'])
@@ -1727,5 +1725,6 @@ class TestDepaletizationOfPaletizedImages(TestCase):
 
         self.assert_PNGs_match(self.get_data('redgreen.png'), remix.get_resource('redgreen.png'))
 
+
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()

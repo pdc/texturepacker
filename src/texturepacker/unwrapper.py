@@ -1,10 +1,11 @@
 # -*-coding: UTF-8-*-
 
-"""Given the alleged URL of a texture pack, find plausing forum and download URLs.
+"""Given the alleged URL of a texture pack, find plausible forum and download URLs.
 
 This is tricky because often they are embedded in a page that is wrapped in
 a bit.ly link which is wrapped in an adf.ly link and the download is hosted on Mediafire
-behind yeat another layer of redirects."""
+behind yet another layer of redirects.
+"""
 
 import sys
 import os
@@ -13,7 +14,9 @@ import re
 from BeautifulSoup import BeautifulSoup
 import json
 
-# Unwrapper functions take a URL and optiopnal Http object
+# Unwrapper functions take a URL, response, and body
+# (these being the result of a request for that URL)
+#  and optional Http object
 # and return a dict of categorized URLs or None.
 
 ADFLY_RE = re.compile(ur"""
@@ -27,14 +30,14 @@ def unwrap_adfly(url, resp, body, http=None):
     m = ADFLY_RE.search(body)
     if m:
         return m.groupdict()
-    
+
 def unwrap_bitly(url, resp, body):
     # Redirects happen transparently
     # We just need to tell caller to process the results using the next unwrapper.
     return {
         'next': (resp['content-location'], resp, body),
     }
-    
+
 
 URL_SCORES = [
     (re.compile(r'^http://(www\.)?mediafire\.com/'), 50),
@@ -53,17 +56,17 @@ def unwrap_minecraftforum(url, resp, body):
     urls = {
         'forum': url, # This *is* the forum page!
     }
-    
+
     # It might also have clues as to where the downloads are.
     soup = BeautifulSoup(body)
     post_elt = soup.first('div', 'entry-content')
-    
+
     best_href = None
     best_score = 0
     for a_elt in post_elt.findAll('a', 'bbc_url'): # This class distinguishes URLS inserted by the author of the post.
         try:
             href = a_elt['href']
-            
+
             # Many entries contain self-links.
             if href == url:
                 continue
@@ -73,7 +76,7 @@ def unwrap_minecraftforum(url, resp, body):
             if licence_score:
                 urls['licence'] = href
                 continue
-                
+
             # Otherwise, this is a candidate for download or home link.
             score = sum(pat_score for (pat, pat_score) in URL_SCORES if pat.search(href))
             labels = []
@@ -87,7 +90,7 @@ def unwrap_minecraftforum(url, resp, body):
             label = a_elt.findPreviousSibling(text=True)
             if label:
                 labels.append(label)
-            
+
             for label in labels:
                 score += sum(pat_score for (pat, pat_score) in LABEL_SCORES if pat.search(label))
             if a_elt.img:
@@ -100,10 +103,10 @@ def unwrap_minecraftforum(url, resp, body):
     if best_href:
         if WOT_NO_SLASH_RE.match(best_href):
             best_href += '/'
-        urls['next'] = best_href        
-        
+        urls['next'] = best_href
+
     return urls
-    
+
 MEDIAFIRE_PKR_RE = re.compile(r"^<!--\s*var LA=\s*false;\s*pKr='([^']+)';")
 MEDIAFIRE_CALL_RE = re.compile(r'^DoShow\("notloggedin_wrapper"\);\s*cR\(\);\s*(\w+)\(\);')
 MEDIAFIRE_CALL2_RE = re.compile(r"\w+\('\w+','([a-f\d]+)'\)")
@@ -113,20 +116,20 @@ def unwrap_mediafire(url, resp, body):
     urls = {
         'download': url,
     }
-    
+
     soup = BeautifulSoup(body)
-    
+
     # The first of three codes needed to generate the next URL.
     secret_qk = url.split('?', 1)[1]
-    
+
     # The JavaScript calls a function whose name is randomized.
     # So our first job is to find the name of the function.
     for elt in soup.body.findAll('script', type='text/javascript', language=None):
         m = MEDIAFIRE_CALL_RE.search(elt.string)
         if m:
-            secret_func = m.group(1)     
+            secret_func = m.group(1)
             break
-            
+
     # That function has within it some 'encrypted' code
     # which in turn contains the third key.
     FUNC_PAT = re.compile(r"""
@@ -134,10 +137,10 @@ def unwrap_mediafire(url, resp, body):
         unescape\('(?P<cyphertext>[a-f\d]+)'\); \s*
         \w+ = (?P<count>\d+) ; \s*
         for \( .* \) .*
-        \w+ = \w+ \+ \(String.fromCharCode\(parseInt\(\w+.substr\(i\s\*\s2,\s2\),\s16\) \^ 
+        \w+ = \w+ \+ \(String.fromCharCode\(parseInt\(\w+.substr\(i\s\*\s2,\s2\),\s16\) \^
                 (?P<key>[\d^]+)
         \)\); \s*
-        eval\(\w+\); 
+        eval\(\w+\);
         """ % secret_func, re.VERBOSE)
 
     for elt in soup.body.findAll('script', type='text/JavaScript', language='JavaScript'): # lol capitalization
@@ -145,32 +148,32 @@ def unwrap_mediafire(url, resp, body):
         if m:
             # This is the second code needed to get the next URL.
             secret_pKr = m.group(1)
-            
+
             # Now to find the 'encrypted' function and pull the third code out of it.
             m = FUNC_PAT.search(elt.string)
             if m:
                 plaintext = mediafire_decode(m.group('cyphertext'), m.group('count'), m.group('key'))
-                
+
                 # Now hoik the third code out of the plaintext.
                 m = MEDIAFIRE_CALL2_RE.match(plaintext)
                 secret_pk1 = m.group(1)
             break
-        
+
     # The next URL is also on Mediafire -- this is the dynamically generated page
     # that is loaded in to an invisible IFRAME.
-    urls['next'] = ('http://www.mediafire.com/dynamic/download.php?qk=%s&pk1=%s&r=%s' 
-                % (secret_qk, secret_pk1, secret_pKr))    
+    urls['next'] = ('http://www.mediafire.com/dynamic/download.php?qk=%s&pk1=%s&r=%s'
+                % (secret_qk, secret_pk1, secret_pKr))
     return urls
-    
+
 def mediafire_decode(cyphertext, count, key):
     """Mediafire use a simple cypher to obscure some codes embedded in their HTML.
-    
+
     Arguments --
         cyphertext -- lowercase hexadecimal digits. Mediafire needlessly wrap it in unescape(...).
         count -- number of pairs of digits to consider; a int or string representation of an int.
         key -- the expression XORed with all bytes, in the form of a string
                 containing ^-separated integers. For example, "13^7".
-                
+
     Returns --
         A byte string, usually containg JavaScript code to pass to eval.
     """
@@ -180,29 +183,29 @@ def mediafire_decode(cyphertext, count, key):
     plaintext = ''.join(chr(int(cyphertext[2 * i:2 * i + 2], 16) ^ key) for i in range(count))
     return plaintext
 
-MF_DOWNLOAD_ENIGMA_RE = re.compile(r""" 
-    unescape\('(?P<cyphertext>[a-f\d]+)'\); 
-    \w+ = (?P<count>\d+) ; 
+MF_DOWNLOAD_ENIGMA_RE = re.compile(r"""
+    unescape\('(?P<cyphertext>[a-f\d]+)'\);
+    \w+ = (?P<count>\d+) ;
     for \(i = 0; i < \w+; i\+\+ \)
-    \w+ = \w+ \+ \(String.fromCharCode\(parseInt\(\w+.substr\(i\s\*\s2,\s2\),\s16\) \^ 
+    \w+ = \w+ \+ \(String.fromCharCode\(parseInt\(\w+.substr\(i\s\*\s2,\s2\),\s16\) \^
             (?P<key>[\d^]+)
     \)\);
     eval\(\w+\); """, re.VERBOSE)
 MF_DOWNLOAD_ROTOR_RE = re.compile(r"(\w+)='(\w+)';")
 MF_DOWNLOAD_INNERHTML_RE = re.compile(r"""
     case \s 15:  # Ensure we have the correct branch of the switch
-    .*? 
-    href=\\"(?P<prefix>http://download\d+.mediafire.com/)" 
+    .*?
+    href=\\"(?P<prefix>http://download\d+.mediafire.com/)"
     \s* \+ \s*
     (?P<key>\w+)
     \s* \+ \s*
     "(?P<suffix>[^"]+\.zip)\\"
     """, re.VERBOSE)
-   
-    
+
+
 def unwrap_mediafire_download(url, resp, body):
     """Pull out the link to the actual download from Medafire’s hidden page"""
-    
+
     # This only works if the cookies and other stuff are set up correctly.
     # There is only one SCRIPT element so no point in anlysing the HTML structure …
     m = MF_DOWNLOAD_ENIGMA_RE.search(body)
@@ -215,7 +218,7 @@ def unwrap_mediafire_download(url, resp, body):
             'next': href,
         }
     return {}
-    
+
 def unwrap_anything_and_save_it(url, resp, body):
     """For debugging! This unwrapper saves its arguments to disk for later analysis."""
     name = url.split('/')[2].replace('www.', '')
@@ -226,8 +229,8 @@ def unwrap_anything_and_save_it(url, resp, body):
         strm.write(body)
     print >>sys.stderr, 'Wrote body to %s.html' % name
     return {}
-    
-    
+
+
 URL_IS_DOWNLOAD_SCORES = [
     (re.compile('^http://(www\.)?mediafire.com/', re.IGNORECASE), 50),
     (re.compile('\.zip$', re.IGNORECASE), 50),
@@ -235,18 +238,18 @@ URL_IS_DOWNLOAD_SCORES = [
 def guess_url_is_download(url):
     """Return a positive number if this URL looks likely to be a ZIP download."""
     return sum(score for (pat, score) in URL_IS_DOWNLOAD_SCORES if pat.search(url))
-    
+
 URL_IS_HOME_SCORES = [
     (re.compile('^http://(www\.)?planetminecraft\.com/texture_pack/[\w-]+/', re.IGNORECASE), 100),
 ]
 def guess_url_is_home(url):
     """Return a positive number if this URL looks likely to be an external homepage for the pack.."""
     return sum(score for (pat, score) in URL_IS_HOME_SCORES if pat.search(url))
-    
-    
-    
+
+
+
 # DRIVER
-    
+
 _PREFIX_UNWRAPPERS = [
     ('adf.ly', unwrap_adfly),
     ('bit.ly', unwrap_bitly),
@@ -259,16 +262,46 @@ COOKIE_EXPIRES_RE = re.compile("""
     (Mon|Tue|Wed|Thu|Fri|Sat|Sun), \s [^;,]+
     [;,]?
     """, re.VERBOSE)
-    
+
 class Unwrapper(object):
-    """Device for peeling back layers of redirection web sites to get the actual download link"""
+    """Device for peeling back layers of redirection web sites to get the actual download link.
+
+    The `unwrap` methodis used to attempt to find download etc. URLs.
+
+    """
     def __init__(self, http=None):
         self.http = http or httplib2.Http()
-    
+
     def unwrap(self, url, until=None):
+        """Try to find actual download and forum URLs, starting with this one.
+
+        Arguments --
+            url -- the published URL for the resource (may be the actual URL
+                or the address of a forum page linking to it etc.)
+            until -- stop when all of the named categorized URLs are known.
+                Use this when you want to document the resource
+                but not necessarly find the final URL.
+
+        Returns --
+            A dictionary  with some or none of the following keys defined:
+
+            final -- the URL that could not be further processed; generally
+                if all has gone well this will be the actual URL of the resource itself.
+            forum -- a forum post concerning this resource (this happens when
+                the alleged URL of the resource is actually a link to the post).
+            download -- the URL to quote as the one to download the resource from
+                (may still involve a redirection via Mediafire etc.).
+            home -- the URL to quote as the home page of the resource
+
+        If `until` is not specified, then carry on until there is no more
+        dereferencing to do.
+
+        This may make one or more HTTP requests, and will consume
+        memory as it holds the intermediate resources for examination.
+        """
         if until:
             until = set(until)
-        
+
         cookie_jar = {}
         queue = [url]
         result = {}
@@ -301,7 +334,7 @@ class Unwrapper(object):
                                 cookie_name, cookie_value = parts[0].split('=', 1)
                                 cookie_jar[cookie_name] = cookie_value
                     res = func(url, resp, body)
-                    
+
                     if res and 'forum' in res and 'next' in res:
                         # We have found a forum page; its links might be download or home.
                         # Only the obvious cases are handled here (e.g., *.zip is a download).
@@ -311,7 +344,7 @@ class Unwrapper(object):
                             res['download'] = u
                         if 'home' not in res and guess_url_is_home(u):
                             res['home'] = u
-                    
+
                     result.update(res)
                     break
             else:
@@ -322,20 +355,20 @@ class Unwrapper(object):
             if 'next' in result:
                 queue.append(result.pop('next'))
         return result
-        
+
 default_unwrapper = None
 
 def unwrap(*args, **kwargs):
     """"Shortcut for unwrapping a URL.
-    
+
     Equivalent to Unwrapper().unwrap(...).
     """
     global default_unwrapper
     if not default_unwrapper:
         default_unwrapper = Unwrapper()
     return default_unwrapper.unwrap(*args, **kwargs)
-        
+
 if __name__ == '__main__':
     u = 'http://adf.ly/380075/forestdepths'
     print Unwrapper().unwrap(u)
-    
+
