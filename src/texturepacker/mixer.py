@@ -20,6 +20,7 @@ import fnmatch
 import json
 import yaml
 from urlparse import urljoin
+import unwrapper
 
 _http = None
 _cache = None
@@ -163,6 +164,7 @@ class Loader(object):
         self._things = {}
         self._schemes = {}
         self._locals = []
+        self._unwrapper = unwrapper.Unwrapper()
 
     def add_scheme(self, prefix, func):
         self._schemes[prefix] = func
@@ -272,6 +274,11 @@ class Loader(object):
             # XXX Allow for more content-types
 
         if url.startswith('http'):
+            # Now use the unwrapper in case it was an indirection URL.
+            res = self._unwrapper.unwrap(url)
+            if 'final' in res:
+                url = res['final']
+
             response, body = _get_http().request(url)
             if response['status'] in ['200', '304']:
                 return response, StringIO(body)

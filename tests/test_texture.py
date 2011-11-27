@@ -13,6 +13,7 @@ import unittest
 from mock import Mock, patch
 
 from texturepacker import *
+import texturepacker.unwrapper
 
 from datetime import datetime, timedelta
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
@@ -320,6 +321,15 @@ class CompositeResourceTests(TestCase):
         self.assert_PNGs_match(self.get_data('a_b_replace.png'), bytes)
 
 
+# Create a fake URL unwrapper.
+class StubUnwrapper(object):
+    def unwrap(self, url, until=None):
+      return {'final': url}
+unwrapper_class_stub = Mock()
+unwrapper_class_stub.return_value = StubUnwrapper()
+
+
+@patch.object(texturepacker.unwrapper, 'Unwrapper', unwrapper_class_stub)
 class ExternalResourceTests(TestCase):
     def setUp(self):
         super(ExternalResourceTests, self).setUp()
@@ -561,6 +571,7 @@ class MixerTests(TestCase):
         pack2 = Mixer().get_pack('file://' + os.path.abspath(file_path))
         self.assert_same_packs(pack1, pack2)
 
+    @patch.object(texturepacker.unwrapper, 'Unwrapper', unwrapper_class_stub)
     @patch('httplib2.Http.request')
     def test_get_pack_from_http(self, mock_meth):
         # Arrange that downloading any URL returns our pack.
@@ -576,6 +587,7 @@ class MixerTests(TestCase):
         self.assert_same_packs(pack1, pack2)
 
     # Identical to the abover except passing the URL as a string not dict.
+    @patch.object(texturepacker.unwrapper, 'Unwrapper', unwrapper_class_stub)
     @patch('httplib2.Http.request')
     def test_get_pack_from_naked_http(self, mock_meth):
         # Arrange that downloading any URL returns our pack.
@@ -593,6 +605,37 @@ class MixerTests(TestCase):
         res = pack2.get_resource('a.png')
         # Has now downloaded the data:
         self.assertEqual('http://example.org/frog.zip', mock_meth.call_args[0][0])
+        self.assert_same_packs(pack1, pack2)
+
+
+    # Identical to the above except requires unwrapper to work.
+    @patch.object(texturepacker.unwrapper, 'Unwrapper')
+    @patch('httplib2.Http.request')
+    def test_get_pack_using_unwrapper(self, request_mock, unwrapper_class_mock):
+        # Arrange that downloading any URL returns our pack.
+        unwrapper_mock = Mock()
+        unwrapper_mock.unwrap.return_value = {
+            'download': 'http://example.org/foo.bart',
+            'final': 'http://example.org/toad.zip',
+        }
+        unwrapper_class_mock.return_value  = unwrapper_mock
+
+        pack1, data1 = self.sample_pack_and_bytes()
+        request_mock.return_value = ({
+            'status': '200',
+            'content-type': 'application/zip',
+            'content-length': str(len(data1)),
+        }, data1)
+
+        pack2 = Mixer().get_pack('http://parasite.ly/12345')
+        # Not laoded yet:
+        self.assertFalse(request_mock.call_args)
+
+        res = pack2.get_resource('a.png')
+        # Has now downloaded the data:
+        unwrapper_class_mock.assert_called_once_with()
+        unwrapper_mock.unwrap.assert_called_once_with('http://parasite.ly/12345')
+        self.assertEqual('http://example.org/toad.zip', request_mock.call_args[0][0])
         self.assert_same_packs(pack1, pack2)
 
     def test_get_pack_from_relative_file(self):
