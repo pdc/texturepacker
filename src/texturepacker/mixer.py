@@ -92,6 +92,12 @@ GENERIC_RE = re.compile(r"""
         (?P<path> [^?#]* / )?
         (?P<final> [^/?#]* )
     )?
+    (?:
+        (?P<query_string>
+            \?
+            [^#]*
+        )
+    )?
     $
 """, re.VERBOSE + re.IGNORECASE)
 

@@ -492,6 +492,10 @@ class ResolveUrlTests(unittest.TestCase):
         self.assertEqual('smuurf://smurf/etc/passwd',
                 resolve_generic_url('smuurf://smurf/derf/bink/bink/frothwagon', 'bib/../../../../../../../../../../etc/passwd'))
 
+    def test_what_about_query_strings_you_nitwit(self):
+        self.assertEqual('http://www.mediafire.com/?5dl4oq82u4sx838',
+                resolve_generic_url('internal:///', 'http://www.mediafire.com/?5dl4oq82u4sx838'))
+
 
 class MixerTests(TestCase):
     def test_get_pack_by_name(self):
