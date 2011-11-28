@@ -1,10 +1,17 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.11
+====
+
+- Packs downloaded with HTTP URLs will be unwrapped first
+  (this allows for indirect URLs using Mediafire and other ad-based
+  hosting services)
+
 0.10
 ====
 
 - Added map updates for Minecraft 1.0
-- Recipes can create textures starting with a blanbk image instead of an existing source.
+- Recipes can create textures starting with a blank image instead of an existing source.
 
 0.9.1
 =====
