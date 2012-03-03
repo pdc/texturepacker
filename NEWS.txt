@@ -1,5 +1,15 @@
 This file outlines changes to the package, in reverse chronological order.
 
+0.12
+====
+
+- Update Minecraft atlass for Release 1.2
+
+0.11.1
+====
+
+- Bug fix for texture-pack URLs containing a query-string part.
+
 0.11
 ====
 

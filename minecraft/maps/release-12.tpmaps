@@ -1,0 +1,92 @@
+# Map for Minecraft 1.0 based on squinting at the image files
+-
+    href: release-10
+-
+    terrain.png:
+        -
+            terrain.png
+        -
+            source_rect:
+                x: 224
+                y: 16
+                width: 16
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - jungle_sapling
+        -
+            source_rect:
+                x: 144
+                y: 144
+                width: 16
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - jungle_log
+        -
+            source_rect:
+                x: 64
+                y: 192
+                width: 32
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - jungle_leaves
+                - jungle_leaves_unfancy
+        -
+            source_rect:
+                x: 48
+                y: 208
+                width: 48
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - lamp
+                - lamp_lit
+                - circle_stone_brick
+        -
+            source_rect:
+                x: 80
+                y: 224
+                width: 32
+                height: 16
+            cell_rect:
+                width: 16
+                height: 16
+            names:
+                - creeper_sandstone
+                - mummy_sandstone
+    gui/items.png:
+    -
+        gui/items.png
+    -
+        source_rect:
+            x: 144
+            y: 144
+            width: 16
+            height: 32
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - spawn_egg
+        - spawn_egg_dots
+    -
+        source_rect:
+            x: 176
+            y: 160
+            width: 16
+            height: 16
+        cell_rect:
+            width: 16
+            height: 16
+        names:
+        - bottle_of_enchanting
