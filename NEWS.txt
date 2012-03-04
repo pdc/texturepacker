@@ -1,9 +1,15 @@
 This file outlines changes to the package, in reverse chronological order.
 
-0.12
+NOTE. The version number appears in 3 files:
+- This file
+- setup.py
+- maketexture
+
+0.12 (2012-02-04)
 ====
 
 - Update Minecraft atlass for Release 1.2
+- Add Planet Minecraft to repertoire of the unwrapper
 
 0.11.1
 ====
@@ -14,8 +20,7 @@ This file outlines changes to the package, in reverse chronological order.
 ====
 
 - Packs downloaded with HTTP URLs will be unwrapped first
-  (this allows for indirect URLs using Mediafire and other ad-based
-  hosting services)
+  (this allows for indirect URLs using some hosting services)
 
 0.10
 ====

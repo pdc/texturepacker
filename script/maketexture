@@ -18,7 +18,7 @@ import yaml
 from datetime import datetime
 from texturepacker import Mixer, SourcePack, Atlas, minecraft_texture_pack_dir_path, set_http_cache
 
-VERSION = '0.3.1 2011-03-05'
+VERSION = '0.12 (2012-03-04)'
 
 
 help_message = '''
