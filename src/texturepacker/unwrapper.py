@@ -13,17 +13,39 @@ import httplib2
 import re
 from BeautifulSoup import BeautifulSoup
 import json
+from urlparse import urljoin
 
 # Unwrapper functions take a URL, response, and body
 # (these being the result of a request for that URL)
 #  and optional Http object
 # and return a dict of categorized URLs or None.
 
+# The following decoratots allow us to specify which
+# URL patterns the functions relate to.
+
+def unwrapper_for(url_pattern, follow_redirects=True):
+    """Decorator for unwrapper functions.
+
+    Arguments --
+        url_pattern -- regex for matching URLs that this applies to.
+            NOTE. The initial http:// and www. will have already been stripped.
+        follow_redirects -- set this to false to not follow redirects
+    """
+    if isinstance(url_pattern, basestring):
+        url_pattern = re.compile(url_pattern)
+    def func_wrapper(func):
+        func.url_pattern = url_pattern
+        func.follow_redirects = follow_redirects
+        return func
+    return func_wrapper
+
+
 ADFLY_RE = re.compile(ur"""
     function \s close_bar\(\) \s \{ \s+
     self\.location \s = \s '(?P<next>[^']*)'; \s+
     \}
     """, re.VERBOSE)
+@unwrapper_for(r'^adf\.ly')
 def unwrap_adfly(url, resp, body, http=None):
     # adf.ly wraps the target page in a frameset or something
     # It has a close button which restores the target page.
@@ -31,11 +53,43 @@ def unwrap_adfly(url, resp, body, http=None):
     if m:
         return m.groupdict()
 
+@unwrapper_for(r'^bit\.ly')
 def unwrap_bitly(url, resp, body):
     # Redirects happen transparently
     # We just need to tell caller to process the results using the next unwrapper.
     return {
         'next': (resp['content-location'], resp, body),
+    }
+
+@unwrapper_for(r'^planetminecraft\.com/texture_pack/[a-z-]+-\d+/$')
+def unwrap_planetminecraft(url, resp, body):
+    """Planet Minecraft texture-pack section.
+
+    Attempt to fish out the genuine download and forum URLs linked therefrom"""
+    urls = {
+        'home': resp['content-location'],
+        'download': resp['content-location'],
+    }
+    soup = BeautifulSoup(body)
+    table_elt = soup.first('div', 'resource-share').table
+    for tr_elt in table_elt.findAll('tr'):
+        a_elt = tr_elt.td.a
+        label = a_elt['title']
+        href = a_elt['href']
+        if label == 'Download Texture Pack':
+            urls['next'] = urljoin(url, href)
+        elif label == 'Visit Forum post':
+            urls['forum' ] = href
+    return urls
+
+@unwrapper_for(r'^planetminecraft\.com/texture_pack/[a-z-]+-\d+/download/file/\d+/$',
+        follow_redirects=False)
+def unwrap_planetminecraft_download(url, resp, body):
+    """The dowload link from Planet Minecraft"""
+    # The maon gotcha is that they redirecy to an invalid URL
+    # (it contains spaces)!
+    return {
+        'next': resp['location'].replace(' ', '%20')
     }
 
 
@@ -52,6 +106,7 @@ LICENCE_SCORES = [
 ]
 WOT_NO_SLASH_RE = re.compile(r'^https?://[\w.-]+$')
 
+@unwrapper_for(r'^minecraftforum\.net')
 def unwrap_minecraftforum(url, resp, body):
     urls = {
         'forum': url, # This *is* the forum page!
@@ -97,7 +152,6 @@ def unwrap_minecraftforum(url, resp, body):
                 score += 10
             if score > best_score:
                 best_href, best_score = href, score
-                print href, score
         except KeyError, e:
             print >>sys.stderr, a_elt, 'did not have', e
     if best_href:
@@ -111,6 +165,7 @@ MEDIAFIRE_PKR_RE = re.compile(r"^<!--\s*var LA=\s*false;\s*pKr='([^']+)';")
 MEDIAFIRE_CALL_RE = re.compile(r'^DoShow\("notloggedin_wrapper"\);\s*cR\(\);\s*(\w+)\(\);')
 MEDIAFIRE_CALL2_RE = re.compile(r"\w+\('\w+','([a-f\d]+)'\)")
 
+@unwrapper_for(r'^mediafire\.com/\?')
 def unwrap_mediafire(url, resp, body):
     """Mediafire wrap downloads in a mass of obsfucated JavaScript. Extract and return the next URL."""
     urls = {
@@ -125,10 +180,13 @@ def unwrap_mediafire(url, resp, body):
     # The JavaScript calls a function whose name is randomized.
     # So our first job is to find the name of the function.
     for elt in soup.body.findAll('script', type='text/javascript', language=None):
-        m = MEDIAFIRE_CALL_RE.search(elt.string)
-        if m:
-            secret_func = m.group(1)
-            break
+        s = elt.string
+        s = s and s.strip()
+        if s:
+            m = MEDIAFIRE_CALL_RE.search(s)
+            if m:
+                secret_func = m.group(1)
+                break
 
     # That function has within it some 'encrypted' code
     # which in turn contains the third key.
@@ -203,6 +261,7 @@ MF_DOWNLOAD_INNERHTML_RE = re.compile(r"""
     """, re.VERBOSE)
 
 
+@unwrapper_for(r'^mediafire\.com/dynamic/download\.php\?')
 def unwrap_mediafire_download(url, resp, body):
     """Pull out the link to the actual download from Medafire’s hidden page"""
 
@@ -219,6 +278,7 @@ def unwrap_mediafire_download(url, resp, body):
         }
     return {}
 
+@unwrapper_for(r'.*')
 def unwrap_anything_and_save_it(url, resp, body):
     """For debugging! This unwrapper saves its arguments to disk for later analysis."""
     name = url.split('/')[2].replace('www.', '')
@@ -250,12 +310,14 @@ def guess_url_is_home(url):
 
 # DRIVER
 
-_PREFIX_UNWRAPPERS = [
-    ('adf.ly', unwrap_adfly),
-    ('bit.ly', unwrap_bitly),
-    ('minecraftforum.net', unwrap_minecraftforum),
-    ('mediafire.com/?', unwrap_mediafire),
-    ('mediafire.com/dynamic/download.php?', unwrap_mediafire_download),
+UNWRAPPERS = [
+    unwrap_planetminecraft,
+    unwrap_planetminecraft_download,
+    unwrap_adfly,
+    unwrap_bitly,
+    unwrap_minecraftforum,
+    unwrap_mediafire,
+    unwrap_mediafire_download,
 ]
 COOKIE_EXPIRES_RE = re.compile("""
     expires=
@@ -276,11 +338,11 @@ class Unwrapper(object):
         """Try to find actual download and forum URLs, starting with this one.
 
         Arguments --
-            url -- the published URL for the resource (may be the actual URL
+            url (string) -- the published URL for the resource (may be the actual URL
                 or the address of a forum page linking to it etc.)
-            until -- stop when all of the named categorized URLs are known.
+            until (Set of string) -- stop when all of the named categorized URLs are known.
                 Use this when you want to document the resource
-                but not necessarly find the final URL.
+                but not necessarly find the final one.
 
         Returns --
             A dictionary  with some or none of the following keys defined:
@@ -317,12 +379,13 @@ class Unwrapper(object):
                 x = x[7:]
             if x.startswith('www.'):
                 x = x[4:]
-            for prefix, func in _PREFIX_UNWRAPPERS:
-                if x.startswith(prefix):
+            for func in UNWRAPPERS:
+                if func.url_pattern.search(x):
                     # Have found a handler for this URL.
                     if need_download:
                         # Dereference the URL; also takes care of copying cookies beetween requests.
                         headers = {}
+                        self.http.follow_redirects = func.follow_redirects if hasattr(func, 'follow_redirects') else True
                         if cookie_jar:
                             headers['cookie'] = ';'.join('%s=%s' % (key, val) for (key, val) in cookie_jar.items())
                         resp, body = self.http.request(url, headers=headers)
@@ -369,6 +432,8 @@ def unwrap(*args, **kwargs):
     return default_unwrapper.unwrap(*args, **kwargs)
 
 if __name__ == '__main__':
+    import pprint
     u = 'http://adf.ly/380075/forestdepths'
-    print Unwrapper().unwrap(u)
+    u = 'http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/'
+    pprint.pprint(Unwrapper().unwrap(u))
 

@@ -1,0 +1,15 @@
+{
+ "status": "200", 
+ "content-length": "88311", 
+ "content-location": "http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/", 
+ "set-cookie": "PHPSESSID=5b7fccef4bbe37cf538c64afbc954b23; path=/", 
+ "expires": "Thu, 19 Nov 1981 08:52:00 GMT", 
+ "vary": "Accept-Encoding", 
+ "server": "Apache/2.0.63 (Unix) mod_ssl/2.0.63 OpenSSL/0.9.8e-fips-rhel5 mod_auth_passthrough/2.1 mod_bwlimited/1.4 FrontPage/5.0.2.2635 PHP/5.2.9", 
+ "-content-encoding": "gzip", 
+ "pragma": "no-cache", 
+ "cache-control": "private, no-cache, no-store, proxy-revalidate, no-transform", 
+ "date": "Sun, 04 Mar 2012 17:42:51 GMT", 
+ "x-powered-by": "PHP/5.2.9", 
+ "content-type": "text/html"
+}

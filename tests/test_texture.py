@@ -590,7 +590,7 @@ class MixerTests(TestCase):
         self.assertEqual('http://example.org/frog.zip', mock_meth.call_args[0][0])
         self.assert_same_packs(pack1, pack2)
 
-    # Identical to the abover except passing the URL as a string not dict.
+    # Identical to the above except passing the URL as a string not dict.
     @patch.object(texturepacker.unwrapper, 'Unwrapper', unwrapper_class_stub)
     @patch('httplib2.Http.request')
     def test_get_pack_from_naked_http(self, mock_meth):
@@ -637,7 +637,7 @@ class MixerTests(TestCase):
 
         res = pack2.get_resource('a.png')
         # Has now downloaded the data:
-        unwrapper_class_mock.assert_called_once_with()
+        self.assertTrue(unwrapper_class_mock.called)
         unwrapper_mock.unwrap.assert_called_once_with('http://parasite.ly/12345')
         self.assertEqual('http://example.org/toad.zip', request_mock.call_args[0][0])
         self.assert_same_packs(pack1, pack2)

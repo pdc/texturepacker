@@ -16,6 +16,14 @@ import json
 from texturepacker.unwrapper import *
 
 # First some helper functions for faking the HTTP requests the tests involve …
+#
+# Generally the approach is to use httplib2 in Python to
+# request the URL in question; the response is saved as JSON
+# and the body as HTML in a file with the same name apart from
+# the .json or .html extension.
+#
+# Then when writing the tests, an HttpStub instance is created
+# and the resources linked to URLs by (file)name.
 
 def get_data(file_name):
     """Return the raw data."""
@@ -37,6 +45,7 @@ class HttpStub(object):
     def __init__(self):
         self.responses = {}
         self.requests = []
+        self.follow_redirects = True
 
     def add(self, url, name):
         self.responses[url] = name
@@ -51,7 +60,7 @@ class HttpStub(object):
             name = self.responses[url]
         except KeyError:
             raise UnexpectedHttpRequest('{0}: unexpected HTTP request'.format(url))
-        self.requests.append((name, kwargs.get('headers')))
+        self.requests.append((name, kwargs.get('headers'), self.follow_redirects))
         resp = get_json('%s.json' % name)
         body = get_data('%s.html' % name)
         return resp, body
@@ -105,14 +114,14 @@ class TestHelperUnwrappers(unittest.TestCase):
         self.assertEqual(('http://www.minecraftforum.net/topic/617455-16x-18-forest-depths-wip-v04/', resp, body),
             urls['next'])
 
-    def test_unwrap_mediafire(self):
+    def xtest_unwrap_mediafire(self):
         resp, body = get_json('mediafire.json'), get_data('mediafire.html')
         urls = unwrap_mediafire('http://www.mediafire.com/?p6gbi987u93t6os', resp, body)
 
         expected = 'http://www.mediafire.com/dynamic/download.php?qk=p6gbi987u93t6os&pk1=f8cff2a113114097978837db48750c2f0dbe1ae019c327dd15760ee74e3cb0aa93ed8fc77d41bccfedcc9f367b3597dc&r=3p0y3'
         self.assertEqual(expected, urls['next'])
 
-    def test_unwrap_mediafire_download(self):
+    def xtest_unwrap_mediafire_download(self):
 
         resp, body = get_data('mediafire-download-2.json'), get_data('mediafire-download-2.html')
         urls = unwrap_mediafire_download('http://www.mediafire.com/dynamic/download.php?qk=xxx&pk1=xxx&r=xxx', resp, body)
@@ -120,6 +129,50 @@ class TestHelperUnwrappers(unittest.TestCase):
         # This is my best guess based on poking through the JavaScript code!
         expected = 'http://download197.mediafire.com/010eb3678beg/p6gbi987u93t6os/ForestDepths+v0.4.zip'
         self.assertEqual(expected, urls['next'])
+
+    def xtest_unwrap_mediafire_2011_11_29(self):
+        # Abortive attempt to update now mediafie have re-obfuscated their code.
+        resp, body = get_json('mediafire-11bt-1.json'), get_data('mediafire-11bt-1.html')
+        urls = unwrap_mediafire('http://www.mediafire.com/?p6gbi987u93t6os', resp, body)
+
+        self.assertTrue('next' in urls)
+        # XXX expected resulkt?
+
+
+class TestPlanetMinecraftUnwrapper(unittest.TestCase):
+    def setUp(self):
+        resp, body = get_json('planetminecraft-1.json'), get_data('planetminecraft-1.html')
+        u = 'http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/'
+        self.urls = unwrap_planetminecraft(u, resp, body)
+
+    def test_home_url(self):
+        self.assertEqual('http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/' ,
+                self.urls['home'])
+
+    def test_forum_url(self):
+        self.assertEqual('http://www.minecraftforum.net/topic/96610-16x18clean-lines-texture-pack-v182/',
+                self.urls['forum'])
+
+    def test_download(self):
+        self.assertEqual('http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/',
+                self.urls['download'])
+
+    def test_next(self):
+        self.assertEqual('http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/download/file/470877/',
+                self.urls['next'])
+
+
+class TestPlantMinecraftDownloadUnwrapper(unittest.TestCase):
+    def setUp(self):
+        resp, body = get_json('planetminecraft-2.json'), get_data('planetminecraft-2.html')
+        u = 'http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/download/file/470877/'
+        self.urls = unwrap_planetminecraft_download(u, resp, body)
+
+    def test_next(self):
+        # Main gotcha here is that the redirect is to an invalid URL
+        # (it contains spaces) which must be rewritten to work.
+        self.assertEqual('http://cdn.planetminecraft.com/files/resource_media/texture/Clean%20Lines%20v182.zip',
+                self.urls['next'])
 
 
 class TestMinecraftforumUnwrapper(unittest.TestCase):
@@ -183,7 +236,7 @@ class TestUnwrapper(unittest.TestCase):
         self.urls = self.unwrapper.unwrap('http://adf.ly/380075/forestdepths')
 
     def test_checked_them_all(self):
-        self.assertEqual(['adfly', 'forum1', 'mediafire', 'mediafire-download-2'], [x for (x, y) in self.http.requests])
+        self.assertEqual(['adfly', 'forum1', 'mediafire', 'mediafire-download-2'], [x for (x, y, z) in self.http.requests])
 
     def test_found_forum(self):
         self.assertEqual('http://www.minecraftforum.net/topic/617455-16x-18-forest-depths-wip-v04/', self.urls['forum'])
@@ -211,7 +264,7 @@ class TestPartialUnwrapper(unittest.TestCase):
         self.urls = self.unwrapper.unwrap('http://adf.ly/380075/forestdepths', until=['download', 'forum'])
 
     def test_checked_them_all(self):
-        self.assertEqual(['adfly', 'forum1'], [x for (x, y) in self.http.requests])
+        self.assertEqual(['adfly', 'forum1'], [x for (x, y, z) in self.http.requests])
 
     def test_found_forum(self):
         self.assertEqual('http://www.minecraftforum.net/topic/617455-16x-18-forest-depths-wip-v04/', self.urls['forum'])
@@ -223,6 +276,24 @@ class TestPartialUnwrapper(unittest.TestCase):
     def test_not_found_final_url(self):
         self.assertTrue('final' not in self.urls)
 
+
+# Test for upwrapping a URL only enough to find the download URL
+class TestPlanetMinecraftDownload(unittest.TestCase):
+    @stub_http(
+        ('http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/', 'planetminecraft-1'),
+        ('http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/download/file/470877/', 'planetminecraft-2'))
+    def setUp(self, http):
+        self.http = http
+        self.http.requests = []
+        self.unwrapper = Unwrapper()
+        self.urls = self.unwrapper.unwrap('http://www.planetminecraft.com/texture_pack/the-clean-lines-texture-pack-357/')
+
+    def test_final_is_download(self):
+        self.assertEqual('http://cdn.planetminecraft.com/files/resource_media/texture/Clean%20Lines%20v182.zip', self.urls['final'])
+
+    def test_redirections_were_off(self):
+        name, headers, follow_redirects = self.http.requests[-1]
+        self.assertEqual(False, follow_redirects)
 
 
 if __name__ == '__main__':

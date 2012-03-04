@@ -170,7 +170,7 @@ class Loader(object):
         self._things = {}
         self._schemes = {}
         self._locals = []
-        self._unwrapper = unwrapper.Unwrapper()
+        self._unwrapper = unwrapper.Unwrapper(_get_http())
 
     def add_scheme(self, prefix, func):
         self._schemes[prefix] = func
